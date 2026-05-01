@@ -7,7 +7,15 @@ const Index = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const target = `${PROXY_BASE}${location.pathname}${location.search}`;
+    let path = location.pathname;
+    // Mapeia rotas legadas /store/<tipo>_<handle>.html -> /<tipo>/<handle>
+    const m = path.match(/^\/store\/([a-z]+)_(.+)\.html$/i);
+    if (m) {
+      path = `/${m[1]}/${m[2]}`;
+    } else if (path === "/store" || path === "/store/" || path === "/store/index.html") {
+      path = "/";
+    }
+    const target = `${PROXY_BASE}${path}${location.search}`;
     window.location.replace(target);
   }, [location.pathname, location.search]);
 
