@@ -8,7 +8,10 @@ const Index = () => {
     const path = location.pathname;
     let target = "/store/index.html";
 
-    if (path !== "/" && path !== "") {
+    if (path.startsWith("/store/")) {
+      // Already a direct store file path - just navigate to it
+      target = path.endsWith(".html") ? path : `${path}.html`;
+    } else if (path !== "/" && path !== "") {
       const mapped = path.replace(/^\//, "").replace(/\/$/, "").replace(/\//g, "_");
       target = `/store/${mapped}.html`;
     }
