@@ -1,23 +1,14 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
+const PROXY_BASE = "https://wwwesncomqedu.arktrix.com";
+
 const Index = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const path = location.pathname;
-    let target = "/store/index.html";
-
-    if (path.startsWith("/store/")) {
-      // Already a direct store file path - just navigate to it
-      target = path.endsWith(".html") ? path : `${path}.html`;
-    } else if (path !== "/" && path !== "") {
-      const mapped = path.replace(/^\//, "").replace(/\/$/, "").replace(/\//g, "_");
-      target = `/store/${mapped}.html`;
-    }
-
-    // Hard navigation to the static store file (no iframe -> no SecurityError, much faster)
-    window.location.replace(target + location.search);
+    const target = `${PROXY_BASE}${location.pathname}${location.search}`;
+    window.location.replace(target);
   }, [location.pathname, location.search]);
 
   return (
