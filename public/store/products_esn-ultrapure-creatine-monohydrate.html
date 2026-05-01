@@ -1533,10 +1533,27 @@ Shopify.shopJsCdnBaseUrl = "https://cdn.shopify.com/shopifycloud/shop-js";</scri
   data-shs-beacon-endpoint="/api/collect"
 ></script>
 <style id="lovable-unhide">
-  .critical-component-hide{visibility:visible!important;opacity:1!important;display:block!important;}
-  .is-loading,.was-loading{opacity:1!important;visibility:visible!important;}
-  .images__image,img{opacity:1!important;visibility:visible!important;}
-  [hidden]{display:revert!important;}
+  /* Force visibility of all critical components and custom elements */
+  .critical-component-hide,.critical-component-clear{visibility:visible!important;opacity:1!important;}
+  .is-loading,.was-loading{opacity:1!important;visibility:visible!important;animation:none!important;}
+  hero-teaser,hero-slider,promo-banner,main-navigation,product-card,
+  product-listing,collection-grid,featured-collection,image-with-text,
+  rich-text,custom-html,newsletter-signup,carousel-section{
+    display:block!important;visibility:visible!important;opacity:1!important;
+  }
+  .images__image,.images__picture img,picture img,img{
+    opacity:1!important;visibility:visible!important;
+  }
+  /* Ensure picture sources display correctly */
+  picture,picture img{display:block!important;}
+  /* Hide cookie banner that blocks the page */
+  aside[class*="usercentrics"]{display:none!important;}
+  #usercentrics-root,[id^="usercentrics"]{display:none!important;}
+  /* Remove animations that may keep things invisible */
+  *{animation-duration:0s!important;}
+  /* Make sure hero teasers and sliders have a visible height */
+  .hero-teaser,.hero-slider,.promo-banner{min-height:50px;}
+  [hidden]:not([data-hidden-permanent]){display:revert!important;}
 </style></head>
 
   <body

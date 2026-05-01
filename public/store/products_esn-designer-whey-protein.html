@@ -2919,10 +2919,27 @@ Shopify.shopJsCdnBaseUrl = "https://cdn.shopify.com/shopifycloud/shop-js";</scri
   data-shs-beacon-endpoint="/api/collect"
 ></script>
 <script>window.ShopifyAnalytics = window.ShopifyAnalytics || {};window.ShopifyAnalytics.performance = window.ShopifyAnalytics.performance || {};(function () {const LONG_FRAME_THRESHOLD = 50;const longAnimationFrames = [];let activeRafId = null;function collectLongFrames() {let previousTime = null;function rafMonitor(now) {if (activeRafId === null) {return;}const delta = now - previousTime;if (delta > LONG_FRAME_THRESHOLD) {longAnimationFrames.push({startTime: previousTime,endTime: now,});}previousTime = now;activeRafId = requestAnimationFrame(rafMonitor);}previousTime = performance.now();activeRafId = requestAnimationFrame(rafMonitor);}if (!PerformanceObserver.supportedEntryTypes.includes('long-animation-frame')) {collectLongFrames();const timeoutId = setTimeout(() => {cancelAnimationFrame(activeRafId);}, 10_000);window.ShopifyAnalytics.performance.getLongAnimationFrames = function(stopCollection = false) {if (stopCollection) {clearTimeout(timeoutId);cancelAnimationFrame(activeRafId);}return longAnimationFrames;};}})();</script><style id="lovable-unhide">
-  .critical-component-hide{visibility:visible!important;opacity:1!important;display:block!important;}
-  .is-loading,.was-loading{opacity:1!important;visibility:visible!important;}
-  .images__image,img{opacity:1!important;visibility:visible!important;}
-  [hidden]{display:revert!important;}
+  /* Force visibility of all critical components and custom elements */
+  .critical-component-hide,.critical-component-clear{visibility:visible!important;opacity:1!important;}
+  .is-loading,.was-loading{opacity:1!important;visibility:visible!important;animation:none!important;}
+  hero-teaser,hero-slider,promo-banner,main-navigation,product-card,
+  product-listing,collection-grid,featured-collection,image-with-text,
+  rich-text,custom-html,newsletter-signup,carousel-section{
+    display:block!important;visibility:visible!important;opacity:1!important;
+  }
+  .images__image,.images__picture img,picture img,img{
+    opacity:1!important;visibility:visible!important;
+  }
+  /* Ensure picture sources display correctly */
+  picture,picture img{display:block!important;}
+  /* Hide cookie banner that blocks the page */
+  aside[class*="usercentrics"]{display:none!important;}
+  #usercentrics-root,[id^="usercentrics"]{display:none!important;}
+  /* Remove animations that may keep things invisible */
+  *{animation-duration:0s!important;}
+  /* Make sure hero teasers and sliders have a visible height */
+  .hero-teaser,.hero-slider,.promo-banner{min-height:50px;}
+  [hidden]:not([data-hidden-permanent]){display:revert!important;}
 </style></head>
 
   <body
