@@ -50,24 +50,44 @@ const Index = () => {
   let iframeSrc = "/store/index.html";
 
   if (path !== "/") {
-    // Map /products/foo to /store/products_foo.html
     const mappedPath = path.substring(1).replace(/\//g, "_");
     iframeSrc = `/store/${mappedPath}.html`;
   }
 
   return (
-    <iframe
-      src={iframeSrc}
-      title="Store"
-      style={{
-        width: "100vw",
-        height: "100vh",
-        border: "none",
-        position: "fixed",
-        top: 0,
-        left: 0,
-      }}
-    />
+    <div className="relative h-screen w-screen bg-background">
+      {/* Loading overlay that shows until iframe loads */}
+      <div 
+        id="store-loading-overlay"
+        className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background text-foreground transition-opacity duration-500"
+      >
+        <div className="h-16 w-16 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+        <p className="mt-4 text-lg font-semibold animate-pulse">Carregando loja...</p>
+      </div>
+
+      <iframe
+        src={iframeSrc}
+        title="Store"
+        onLoad={(e) => {
+          // Hide loading overlay when iframe loads
+          const overlay = document.getElementById("store-loading-overlay");
+          if (overlay) {
+            overlay.style.opacity = "0";
+            setTimeout(() => {
+              overlay.style.display = "none";
+            }, 500);
+          }
+        }}
+        style={{
+          width: "100%",
+          height: "100%",
+          border: "none",
+          position: "absolute",
+          top: 0,
+          left: 0,
+        }}
+      />
+    </div>
   );
 };
 

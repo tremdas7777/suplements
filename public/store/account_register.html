@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
 
-    <!-- Offer route (/o/:slug): set background ASAP (before app CSS/JS) based on device theme -->
+    
     <style>
       html.offer-preload,
       html.offer-preload body {
@@ -48,19 +48,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
   
-  <!-- Meta Pixel — init apenas, PageView é disparado manualmente por rota -->
-  <script>
-    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-    document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init','1265953412348824');
-  </script>
+  
+  
 
-  <!-- Google Analytics 4 -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-WMCXRNQWFL"></script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P14GZHJCLD"></script>
+  
+  
+  
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -69,7 +62,7 @@
     gtag('config', 'G-P14GZHJCLD');
   </script>
 
-  <!-- JSON-LD Structured Data -->
+  
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -150,7 +143,7 @@
 </head>
 
   <body>
-    <!-- Meta Pixel noscript fallback (deve ficar no body, não no head) -->
+    
     <noscript><img height="1" width="1" style="display:none"
       src="https://www.facebook.com/tr?id=1265953412348824&ev=PageView&noscript=1"/></noscript>
     <div id="root"></div>
