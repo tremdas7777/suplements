@@ -2918,7 +2918,12 @@ Shopify.shopJsCdnBaseUrl = "https://cdn.shopify.com/shopifycloud/shop-js";</scri
   data-shs-logs-sample-rate="1"
   data-shs-beacon-endpoint="/api/collect"
 ></script>
-<script>window.ShopifyAnalytics = window.ShopifyAnalytics || {};window.ShopifyAnalytics.performance = window.ShopifyAnalytics.performance || {};(function () {const LONG_FRAME_THRESHOLD = 50;const longAnimationFrames = [];let activeRafId = null;function collectLongFrames() {let previousTime = null;function rafMonitor(now) {if (activeRafId === null) {return;}const delta = now - previousTime;if (delta > LONG_FRAME_THRESHOLD) {longAnimationFrames.push({startTime: previousTime,endTime: now,});}previousTime = now;activeRafId = requestAnimationFrame(rafMonitor);}previousTime = performance.now();activeRafId = requestAnimationFrame(rafMonitor);}if (!PerformanceObserver.supportedEntryTypes.includes('long-animation-frame')) {collectLongFrames();const timeoutId = setTimeout(() => {cancelAnimationFrame(activeRafId);}, 10_000);window.ShopifyAnalytics.performance.getLongAnimationFrames = function(stopCollection = false) {if (stopCollection) {clearTimeout(timeoutId);cancelAnimationFrame(activeRafId);}return longAnimationFrames;};}})();</script></head>
+<script>window.ShopifyAnalytics = window.ShopifyAnalytics || {};window.ShopifyAnalytics.performance = window.ShopifyAnalytics.performance || {};(function () {const LONG_FRAME_THRESHOLD = 50;const longAnimationFrames = [];let activeRafId = null;function collectLongFrames() {let previousTime = null;function rafMonitor(now) {if (activeRafId === null) {return;}const delta = now - previousTime;if (delta > LONG_FRAME_THRESHOLD) {longAnimationFrames.push({startTime: previousTime,endTime: now,});}previousTime = now;activeRafId = requestAnimationFrame(rafMonitor);}previousTime = performance.now();activeRafId = requestAnimationFrame(rafMonitor);}if (!PerformanceObserver.supportedEntryTypes.includes('long-animation-frame')) {collectLongFrames();const timeoutId = setTimeout(() => {cancelAnimationFrame(activeRafId);}, 10_000);window.ShopifyAnalytics.performance.getLongAnimationFrames = function(stopCollection = false) {if (stopCollection) {clearTimeout(timeoutId);cancelAnimationFrame(activeRafId);}return longAnimationFrames;};}})();</script><style id="lovable-unhide">
+  .critical-component-hide{visibility:visible!important;opacity:1!important;display:block!important;}
+  .is-loading,.was-loading{opacity:1!important;visibility:visible!important;}
+  .images__image,img{opacity:1!important;visibility:visible!important;}
+  [hidden]{display:revert!important;}
+</style></head>
 
   <body
     id="designer-whey-von-esn-kaufen-uber-10-leckere-geschmacker"
