@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
 
-    
+    <!-- Offer route (/o/:slug): set background ASAP (before app CSS/JS) based on device theme -->
     <style>
       html.offer-preload,
       html.offer-preload body {
@@ -48,12 +48,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
   
-  
-  
+  <!-- Meta Pixel — init apenas, PageView é disparado manualmente por rota -->
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init','1265953412348824');
+  </script>
 
-  
-  
-  
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-WMCXRNQWFL"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P14GZHJCLD"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -62,7 +69,7 @@
     gtag('config', 'G-P14GZHJCLD');
   </script>
 
-  
+  <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -140,72 +147,12 @@
   <meta name="twitter:description" content="Arktrix é a IA que clona qualquer site em segundos. Clone landing pages, edite textos e imagens ao vivo, substitua links e publique com domínio próprio.">
   <script type="module" crossorigin src="/assets/index-CsyjICY9.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-nBx5d2cK.css">
-<style id="lovable-unhide">
-  /* Force visibility of all critical components and custom elements */
-  .critical-component-hide,.critical-component-clear{visibility:visible!important;opacity:1!important;}
-  .is-loading,.was-loading{opacity:1!important;visibility:visible!important;animation:none!important;}
-  hero-teaser,hero-slider,promo-banner,main-navigation,product-card,
-  product-listing,collection-grid,featured-collection,image-with-text,
-  rich-text,custom-html,newsletter-signup,carousel-section{
-    display:block!important;visibility:visible!important;opacity:1!important;
-  }
-  .images__image,.images__picture img,picture img,img{
-    opacity:1!important;visibility:visible!important;
-  }
-  /* Ensure picture sources display correctly */
-  picture,picture img{display:block!important;}
-  /* Hide cookie banner that blocks the page */
-  aside[class*="usercentrics"]{display:none!important;}
-  #usercentrics-root,[id^="usercentrics"]{display:none!important;}
-  /* Remove animations that may keep things invisible */
-  *{animation-duration:0s!important;}
-  /* Make sure hero teasers and sliders have a visible height */
-  .hero-teaser,.hero-slider,.promo-banner{min-height:50px;}
-  [hidden]:not([data-hidden-permanent]){display:revert!important;}
-</style></head>
+</head>
 
   <body>
-    
+    <!-- Meta Pixel noscript fallback (deve ficar no body, não no head) -->
     <noscript><img height="1" width="1" style="display:none"
       src="https://www.facebook.com/tr?id=1265953412348824&ev=PageView&noscript=1"/></noscript>
     <div id="root"></div>
-  
-
-
-<script>
-    (function() {
-        const fixUrl = (url) => {
-            if (!url) return null;
-            let path = url;
-            if (url.startsWith('http')) {
-                try {
-                    const parsed = new URL(url);
-                    if (parsed.hostname !== 'localhost' && parsed.hostname !== 'wwwesncomqedu.arktrix.com') return null;
-                    path = parsed.pathname;
-                } catch(e) { return null; }
-            }
-            if (path.startsWith('/') && !path.endsWith('.html') && !path.includes('.')) {
-                const parts = path.split('/').filter(Boolean);
-                if (parts.length >= 2) {
-                    return '/store/' + parts[0] + '_' + parts.slice(1).join('_') + '.html';
-                }
-            }
-            return null;
-        };
-
-        document.addEventListener('click', (e) => {
-            const target = e.target.closest('a, [href], [data-href], [data-url]');
-            if (target) {
-                const url = target.getAttribute('href') || target.getAttribute('data-href') || target.getAttribute('data-url');
-                const fixed = fixUrl(url);
-                if (fixed) {
-                    window.location.href = fixed;
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            }
-        }, true);
-    })();
-</script>
-</body>
+  </body>
 </html>
