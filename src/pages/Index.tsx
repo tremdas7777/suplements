@@ -123,7 +123,6 @@ const Index = () => {
     return null; // Do not render anything in iframe while redirecting top window
   }
 
-  const path = location.pathname;
   const mappedPath = (path === '' || path === '/' || path === '/store/') ? 'index' : path.replace('/store/', '').replace('.html', '').replace(/\//g, '_');
   const iframeSrc = `/store/${mappedPath}.html${location.search}`;
 
