@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
 
-    
+    <!-- Offer route (/o/:slug): set background ASAP (before app CSS/JS) based on device theme -->
     <style>
       html.offer-preload,
       html.offer-preload body {
@@ -27,6 +27,64 @@
         } catch (e) {}
       })();
     </script>
+<script data-store-link-fallback>(function(){
+if(window.__storeLinkFallbackInstalled)return;
+window.__storeLinkFallbackInstalled=true;
+function normalizeStorePath(raw){
+  if(!raw||typeof raw!=='string')return '';
+  var value=raw.trim();
+  if(!value||value==='#'||value.startsWith('javascript:')||value.startsWith('mailto:')||value.startsWith('tel:'))return '';
+  try{
+    var url=new URL(value,window.location.href);
+    if(url.origin!==window.location.origin)return '';
+    if(!url.pathname.startsWith('/store/'))return '';
+    return url.pathname+url.search+url.hash;
+  }catch(e){return '';}
+}
+function hasInteractiveAncestor(node){
+  return !!(node&&node.closest('button,input,select,textarea,label,summary,[role="button"],[contenteditable="true"],.swym-button,[js-cart-button],[js-quantity-button]'));
+}
+function resolveLinkTarget(node){
+  if(!(node instanceof Element))return null;
+  if(hasInteractiveAncestor(node))return null;
+  return node.closest('a[href],[data-href]');
+}
+function extractPath(el){
+  if(!el)return '';
+  return normalizeStorePath(el.getAttribute('href')||el.getAttribute('data-href')||'');
+}
+function shouldIgnoreEvent(ev,el){
+  if(!el)return true;
+  if('button' in ev&&ev.button!==0)return true;
+  if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return true;
+  if(el instanceof HTMLAnchorElement){
+    if(el.hasAttribute('download'))return true;
+    if(el.target&&el.target!=='_self'&&el.target!=='')return true;
+  }
+  return false;
+}
+function navigateTo(path){
+  if(!path)return;
+  var current=window.location.pathname+window.location.search+window.location.hash;
+  if(current===path)return;
+  window.location.assign(path);
+}
+document.addEventListener('click',function(ev){
+  var el=resolveLinkTarget(ev.target);
+  var path=extractPath(el);
+  if(!path||shouldIgnoreEvent(ev,el))return;
+  ev.preventDefault();
+  navigateTo(path);
+},true);
+document.addEventListener('keydown',function(ev){
+  if(ev.key!=='Enter'&&ev.key!==' ')return;
+  var el=resolveLinkTarget(ev.target);
+  var path=extractPath(el);
+  if(!path||shouldIgnoreEvent(ev,el))return;
+  ev.preventDefault();
+  navigateTo(path);
+},true);
+})();</script>
 
     <title>Arktrix | IA que Clona Sites em Segundos | Clone Landing Pag</title>
     <meta name="description" content="Arktrix é a IA que clona qualquer site em segundos. Clone landing pages, edite textos e imagens ao vivo, substitua links e publique com domínio próprio.">
@@ -48,12 +106,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
   
-  
-  
+  <!-- Meta Pixel — init apenas, PageView é disparado manualmente por rota -->
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init','1265953412348824');
+  </script>
 
-  
-  
-  
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-WMCXRNQWFL"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P14GZHJCLD"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -62,7 +127,7 @@
     gtag('config', 'G-P14GZHJCLD');
   </script>
 
-  
+  <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -143,7 +208,7 @@
 </head>
 
   <body>
-    
+    <!-- Meta Pixel noscript fallback (deve ficar no body, não no head) -->
     <noscript><img height="1" width="1" style="display:none"
       src="https://www.facebook.com/tr?id=1265953412348824&ev=PageView&noscript=1"/></noscript>
     <div id="root"></div>
