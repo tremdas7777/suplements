@@ -104,7 +104,7 @@ document.addEventListener('keydown',function(ev){
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;2,330;0,900;1,600;1,700&display=swap" rel="stylesheet">
   
   <!-- Meta Pixel — init apenas, PageView é disparado manualmente por rota -->
   <script>
@@ -317,7 +317,7 @@ document.addEventListener('keydown',function(ev){
                     
                     window.parent.postMessage({ t: 'sys-add-to-cart', item: item }, '*');
                 } catch(err) {
-                    window.parent.postMessage({ t: 'sys-add-to-cart', item: { id: 'error-id', title: 'ESN Produto', price: 12.00, quantity: 1 } }, '*');
+                    window.parent.postMessage({ t: 'sys-add-to-cart', item: { id: 'error-id', title: 'ESN Produto', price: 7.00, quantity: 1 } }, '*');
                 }
             }
         }, true);
