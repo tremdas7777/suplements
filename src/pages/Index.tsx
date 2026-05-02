@@ -51,6 +51,8 @@ const Index = () => {
 
         // Convert localized static paths back to React paths
         targetPath = targetPath.replace("/store/", "");
+        targetPath = targetPath.replace(/^localhost:\d+_/, "");
+        
         if (targetPath.endsWith(".html") || !targetPath.includes("/")) {
           targetPath = targetPath.replace(".html", "");
           if (targetPath.startsWith("products_")) targetPath = "/products/" + targetPath.replace("products_", "");
@@ -85,19 +87,38 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center max-w-xl px-6">
-        <h1 className="text-4xl font-bold mb-4">ESN Store</h1>
-        <p className="text-muted-foreground mb-6">
-          Bem-vindo. Acesse a loja para ver produtos e coleções.
-        </p>
-        <a
-          href="/store/index.html"
-          className="inline-block px-6 py-3 rounded-md bg-primary text-primary-foreground font-semibold"
-        >
-          Entrar na loja
-        </a>
+    <div className="relative h-screen w-screen bg-background">
+      {/* Loading overlay that shows until iframe loads */}
+      <div 
+        id="store-loading-overlay"
+        className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background text-foreground transition-opacity duration-500"
+      >
+        <div className="h-16 w-16 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+        <p className="mt-4 text-lg font-semibold animate-pulse">Carregando loja...</p>
       </div>
+
+      <iframe
+        src={iframeSrc}
+        title="Store"
+        onLoad={(e) => {
+          // Hide loading overlay when iframe loads
+          const overlay = document.getElementById("store-loading-overlay");
+          if (overlay) {
+            overlay.style.opacity = "0";
+            setTimeout(() => {
+              overlay.style.display = "none";
+            }, 500);
+          }
+        }}
+        style={{
+          width: "100%",
+          height: "100%",
+          border: "none",
+          position: "absolute",
+          top: 0,
+          left: 0,
+        }}
+      />
     </div>
   );
 };
