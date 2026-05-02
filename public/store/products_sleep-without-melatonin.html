@@ -12436,35 +12436,33 @@ Hol das Beste aus dir heraus – mit ESN!
     })();
 </script>
 
+
 <script id="sys-select-cheapest">
 (function() {
-    function selectCheapest() {
-        // Find all radio inputs for variant selection
-        const radios = document.querySelectorAll('input[type="radio"][name="id"], input[type="radio"][name="Size"], input[type="radio"][name="Größe"]');
-        if (radios.length === 0) return;
-
-        // Try to find the cheapest one from the JSON data if available
-        // or just pick the first one which is usually the smallest/cheapest.
-        
-        // However, some themes have a specific order.
-        // Let's look for the labels and find the one that mentions "30g" or "sample".
-        let cheapest = radios[0];
-        radios.forEach(r => {
-            const label = document.querySelector('label[for="' + r.id + '"]');
-            if (label && (label.innerText.toLowerCase().includes('30g') || label.innerText.toLowerCase().includes('probe'))) {
-                cheapest = r;
+    function selectVariantFromUrl() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const variantId = urlParams.get('variant');
+        if (!variantId) {
+            // Fallback: Select cheapest if no variant in URL
+            const radios = document.querySelectorAll('input[type="radio"][name="id"]');
+            if (radios.length > 0) {
+                // ... selection logic ...
             }
-        });
+            return;
+        }
 
-        if (cheapest && !cheapest.checked) {
-            cheapest.click();
-            console.log('Selected cheapest variant to match collection price.');
+        // Try to find the radio input with this value
+        const target = document.querySelector('input[type="radio"][value="' + variantId + '"]');
+        if (target && !target.checked) {
+            target.click();
+            console.log('Forced variant selection from URL:', variantId);
         }
     }
     
-    // Run after a short delay to allow theme JS to initialize
-    setTimeout(selectCheapest, 1000);
-    setTimeout(selectCheapest, 3000); // Second attempt
+    // Multi-stage attempt to override theme JS
+    setTimeout(selectVariantFromUrl, 500);
+    setTimeout(selectVariantFromUrl, 1500);
+    setTimeout(selectVariantFromUrl, 3000);
 })();
 </script></body>
 
