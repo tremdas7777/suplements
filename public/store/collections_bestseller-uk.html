@@ -10942,7 +10942,37 @@ Hol das Beste aus dir heraus – mit ESN!
         }, true);
     })();
 </script>
-</body>
+
+<script id="sys-collection-discount">
+(function() {
+    function applyDiscount() {
+        const cards = document.querySelectorAll('.product-card, .product-card-sample');
+        cards.forEach(card => {
+            if (card.getAttribute('data-discounted')) return;
+            const priceEl = card.querySelector('.product-prices__price') || card.querySelector('.product-card__prices');
+            if (!priceEl) return;
+            
+            const text = priceEl.innerText.trim();
+            const match = text.match(/(\d+),(\d+)/);
+            if (match) {
+                card.setAttribute('data-discounted', 'true');
+                const euros = parseInt(match[1]);
+                const cents = parseInt(match[2]);
+                const oldPriceNum = euros + (cents / 100);
+                const newPriceNum = oldPriceNum * 0.6;
+                const newPriceStr = newPriceNum.toFixed(2).replace('.', ',');
+                const oldPriceStr = oldPriceNum.toFixed(2).replace('.', ',');
+                
+                priceEl.innerHTML = '<span style="color: #b70832; font-weight: bold;">€' + newPriceStr + '</span> ' +
+                                   '<span style="text-decoration: line-through; color: #8d9093; font-size: 0.8em; margin-left: 5px;">€' + oldPriceStr + '</span>' +
+                                   '<div style="position: absolute; top: 10px; left: 10px; background: #b70832; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; z-index: 10;">-40%</div>';
+            }
+        });
+    }
+    applyDiscount();
+    setInterval(applyDiscount, 1000);
+})();
+</script></body>
 
   <script async src="//www.esn.com/cdn/shop/t/62/assets/bundle.global-components.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script>
 <script async src="//www.esn.com/cdn/shop/t/62/assets/bundle.vendors.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script><script async src="//www.esn.com/cdn/shop/t/62/assets/layout.theme.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script><link href="//www.esn.com/cdn/shop/t/62/assets/component.cart-drawer.min.js?v=1777378949116&akv=2026-03-22.block-about-blank" fetchpriority="low" rel="prefetch">

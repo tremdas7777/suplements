@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import NotFound from "./NotFound";
-import { X, ShoppingBag } from "lucide-react";
+import { X, ShoppingBag, Minus, Plus } from "lucide-react";
 
 const Index = () => {
   const location = useLocation();
@@ -139,7 +139,7 @@ const Index = () => {
         className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background text-foreground transition-opacity duration-500"
       >
         <div className="h-16 w-16 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-        <p className="mt-4 text-lg font-semibold animate-pulse">Carregando loja...</p>
+        <p className="mt-4 text-lg font-semibold animate-pulse">Shop wird geladen...</p>
       </div>
 
       {/* Floating Cart Button */}
@@ -161,7 +161,7 @@ const Index = () => {
           <div className="w-full max-w-sm bg-background h-full shadow-2xl flex flex-col animate-in slide-in-from-right-full duration-300">
             <div className="flex items-center justify-between p-5 border-b border-border">
               <h2 className="text-xl font-bold flex items-center gap-2">
-                <ShoppingBag size={24} /> Seu Carrinho
+                <ShoppingBag size={24} /> Warenkorb
               </h2>
               <button onClick={() => setIsCartOpen(false)} className="p-2 hover:bg-muted rounded-full transition-colors">
                 <X size={20} />
@@ -172,7 +172,7 @@ const Index = () => {
               {cartItems.length === 0 ? (
                 <div className="text-center text-muted-foreground mt-20 flex flex-col items-center gap-4">
                   <ShoppingBag size={48} className="opacity-20" />
-                  <p>O carrinho está vazio</p>
+                  <p>Der Warenkorb ist leer</p>
                 </div>
               ) : (
                 cartItems.map((item, i) => (
@@ -187,7 +187,25 @@ const Index = () => {
                     <div className="flex-1 flex flex-col justify-center">
                       <h3 className="font-bold text-sm leading-tight text-foreground">{item.title}</h3>
                       <div className="flex items-center justify-between mt-3">
-                        <p className="text-sm font-medium px-2 py-1 bg-muted rounded-md text-muted-foreground">Qtd: {item.quantity}</p>
+                        <div className="flex items-center gap-3 bg-muted rounded-lg p-1">
+                          <button 
+                            onClick={() => {
+                              setCartItems(prev => prev.map(i => i.id === item.id ? { ...i, quantity: Math.max(0, i.quantity - 1) } : i).filter(i => i.quantity > 0));
+                            }}
+                            className="p-1 hover:bg-background rounded-md transition-colors"
+                          >
+                            <Minus size={14} />
+                          </button>
+                          <span className="text-sm font-black w-4 text-center">{item.quantity}</span>
+                          <button 
+                            onClick={() => {
+                              setCartItems(prev => prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i));
+                            }}
+                            className="p-1 hover:bg-background rounded-md transition-colors"
+                          >
+                            <Plus size={14} />
+                          </button>
+                        </div>
                         <p className="font-black text-lg">€ {(item.price * item.quantity).toFixed(2)}</p>
                       </div>
                     </div>

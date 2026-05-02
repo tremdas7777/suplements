@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShoppingBag, ChevronRight, Lock, HelpCircle, ArrowLeft } from 'lucide-react';
+import { ShoppingBag, ChevronRight, Lock, HelpCircle, ArrowLeft, Minus, Plus, Trash2 } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { loadStripe } from '@stripe/stripe-js';
@@ -249,9 +249,43 @@ const StoreCheckout = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-bold text-sm truncate">{item.title}</h3>
-                    <p className="text-xs text-gray-500">Einheitsgröße</p>
+                    <div className="flex items-center justify-between mt-1">
+                      <div className="flex items-center gap-2 bg-white border border-gray-200 rounded p-0.5 scale-90 origin-left">
+                        {step === 1 && (
+                          <button 
+                            type="button"
+                            onClick={() => {
+                              const newItems = cartItems.map((it, i) => 
+                                i === idx ? { ...it, quantity: Math.max(0, it.quantity - 1) } : it
+                              ).filter(it => it.quantity > 0);
+                              setCartItems(newItems);
+                              sessionStorage.setItem('cart', JSON.stringify(newItems));
+                            }}
+                            className="p-0.5 hover:bg-gray-100 rounded transition-colors"
+                          >
+                            <Minus size={12} />
+                          </button>
+                        )}
+                        <span className="text-xs font-bold w-4 text-center">{item.quantity}</span>
+                        {step === 1 && (
+                          <button 
+                            type="button"
+                            onClick={() => {
+                              const newItems = cartItems.map((it, i) => 
+                                i === idx ? { ...it, quantity: it.quantity + 1 } : it
+                              );
+                              setCartItems(newItems);
+                              sessionStorage.setItem('cart', JSON.stringify(newItems));
+                            }}
+                            className="p-0.5 hover:bg-gray-100 rounded transition-colors"
+                          >
+                            <Plus size={12} />
+                          </button>
+                        )}
+                      </div>
+                      <span className="font-bold text-sm">€ {(item.price * item.quantity).toFixed(2)}</span>
+                    </div>
                   </div>
-                  <span className="font-bold text-sm">€ {(item.price * item.quantity).toFixed(2)}</span>
                 </div>
               ))}
             </div>
