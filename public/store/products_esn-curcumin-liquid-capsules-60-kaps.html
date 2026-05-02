@@ -1974,7 +1974,7 @@ Shopify.shopJsCdnBaseUrl = "https://cdn.shopify.com/shopifycloud/shop-js";</scri
             
             imageUrl: "https://wwwesncomqedu.arktrix.com/cdn/shop/files/Curcumin_60Caps_2024x2024_shop-mwqrPaFY_8c75d824-3f5f-4483-aa72-cf21fe4ce500_grande.jpg?v=1713886484",
             
-            price: "896",
+            price: "1493",
             currency: "EUR",
             availableForSale: true,
             title: "60 Kapseln",
@@ -2123,7 +2123,7 @@ Shopify.shopJsCdnBaseUrl = "https://cdn.shopify.com/shopifycloud/shop-js";</scri
   window.ShopifyAnalytics = window.ShopifyAnalytics || {};
   window.ShopifyAnalytics.meta = window.ShopifyAnalytics.meta || {};
   window.ShopifyAnalytics.meta.currency = 'EUR';
-  var meta = {"product":{"id":9117214376251,"gid":"gid:\/\/shopify\/Product\/9117214376251","vendor":"ESN","type":"","handle":"esn-curcumin-liquid-capsules-60-kaps","variants":[{"id":47947727339835,"price":538,"name":"Kurkuma Kapseln: Curcumin Liquid - 60 Kapseln","public_title":"60 Kapseln","sku":"10001"}],"remote":false},"page":{"pageType":"product","resourceType":"product","resourceId":9117214376251,"requestId":"dc70706e-6f19-4ed4-b70c-e85b94824297-1777678671"}};
+  var meta = {"product":{"id":9117214376251,"gid":"gid:\/\/shopify\/Product\/9117214376251","vendor":"ESN","type":"","handle":"esn-curcumin-liquid-capsules-60-kaps","variants":[{"id":47947727339835,"price":896,"name":"Kurkuma Kapseln: Curcumin Liquid - 60 Kapseln","public_title":"60 Kapseln","sku":"10001"}],"remote":false},"page":{"pageType":"product","resourceType":"product","resourceId":9117214376251,"requestId":"dc70706e-6f19-4ed4-b70c-e85b94824297-1777678671"}};
   for (var attr in meta) {
     window.ShopifyAnalytics.meta[attr] = meta[attr];
   }
@@ -12587,35 +12587,60 @@ Hol das Beste aus dir heraus – mit ESN!
 
 
 
+
 <script id="sys-discount-badge">
 (function() {
-    function applyUI() {
-        const priceEls = document.querySelectorAll('.product-prices__price, .product-prices, .price-item');
-        priceEls.forEach(el => {
-            const currentText = el.innerText.trim();
-            if (!currentText || el.getAttribute('data-last-text') === currentText) return;
-            el.setAttribute('data-last-text', currentText);
+    function applyUI(el) {
+        if (el.getAttribute('data-sys-processed')) return;
+        
+        const currentText = el.innerText.trim();
+        if (!currentText) return;
+        
+        // Match a price pattern
+        const match = currentText.match(/(\d+),(\d+)/);
+        if (match) {
+            el.setAttribute('data-sys-processed', 'true');
+            const euros = parseInt(match[1]);
+            const cents = parseInt(match[2]);
+            const currentPrice = euros + (cents/100);
             
-            const match = currentText.match(/(\d+),(\d+)/);
-            if (match) {
-                const euros = parseInt(match[1]);
-                const cents = parseInt(match[2]);
-                const currentPrice = euros + (cents/100);
-                
-                // IMPORTANT: In product page, the HTML text might ALREADY be discounted by our static replace
-                // or Shopify JS might have overwritten it with raw prices.
-                // To be safe and consistent with collection, we assume the price shown is the DISCOUNTED one
-                // and we calculate the OLD price back to show it.
-                const oldPriceNum = (currentPrice / (1 - 0.4)).toFixed(2).replace('.', ',');
-                
-                el.innerHTML = '<span style="color: #b70832; font-weight: bold;">€' + currentPrice.toFixed(2).replace('.', ',') + '</span> ' +
-                               '<span style="text-decoration: line-through; color: #8d9093; font-size: 0.8em; margin-left: 8px;">€' + oldPriceNum + '</span> ' +
-                               '<span style="background: #b70832; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; margin-left: 8px; vertical-align: middle;">-40%</span>';
+            // Assume currentPrice is ALREADY discounted by 40%
+            const oldPriceNum = (currentPrice / (1 - 0.4)).toFixed(2).replace('.', ',');
+            
+            // Create a wrapper so we don't break Shopify's reference to the original text node if possible
+            // But most themes overwrite innerHTML anyway.
+            el.innerHTML = '<span style="color: #b70832; font-weight: bold;">€' + currentPrice.toFixed(2).replace('.', ',') + '</span> ' +
+                           '<span style="text-decoration: line-through; color: #8d9093; font-size: 0.8em; margin-left: 8px;">€' + oldPriceNum + '</span> ' +
+                           '<span style="background: #b70832; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; margin-left: 8px; vertical-align: middle;">-40%</span>';
+        }
+    }
+
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                const target = mutation.target.parentElement || mutation.target;
+                if (target.classList && (target.classList.contains('product-prices__price') || target.classList.contains('price-item'))) {
+                    target.removeAttribute('data-sys-processed');
+                    applyUI(target);
+                }
             }
         });
+    });
+
+    function init() {
+        const priceEls = document.querySelectorAll('.product-prices__price, .product-prices, .price-item');
+        priceEls.forEach(el => {
+            applyUI(el);
+            observer.observe(el, { childList: true, characterData: true, subtree: true });
+        });
     }
-    applyUI();
-    setInterval(applyUI, 1000);
+
+    init();
+    // Fallback for dynamically added elements
+    setInterval(() => {
+        const priceEls = document.querySelectorAll('.product-prices__price, .product-prices, .price-item');
+        priceEls.forEach(applyUI);
+    }, 2000);
 })();
 </script><script id="sys-json-v2-discounted"></script></body>
 

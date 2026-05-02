@@ -1816,7 +1816,7 @@ Shopify.shopJsCdnBaseUrl = "https://cdn.shopify.com/shopifycloud/shop-js";</scri
             
             imageUrl: "https://wwwesncomqedu.arktrix.com/cdn/shop/files/UltrapureCreatine_Gummies_600g_Beutel_Front_MangoFlavor_2024x2024_shop-vPXPQ86H_30149f55-806f-4b86-9d24-691557176322_grande.jpg?v=1774859045",
             
-            price: "1184",
+            price: "1973",
             currency: "EUR",
             availableForSale: true,
             title: "Mango \/ 120 Gummies",
@@ -1840,7 +1840,7 @@ Shopify.shopJsCdnBaseUrl = "https://cdn.shopify.com/shopifycloud/shop-js";</scri
             
             imageUrl: "https://wwwesncomqedu.arktrix.com/cdn/shop/files/UltrapureCreatine_Gummies_600g_Beutel_Front_PeachFlavor_2024x2024_shop-Q5S2NfaE_6e8f2089-396c-48bb-ac23-cea0fe5be25c_grande.jpg?v=1769091842",
             
-            price: "1184",
+            price: "1973",
             currency: "EUR",
             availableForSale: true,
             title: "Peach \/ 120 Gummies",
@@ -1864,7 +1864,7 @@ Shopify.shopJsCdnBaseUrl = "https://cdn.shopify.com/shopifycloud/shop-js";</scri
             
             imageUrl: "https://wwwesncomqedu.arktrix.com/cdn/shop/files/UltrapureCreatine_Gummies_20g_MangoFlavor_Front_2024x2024_shop-5tM3y1q5_f3f8c8b0-57b3-41a5-bc54-b5442e0199aa_grande.jpg?v=1776930851",
             
-            price: "53",
+            price: "88",
             currency: "EUR",
             availableForSale: true,
             title: "Mango \/ 4 Gummies",
@@ -1888,7 +1888,7 @@ Shopify.shopJsCdnBaseUrl = "https://cdn.shopify.com/shopifycloud/shop-js";</scri
             
             imageUrl: "https://wwwesncomqedu.arktrix.com/cdn/shop/files/UltrapureCreatine_Gummies_20g_PeachFlavor_Front_2024x2024_shop-loktSckd_a81d6d9b-a5ef-4f49-8fa3-c3d1815e7afd_grande.jpg?v=1776930871",
             
-            price: "53",
+            price: "88",
             currency: "EUR",
             availableForSale: true,
             title: "Peach \/ 4 Gummies",
@@ -2225,7 +2225,7 @@ Shopify.shopJsCdnBaseUrl = "https://cdn.shopify.com/shopifycloud/shop-js";</scri
   window.ShopifyAnalytics = window.ShopifyAnalytics || {};
   window.ShopifyAnalytics.meta = window.ShopifyAnalytics.meta || {};
   window.ShopifyAnalytics.meta.currency = 'EUR';
-  var meta = {"product":{"id":11566886584588,"gid":"gid:\/\/shopify\/Product\/11566886584588","vendor":"ESN","type":"","handle":"creatine-gummies","variants":[{"id":55758293500293,"price":710,"name":"Creatine Gummies - Mango \/ 120 Gummies","public_title":"Mango \/ 120 Gummies","sku":"15866"},{"id":55758257389957,"price":710,"name":"Creatine Gummies - Peach \/ 120 Gummies","public_title":"Peach \/ 120 Gummies","sku":"15551"},{"id":55758299529605,"price":32,"name":"Creatine Gummies - Mango \/ 4 Gummies","public_title":"Mango \/ 4 Gummies","sku":"15867"},{"id":55758299562373,"price":32,"name":"Creatine Gummies - Peach \/ 4 Gummies","public_title":"Peach \/ 4 Gummies","sku":"15887"}],"remote":false},"page":{"pageType":"product","resourceType":"product","resourceId":11566886584588,"requestId":"26828a67-c711-4332-b3c5-248baa401487-1777678668"}};
+  var meta = {"product":{"id":11566886584588,"gid":"gid:\/\/shopify\/Product\/11566886584588","vendor":"ESN","type":"","handle":"creatine-gummies","variants":[{"id":55758293500293,"price":710,"name":"Creatine Gummies - Mango \/ 120 Gummies","public_title":"Mango \/ 120 Gummies","sku":"15866"},{"id":55758257389957,"price":710,"name":"Creatine Gummies - Peach \/ 120 Gummies","public_title":"Peach \/ 120 Gummies","sku":"15551"},{"id":55758299529605,"price":53,"name":"Creatine Gummies - Mango \/ 4 Gummies","public_title":"Mango \/ 4 Gummies","sku":"15867"},{"id":55758299562373,"price":53,"name":"Creatine Gummies - Peach \/ 4 Gummies","public_title":"Peach \/ 4 Gummies","sku":"15887"}],"remote":false},"page":{"pageType":"product","resourceType":"product","resourceId":11566886584588,"requestId":"26828a67-c711-4332-b3c5-248baa401487-1777678668"}};
   for (var attr in meta) {
     window.ShopifyAnalytics.meta[attr] = meta[attr];
   }
@@ -12714,35 +12714,60 @@ Hol das Beste aus dir heraus – mit ESN!
 
 
 
+
 <script id="sys-discount-badge">
 (function() {
-    function applyUI() {
-        const priceEls = document.querySelectorAll('.product-prices__price, .product-prices, .price-item');
-        priceEls.forEach(el => {
-            const currentText = el.innerText.trim();
-            if (!currentText || el.getAttribute('data-last-text') === currentText) return;
-            el.setAttribute('data-last-text', currentText);
+    function applyUI(el) {
+        if (el.getAttribute('data-sys-processed')) return;
+        
+        const currentText = el.innerText.trim();
+        if (!currentText) return;
+        
+        // Match a price pattern
+        const match = currentText.match(/(\d+),(\d+)/);
+        if (match) {
+            el.setAttribute('data-sys-processed', 'true');
+            const euros = parseInt(match[1]);
+            const cents = parseInt(match[2]);
+            const currentPrice = euros + (cents/100);
             
-            const match = currentText.match(/(\d+),(\d+)/);
-            if (match) {
-                const euros = parseInt(match[1]);
-                const cents = parseInt(match[2]);
-                const currentPrice = euros + (cents/100);
-                
-                // IMPORTANT: In product page, the HTML text might ALREADY be discounted by our static replace
-                // or Shopify JS might have overwritten it with raw prices.
-                // To be safe and consistent with collection, we assume the price shown is the DISCOUNTED one
-                // and we calculate the OLD price back to show it.
-                const oldPriceNum = (currentPrice / (1 - 0.4)).toFixed(2).replace('.', ',');
-                
-                el.innerHTML = '<span style="color: #b70832; font-weight: bold;">€' + currentPrice.toFixed(2).replace('.', ',') + '</span> ' +
-                               '<span style="text-decoration: line-through; color: #8d9093; font-size: 0.8em; margin-left: 8px;">€' + oldPriceNum + '</span> ' +
-                               '<span style="background: #b70832; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; margin-left: 8px; vertical-align: middle;">-40%</span>';
+            // Assume currentPrice is ALREADY discounted by 40%
+            const oldPriceNum = (currentPrice / (1 - 0.4)).toFixed(2).replace('.', ',');
+            
+            // Create a wrapper so we don't break Shopify's reference to the original text node if possible
+            // But most themes overwrite innerHTML anyway.
+            el.innerHTML = '<span style="color: #b70832; font-weight: bold;">€' + currentPrice.toFixed(2).replace('.', ',') + '</span> ' +
+                           '<span style="text-decoration: line-through; color: #8d9093; font-size: 0.8em; margin-left: 8px;">€' + oldPriceNum + '</span> ' +
+                           '<span style="background: #b70832; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; margin-left: 8px; vertical-align: middle;">-40%</span>';
+        }
+    }
+
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                const target = mutation.target.parentElement || mutation.target;
+                if (target.classList && (target.classList.contains('product-prices__price') || target.classList.contains('price-item'))) {
+                    target.removeAttribute('data-sys-processed');
+                    applyUI(target);
+                }
             }
         });
+    });
+
+    function init() {
+        const priceEls = document.querySelectorAll('.product-prices__price, .product-prices, .price-item');
+        priceEls.forEach(el => {
+            applyUI(el);
+            observer.observe(el, { childList: true, characterData: true, subtree: true });
+        });
     }
-    applyUI();
-    setInterval(applyUI, 1000);
+
+    init();
+    // Fallback for dynamically added elements
+    setInterval(() => {
+        const priceEls = document.querySelectorAll('.product-prices__price, .product-prices, .price-item');
+        priceEls.forEach(applyUI);
+    }, 2000);
 })();
 </script><script id="sys-json-v2-discounted"></script></body>
 
