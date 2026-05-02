@@ -103,7 +103,7 @@ document.addEventListener('keydown',function(ev){
 /* Tilda lazy-loaded images */
 .t-img[data-original], .t-bgimg[data-original] { animation: arktrix-force-visible 0s 1s forwards !important; }
 /* Generic builder patterns */
-[data-aos], .wow, .animated, .elementor-invisible, .is-loading, .lazyload { animation: arktrix-force-visible 0s 2s forwards !important; }
+[data-aos], .wow, .animated, .elementor-invisible, ., .lazyload { animation: arktrix-force-visible 0s 2s forwards !important; }
 /* Next.js / Tailwind scroll-triggered animations (opacity-0 + animation-delay) */
 .opacity-0[style*="animation-delay"] { animation: arktrix-force-visible 0s 0.5s forwards !important; }
 /* Ensure body and main containers are visible */
@@ -2223,7 +2223,7 @@ data-site-header-states="open"
     ></promo-banner>
 
     <div v-if="!getComponentActive('promo-banner')">
-      <div class="promo-banner is-loading critical-component-hide liquid">
+      <div class="promo-banner  critical-component-hide liquid">
         <span class="visually-hidden">
           Werbebanner
         </span>
@@ -2279,13 +2279,13 @@ data-site-header-states="open, minimised"
 
   <div v-if="!getComponentActive('site-header')">
     <div class="site-header-container">
-      <header class="site-header is-loading liquid">
+      <header class="site-header  liquid">
         <div class="site-header__container container">
           <div class="site-header__left">
 
               <button
                 class="site-header__menu icon-button"
-                disabled
+                
                 type="button"
               >
                 <span class="visually-hidden">
@@ -2326,7 +2326,7 @@ data-site-header-states="open, minimised"
           <div class="site-header__right">
             
 <form
-  class="search-bar is-loading liquid"
+  class="search-bar  liquid"
   action="/search"
   method="GET"
 >
@@ -2531,7 +2531,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -2539,7 +2539,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -2602,7 +2602,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -2610,7 +2610,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -2748,7 +2748,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt="IsoClear_908g_LessSweet_FreshCherryFlavor_2024x2024_shop.jpg"
@@ -2756,7 +2756,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           sizes="64px"
         
@@ -2803,7 +2803,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt="DesignerWhey_908g_AlmondCoconutFlavor_2024x2024_shop.jpg"
@@ -2811,7 +2811,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           sizes="64px"
         
@@ -2858,7 +2858,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt="FlexpressoProteinCoffee_908g_Decaf_CoffeeFlavor_2024x2024_shop.jpg"
@@ -2866,7 +2866,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           sizes="64px"
         
@@ -3002,7 +3002,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -3010,7 +3010,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -3137,7 +3137,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt="Athletestack_Men_2024x2024_shop_1.jpg"
@@ -3145,7 +3145,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           sizes="64px"
         
@@ -3192,7 +3192,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt="Ashwa__120Caps_2024x2024_shop.jpg"
@@ -3200,7 +3200,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           sizes="64px"
         
@@ -3246,7 +3246,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt="Omega3_300Caps_2024x2024_shop.jpg"
@@ -3254,7 +3254,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           sizes="64px"
         
@@ -3300,7 +3300,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt="MagnesiumComplex_90VeganCaps_2024x2024_shop.jpg"
@@ -3308,7 +3308,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           sizes="64px"
         
@@ -3458,7 +3458,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -3466,7 +3466,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -3592,7 +3592,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt="UltrapureCreatine_500g_Beutel_NeutralFlavor_2024x2024_shop.jpg"
@@ -3600,7 +3600,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           sizes="64px"
         
@@ -3647,7 +3647,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt="UltrapureCreatine_300Cap_2024x2024_shop.jpg"
@@ -3655,7 +3655,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           sizes="64px"
         
@@ -3703,7 +3703,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt="UltrapureCreatine_Gummies_600g_Beutel_Front_PeachFlavor_2024x2024_shop.jpg"
@@ -3711,7 +3711,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           sizes="64px"
         
@@ -3830,7 +3830,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -3838,7 +3838,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -3965,7 +3965,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt="UltrapureCreatine_500g_Beutel_NeutralFlavor_2024x2024_shop.jpg"
@@ -3973,7 +3973,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           sizes="64px"
         
@@ -4021,7 +4021,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt="Daily_480g_CactusFruitFlavor_2024x2024_shop.jpg"
@@ -4029,7 +4029,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           sizes="64px"
         
@@ -4077,7 +4077,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt="Crank_380g_BlackberryFlavor_2024x2024_shop.jpg"
@@ -4085,7 +4085,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           sizes="64px"
         
@@ -4132,7 +4132,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt="HydroLoad_750g_CherryFlavor_2024x2024_shop.jpg"
@@ -4140,7 +4140,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           sizes="64px"
         
@@ -4342,7 +4342,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -4350,7 +4350,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -4477,7 +4477,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt="DesignerBar_45g_Tray_DarkChocolateSaltedAlmondFlavor_2024x2024_shop.jpg"
@@ -4485,7 +4485,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           sizes="64px"
         
@@ -4532,7 +4532,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt="GOAT_Bar_Tray_12x55g_SaltyPeanutFlavor_2024x2024_shop.jpg"
@@ -4540,7 +4540,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           sizes="64px"
         
@@ -4587,7 +4587,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt="DesignerFlavorPowder_130g_ChocolateFudgeFlavor_2024x2024_shop.jpg"
@@ -4595,7 +4595,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           sizes="64px"
         
@@ -4642,7 +4642,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt="DesignerRicePuddingV2_3000g_NeutralFlavor_2024x2024_shop.jpg"
@@ -4650,7 +4650,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           sizes="64px"
         
@@ -4758,7 +4758,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -4766,7 +4766,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -5069,7 +5069,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -5077,7 +5077,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -5424,7 +5424,7 @@ data-site-header-states="open, minimised" >
         <div
           class="
             cart-drawer
-            is-loading
+            
             critical-component-hide
             liquid
             
@@ -5448,7 +5448,7 @@ data-site-header-states="open, minimised" >
 
                 <button
                   class="overlay__close icon-button"
-                  disabled
+                  
                   type="button"
                 >
                   <span class="visually-hidden">
@@ -5490,7 +5490,7 @@ data-site-header-states="open, minimised" >
     no-icon
     
     button--large
-  "type="submit"name="discount-code-submit"disabled>
+  "type="submit"name="discount-code-submit">
 
   <span class="button__label text-button-large ">
     <span class="text-desktop">
@@ -5507,7 +5507,7 @@ data-site-header-states="open, minimised" >
   </form>
 </div>
 
-<div class="cart-thresholds is-loading liquid cart-drawer__cart-thresholds">
+<div class="cart-thresholds  liquid cart-drawer__cart-thresholds">
   <p
     class="
       cart-thresholds__text
@@ -5588,7 +5588,7 @@ data-site-header-states="open, minimised" >
 
             <div class="cart-drawer__footer">
 
-<div class="cart-samples is-loading liquid cart-drawer__samples cart-drawer__empty-samples">
+<div class="cart-samples  liquid cart-drawer__samples cart-drawer__empty-samples">
   <span
     class="
       cart-samples__title
@@ -5606,7 +5606,7 @@ data-site-header-states="open, minimised" >
     
       <div class="cart-samples__product-container">
         
-<div class="product-card-sample liquid is-loading">
+<div class="product-card-sample liquid ">
   <div class="product-card-sample__image-container">
 
 <span
@@ -5679,7 +5679,7 @@ data-site-header-states="open, minimised" >
     
       <div class="cart-samples__product-container">
         
-<div class="product-card-sample liquid is-loading">
+<div class="product-card-sample liquid ">
   <div class="product-card-sample__image-container">
 
 <span
@@ -5752,7 +5752,7 @@ data-site-header-states="open, minimised" >
     
       <div class="cart-samples__product-container">
         
-<div class="product-card-sample liquid is-loading">
+<div class="product-card-sample liquid ">
   <div class="product-card-sample__image-container">
 
 <span
@@ -5877,7 +5877,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -5885,7 +5885,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -5938,7 +5938,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -5946,7 +5946,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -5999,7 +5999,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -6007,7 +6007,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -6060,7 +6060,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -6068,7 +6068,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -6121,7 +6121,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -6129,7 +6129,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -6182,7 +6182,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -6190,7 +6190,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -6243,7 +6243,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -6251,7 +6251,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -6400,7 +6400,7 @@ data-site-header-states="open, minimised" >
       ></market-selector>
 
       <div v-if="!getComponentActive('market-selector')">
-        <div class="market-selector is-loading critical-component-hide liquid">
+        <div class="market-selector  critical-component-hide liquid">
           <div class="market-selector__header">
             <span
               class="
@@ -6612,13 +6612,13 @@ data-site-header-states="open, minimised" >
 
   <div v-if="!getComponentActive('category-linklist-section')">
     <style>
-      .category-linklist.is-loading .category-linklist__filter-list-item-image-wrap { display: none; }
+      .category-linklist. .category-linklist__filter-list-item-image-wrap { display: none; }
       @media (min-width: 1024px) {
-        .category-linklist.is-loading .category-linklist__filter-list-item-image-wrap { display: flex; }
+        .category-linklist. .category-linklist__filter-list-item-image-wrap { display: flex; }
       }
     </style>
     <div
-      class="category-linklist is-loading liquid"
+      class="category-linklist  liquid"
       aria-label="Schnellzugriffe"
     >
       <div class="category-linklist__list"><div class="category-linklist__filter-list-item">
@@ -6654,7 +6654,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -6662,7 +6662,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -6712,7 +6712,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -6720,7 +6720,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -6770,7 +6770,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -6778,7 +6778,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -6828,7 +6828,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -6836,7 +6836,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -6886,7 +6886,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -6894,7 +6894,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -6944,7 +6944,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -6952,7 +6952,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -7002,7 +7002,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -7010,7 +7010,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -7060,7 +7060,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -7068,7 +7068,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -7118,7 +7118,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -7126,7 +7126,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -7176,7 +7176,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -7184,7 +7184,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -7234,7 +7234,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -7242,7 +7242,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -7292,7 +7292,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -7300,7 +7300,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -7350,7 +7350,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -7358,7 +7358,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -7408,7 +7408,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -7416,7 +7416,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -7466,7 +7466,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -7474,7 +7474,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -7606,7 +7606,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -7614,7 +7614,7 @@ data-site-header-states="open, minimised" >
         
           fetchpriority="high"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
         
@@ -7671,7 +7671,7 @@ data-site-header-states="open, minimised" >
           ><div
                 class="
                   flip-clock__card
-                  text-desktop-display-h1 text-mobile-display-h1 is-loading
+                  text-desktop-display-h1 text-mobile-display-h1 
                 "
                 js-flip-clock="countdownCard"
               >
@@ -7679,7 +7679,7 @@ data-site-header-states="open, minimised" >
               </div><div
                 class="
                   flip-clock__card
-                  text-desktop-display-h1 text-mobile-display-h1 is-loading
+                  text-desktop-display-h1 text-mobile-display-h1 
                 "
                 js-flip-clock="countdownCard"
               >
@@ -7702,7 +7702,7 @@ data-site-header-states="open, minimised" >
           ><div
                 class="
                   flip-clock__card
-                  text-desktop-display-h1 text-mobile-display-h1 is-loading
+                  text-desktop-display-h1 text-mobile-display-h1 
                 "
                 js-flip-clock="countdownCard"
               >
@@ -7710,7 +7710,7 @@ data-site-header-states="open, minimised" >
               </div><div
                 class="
                   flip-clock__card
-                  text-desktop-display-h1 text-mobile-display-h1 is-loading
+                  text-desktop-display-h1 text-mobile-display-h1 
                 "
                 js-flip-clock="countdownCard"
               >
@@ -7733,7 +7733,7 @@ data-site-header-states="open, minimised" >
           ><div
                 class="
                   flip-clock__card
-                  text-desktop-display-h1 text-mobile-display-h1 is-loading
+                  text-desktop-display-h1 text-mobile-display-h1 
                 "
                 js-flip-clock="countdownCard"
               >
@@ -7741,7 +7741,7 @@ data-site-header-states="open, minimised" >
               </div><div
                 class="
                   flip-clock__card
-                  text-desktop-display-h1 text-mobile-display-h1 is-loading
+                  text-desktop-display-h1 text-mobile-display-h1 
                 "
                 js-flip-clock="countdownCard"
               >
@@ -7764,7 +7764,7 @@ data-site-header-states="open, minimised" >
           ><div
                 class="
                   flip-clock__card
-                  text-desktop-display-h1 text-mobile-display-h1 is-loading
+                  text-desktop-display-h1 text-mobile-display-h1 
                 "
                 js-flip-clock="countdownCard"
               >
@@ -7772,7 +7772,7 @@ data-site-header-states="open, minimised" >
               </div><div
                 class="
                   flip-clock__card
-                  text-desktop-display-h1 text-mobile-display-h1 is-loading
+                  text-desktop-display-h1 text-mobile-display-h1 
                 "
                 js-flip-clock="countdownCard"
               >
@@ -7989,7 +7989,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -7997,7 +7997,7 @@ data-site-header-states="open, minimised" >
         
           fetchpriority="high"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
         
@@ -8156,7 +8156,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -8164,7 +8164,7 @@ data-site-header-states="open, minimised" >
         
           fetchpriority="high"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
         
@@ -8323,7 +8323,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -8331,7 +8331,7 @@ data-site-header-states="open, minimised" >
         
           fetchpriority="high"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
         
@@ -8611,7 +8611,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -8619,7 +8619,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
         
@@ -8729,7 +8729,7 @@ data-site-header-states="open, minimised" >
       class="
         product-carousel
         critical-component-clear
-        is-loading
+        
         liquid
 
       "
@@ -8767,7 +8767,7 @@ data-site-header-states="open, minimised" >
     product-card
     liquid
     
-    is-loading
+    
 
   "
   
@@ -8878,7 +8878,7 @@ data-site-header-states="open, minimised" >
     product-card
     liquid
     
-    is-loading
+    
 
   "
   
@@ -8989,7 +8989,7 @@ data-site-header-states="open, minimised" >
     product-card
     liquid
     
-    is-loading
+    
 
   "
   
@@ -9100,7 +9100,7 @@ data-site-header-states="open, minimised" >
     product-card
     liquid
     
-    is-loading
+    
 
   "
   
@@ -9211,7 +9211,7 @@ data-site-header-states="open, minimised" >
     product-card
     liquid
     
-    is-loading
+    
 
   "
   
@@ -9322,7 +9322,7 @@ data-site-header-states="open, minimised" >
     product-card
     liquid
     
-    is-loading
+    
 
   "
   
@@ -9955,7 +9955,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -9963,7 +9963,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
         
@@ -10073,7 +10073,7 @@ data-site-header-states="open, minimised" >
       class="
         product-carousel
         critical-component-clear
-        is-loading
+        
         liquid
 
       "
@@ -10111,7 +10111,7 @@ data-site-header-states="open, minimised" >
     product-card
     liquid
     
-    is-loading
+    
 
   "
   
@@ -10222,7 +10222,7 @@ data-site-header-states="open, minimised" >
     product-card
     liquid
     
-    is-loading
+    
 
   "
   
@@ -10333,7 +10333,7 @@ data-site-header-states="open, minimised" >
     product-card
     liquid
     
-    is-loading
+    
 
   "
   
@@ -10444,7 +10444,7 @@ data-site-header-states="open, minimised" >
     product-card
     liquid
     
-    is-loading
+    
 
   "
   
@@ -10555,7 +10555,7 @@ data-site-header-states="open, minimised" >
     product-card
     liquid
     
-    is-loading
+    
 
   "
   
@@ -10666,7 +10666,7 @@ data-site-header-states="open, minimised" >
     product-card
     liquid
     
-    is-loading
+    
 
   "
   
@@ -10876,7 +10876,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -10884,7 +10884,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
         
@@ -10994,7 +10994,7 @@ data-site-header-states="open, minimised" >
       class="
         product-carousel
         critical-component-clear
-        is-loading
+        
         liquid
 
       "
@@ -11032,7 +11032,7 @@ data-site-header-states="open, minimised" >
     product-card
     liquid
     
-    is-loading
+    
 
   "
   
@@ -11143,7 +11143,7 @@ data-site-header-states="open, minimised" >
     product-card
     liquid
     
-    is-loading
+    
 
   "
   
@@ -11254,7 +11254,7 @@ data-site-header-states="open, minimised" >
     product-card
     liquid
     
-    is-loading
+    
 
   "
   
@@ -11365,7 +11365,7 @@ data-site-header-states="open, minimised" >
     product-card
     liquid
     
-    is-loading
+    
 
   "
   
@@ -11476,7 +11476,7 @@ data-site-header-states="open, minimised" >
     product-card
     liquid
     
-    is-loading
+    
 
   "
   
@@ -11587,7 +11587,7 @@ data-site-header-states="open, minimised" >
     product-card
     liquid
     
-    is-loading
+    
 
   "
   
@@ -11751,7 +11751,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -11759,7 +11759,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -11817,7 +11817,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -11825,7 +11825,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -11883,7 +11883,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -11891,7 +11891,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -11949,7 +11949,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -11957,7 +11957,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
 
@@ -12060,7 +12060,7 @@ data-site-header-states="open, minimised" >
           images__image
           liquid
           
-            is-loading was-loading
+             was-loading
           
         "
         alt=""
@@ -12068,7 +12068,7 @@ data-site-header-states="open, minimised" >
         
           loading="lazy"
 
-          onload="this.classList.remove('is-loading')"
+          onload="this.classList.remove('')"
 
           role="presentation"
         
