@@ -124,12 +124,11 @@ const Index = () => {
   }
 
   // We are in the TOP window.
-  let iframeSrc = "/store/index.html";
-
-  if (path !== "/") {
-    const mappedPath = path.substring(1).replace(/\//g, "_");
-    iframeSrc = `/store/${mappedPath}.html${location.search}`;
-  }
+  const [initialIframeSrc] = useState(() => {
+    const path = location.pathname.replace('/store/', '');
+    const mappedPath = path === '' || path === '/' ? 'collections_bestseller' : path.replace('.html', '');
+    return `/store/${mappedPath}.html${location.search}`;
+  });
 
   return (
     <div className="relative h-screen w-screen bg-background overflow-hidden">
@@ -311,7 +310,7 @@ const Index = () => {
       )}
 
       <iframe
-        src={iframeSrc}
+        src={initialIframeSrc}
         title="Store"
         onLoad={(e) => {
           const overlay = document.getElementById("store-loading-overlay");
@@ -328,6 +327,9 @@ const Index = () => {
             const script = doc.createElement('script');
             script.textContent = `
               (function() {
+                if (window.__sys_script_running) return;
+                window.__sys_script_running = true;
+
                 function fixVariants() {
                   if (!window.cnvs || !window.cnvs.product) return;
                   const product = window.cnvs.product;
@@ -415,7 +417,6 @@ const Index = () => {
                   }
                   update();
                   render();
-                }
                 }
 
                 function renderUpsells() {
@@ -541,12 +542,12 @@ const Index = () => {
 
                 function runAll() {
                   renderAnnouncementBar(); hideBuggyProducts(); fixVariants(); renderUpsells(); renderTrustShield(); renderReviews(); fixCollectionPrices(); renderFooterUSPs();
+                  setTimeout(runAll, 2000); // Recursive timeout is safer than interval
                 }
 
                 runAll();
                 const obs = new MutationObserver(() => { runAll(); });
                 obs.observe(document.body, { childList: true, subtree: true });
-                setInterval(runAll, 2000);
               })();
             `;
             doc.body.appendChild(script);
