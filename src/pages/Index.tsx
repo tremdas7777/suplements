@@ -432,9 +432,9 @@ const Index = () => {
                 }
 
                 function fixPDPInitialPrice() {
-                  if (document.querySelector('[data-sys-processed]')) return;
                   const priceEls = document.querySelectorAll('.product-prices__price, .price__regular, .product-form__prices-container .product-prices__price');
                   priceEls.forEach(priceEl => {
+                     if (priceEl.getAttribute('data-sys-processed')) return;
                      const text = priceEl.innerText.trim();
                      const match = text.match(/(\\d+)[,.](\\d+)/);
                      if (match) {
@@ -568,14 +568,33 @@ const Index = () => {
                 style.textContent = '[href*="elite-leistung-combo"], [href*="elite-performance-paket"], [data-track*="Elite Leistungs-Paket"], img[src*="Elite_Leistungs-Paket"] { display: none !important; }';
                 document.head.appendChild(style);
 
+                var __obs = null;
                 function runAll() {
-                  renderAnnouncementBar(); hideBuggyProducts(); fixVariants(); fixPDPInitialPrice(); renderUpsells(); renderTrustShield(); renderReviews(); fixCollectionPrices(); renderFooterUSPs();
-                  setTimeout(runAll, 2000); // Recursive timeout is safer than interval
+                  if (window.__sys_running) return;
+                  window.__sys_running = true;
+                  
+                  if (__obs) __obs.disconnect();
+                  
+                  renderAnnouncementBar(); 
+                  hideBuggyProducts(); 
+                  fixVariants(); 
+                  fixPDPInitialPrice(); 
+                  renderUpsells(); 
+                  renderTrustShield(); 
+                  renderReviews(); 
+                  fixCollectionPrices(); 
+                  renderFooterUSPs();
+                  
+                  if (__obs) __obs.observe(document.body, { childList: true, subtree: true });
+                  window.__sys_running = false;
                 }
 
                 runAll();
-                const obs = new MutationObserver(() => { runAll(); });
-                obs.observe(document.body, { childList: true, subtree: true });
+                __obs = new MutationObserver(() => { runAll(); });
+                __obs.observe(document.body, { childList: true, subtree: true });
+                
+                // Backup interval for cases where MutationObserver misses something
+                setInterval(runAll, 3000);
               })();
             `;
             doc.body.appendChild(script);
