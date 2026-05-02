@@ -12335,7 +12335,11 @@ Hol das Beste aus dir heraus – mit ESN!
 
 
 
-<script>
+
+
+
+
+<script id="sys-cart-fix">
     (function() {
         const fixUrl = (url) => {
             if (!url) return null;
@@ -12343,7 +12347,7 @@ Hol das Beste aus dir heraus – mit ESN!
             if (url.startsWith('http')) {
                 try {
                     const parsed = new URL(url);
-                    if (parsed.hostname !== 'localhost' && parsed.hostname !== 'wwwesncomqedu.arktrix.com') return null;
+                    if (parsed.hostname !== 'localhost' && parsed.hostname !== 'wwwesncomqedu.arktrix.com' && parsed.hostname !== 'www.esn.com') return null;
                     path = parsed.pathname;
                 } catch(e) { return null; }
             }
@@ -12361,89 +12365,74 @@ Hol das Beste aus dir heraus – mit ESN!
             if (target) {
                 const url = target.getAttribute('href') || target.getAttribute('data-href') || target.getAttribute('data-url');
                 if (!url || url === '#' || url.startsWith('javascript:')) return;
-                
                 const fixed = fixUrl(url);
                 const finalUrl = fixed || url;
-                
-                // Check if checkout
                 if (finalUrl.includes('/checkout')) {
                     window.parent.postMessage({ t: 'sys-checkout' }, '*');
-                    e.preventDefault();
-                    e.stopPropagation();
-                    return;
+                    e.preventDefault(); e.stopPropagation(); return;
                 }
-                
-                // Always tell the parent React app to navigate
                 window.parent.postMessage({ t: 'sys-click', u: finalUrl }, '*');
-                e.preventDefault();
-                e.stopPropagation();
+                e.preventDefault(); e.stopPropagation();
             }
         }, true);
-        
-        // Add listener for Add to Cart
+
         document.addEventListener('submit', (e) => {
             const form = e.target;
-            if (form && (form.action && form.action.includes('/cart/add') || form.querySelector('.product-form__add-to-cart'))) {
-                e.preventDefault();
-                e.stopPropagation();
+            if (form && (form.action && form.action.includes('/cart/add') || form.querySelector('.product-form__add-to-cart') || form.querySelector('[name="add"]'))) {
+                e.preventDefault(); e.stopPropagation();
                 
                 try {
                     const formData = new FormData(form);
                     const item = {
-                        id: formData.get('id') || 'default-id',
+                        id: formData.get('id') || 'id-' + Math.random().toString(36).substr(2, 9),
                         quantity: parseInt(formData.get('quantity')) || 1,
                         product_id: formData.get('product-id')
                     };
                     
-                    const productTitleEl = document.querySelector('h1') || document.querySelector('.product-title');
-                    const productPriceEl = document.querySelector('.price__regular') || document.querySelector('.price-item');
+                    // Improved title extraction
+                    const titleEl = document.querySelector('.product-title') || document.querySelector('h1') || document.querySelector('meta[property="og:title"]');
+                    item.title = titleEl ? (titleEl.tagName === 'META' ? titleEl.content : titleEl.innerText.trim()) : (document.title.split('|')[0].trim());
+
+                    // Improved price extraction
+                    let price = 12.00;
+                    const priceSelectors = [
+                        '.product-form .product-prices__price',
+                        '.product-prices__price',
+                        '.price__regular',
+                        '.price-item',
+                        'meta[property="product:price:amount"]'
+                    ];
                     
-                    item.title = productTitleEl ? productTitleEl.innerText.trim() : 'ESN Produto';
-                    
-                    if (productPriceEl) {
-                        const priceText = productPriceEl.innerText.replace(/[^0-9,]/g, '').replace(',', '.');
-                        item.price = parseFloat(priceText) || 12.00;
-                    } else {
-                        item.price = 12.00;
+                    for (const sel of priceSelectors) {
+                        const el = document.querySelector(sel);
+                        if (el) {
+                            let text = el.tagName === 'META' ? el.content : el.innerText;
+                            if (text) {
+                                const clean = text.replace(/[^0-9,.]/g, '').replace(',', '.');
+                                const num = parseFloat(clean);
+                                if (!isNaN(num) && num > 0) {
+                                    price = num;
+                                    break;
+                                }
+                            }
+                        }
                     }
                     
-                    // Look for image
-                    const imgEl = document.querySelector('.product-media img') || document.querySelector('img');
-                    if (imgEl) item.image = imgEl.src;
+                    if (price === 12.00 && window.cnvs && window.cnvs.product && window.cnvs.product.price) {
+                        price = parseFloat(String(window.cnvs.product.price).replace(',', '.')) || 12.00;
+                    }
+                    item.price = price;
+                    
+                    // Improved image extraction
+                    const imgEl = document.querySelector('.product-media__image') || document.querySelector('.product-media img') || document.querySelector('meta[property="og:image"]');
+                    if (imgEl) item.image = imgEl.tagName === 'META' ? imgEl.content : imgEl.src;
                     
                     window.parent.postMessage({ t: 'sys-add-to-cart', item: item }, '*');
-                    
-                    // Show a local success message? 
-                    // Optional: let the parent handle the notification.
                 } catch(err) {
-                    window.parent.postMessage({ t: 'sys-add-to-cart', item: { id: 'default-id', title: 'ESN Produto', price: 12.00, quantity: 1 } }, '*');
+                    window.parent.postMessage({ t: 'sys-add-to-cart', item: { id: 'error-id', title: 'ESN Produto', price: 12.00, quantity: 1 } }, '*');
                 }
             }
         }, true);
-        
-        // Intercept native fetch/xhr to cart
-        const origFetch = window.fetch;
-        window.fetch = async function() {
-            if (arguments[0] && typeof arguments[0] === 'string' && arguments[0].includes('/cart/add.js')) {
-                // If the shopify JS tries to use fetch to add to cart
-                const bodyStr = arguments[1] ? arguments[1].body : null;
-                try {
-                    if (bodyStr) {
-                        const data = JSON.parse(bodyStr);
-                        const items = data.items || [data];
-                        for(const it of items) {
-                            window.parent.postMessage({ 
-                                t: 'sys-add-to-cart', 
-                                item: { id: it.id, quantity: it.quantity || 1, title: 'ESN Produto', price: 12.00 } 
-                            }, '*');
-                        }
-                    }
-                } catch(e) {}
-                // Mock success
-                return new Response(JSON.stringify({items: []}), {status: 200, headers: {'Content-Type':'application/json'}});
-            }
-            return origFetch.apply(this, arguments);
-        };
     })();
 </script>
 </body>

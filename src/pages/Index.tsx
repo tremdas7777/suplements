@@ -59,7 +59,14 @@ const Index = () => {
       if (!e.data || !e.data.t) return;
       
       if (e.data.t === "sys-add-to-cart" && e.data.item) {
-        const item = e.data.item;
+        const item = {
+          ...e.data.item,
+          price: typeof e.data.item.price === 'string' 
+            ? parseFloat(e.data.item.price.replace(/[^0-9,.]/g, '').replace(',', '.')) 
+            : (Number(e.data.item.price) || 0),
+          quantity: Number(e.data.item.quantity) || 1
+        };
+
         setCartItems(prev => {
            const existing = prev.find(i => i.id === item.id);
            if (existing) {
