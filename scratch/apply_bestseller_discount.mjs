@@ -22,23 +22,54 @@ uniqueProducts.forEach(prodFile => {
 
     let html = fs.readFileSync(filePath, 'utf8');
     
-    // Check if we already discounted JSON
-    if (html.includes('id="sys-json-discounted"')) {
-        console.log(`Skipping ${prodFile}: JSON already discounted.`);
+    // Check if we already discounted JSON with the NEW aggressive logic
+    if (html.includes('id="sys-json-v2-discounted"')) {
+        console.log(`Skipping ${prodFile}: JSON v2 already discounted.`);
         return;
     }
 
-    // Discount JSON prices (e.g., "price":3490)
-    html = html.replace(/"price":\s*(\d+)/g, (match, p1) => {
+    // Agressive replacement for various price formats in JS/JSON
+    // 1. "price": "4290" or price: "4290" or "price": 4290
+    html = html.replace(/(?:["']?price["']?\s*:\s*["']?)(\d+)(?:["']?)/g, (match, p1) => {
+        // Only treat as cents if it's a long enough number (usually > 100) 
+        // OR if it's clearly a price field.
         const currentCents = parseInt(p1);
-        const newCents = Math.round(currentCents * (1 - DISCOUNT));
-        return `"price":${newCents}`;
+        if (currentCents > 0) {
+            const newCents = Math.round(currentCents * (1 - DISCOUNT));
+            // We need to preserve the surrounding quotes/structure
+            return match.replace(p1, String(newCents));
+        }
+        return match;
     });
 
-    // Mark as JSON discounted
-    html = html.replace('</body>', '<script id="sys-json-discounted"></script></body>');
+    // 2. "Value": "34,90" or Value: "34,90"
+    html = html.replace(/(?:["']?Value["']?\s*:\s*["']?)([\d,.]+)(?:["']?)/g, (match, p1) => {
+        const val = parseFloat(p1.replace(',', '.'));
+        if (!isNaN(val) && val > 0) {
+            const newVal = (val * (1 - DISCOUNT)).toFixed(2).replace('.', ',');
+            return match.replace(p1, newVal);
+        }
+        return match;
+    });
 
-    // Also update the dynamic UI script to be the latest version
+    // 3. "Price": "€34,90"
+    html = html.replace(/(?:["']?Price["']?\s*:\s*["']?)(€[\d,.]+)(?:["']?)/g, (match, p1) => {
+        const val = parseFloat(p1.replace('€', '').replace(',', '.'));
+        if (!isNaN(val) && val > 0) {
+            const newVal = '€' + (val * (1 - DISCOUNT)).toFixed(2).replace('.', ',');
+            return match.replace(p1, newVal);
+        }
+        return match;
+    });
+
+    // Mark as JSON v2 discounted
+    if (html.includes('id="sys-json-discounted"')) {
+        html = html.replace('id="sys-json-discounted"', 'id="sys-json-v2-discounted"');
+    } else {
+        html = html.replace('</body>', '<script id="sys-json-v2-discounted"></script></body>');
+    }
+
+    // Dynamic UI script (latest version)
     const newBadgeScript = `
 <script id="sys-discount-badge">
 (function() {
@@ -51,11 +82,14 @@ uniqueProducts.forEach(prodFile => {
             if (el.getAttribute('data-last-text') === currentText) return;
             el.setAttribute('data-last-text', currentText);
             
+            // Try to find a price in the text
             const match = currentText.match(/(\\d+),(\\d+)/);
             if (match) {
                 const euros = parseInt(match[1]);
                 const cents = parseInt(match[2]);
                 const currentPrice = euros + (cents/100);
+                
+                // We show the -40% badge and the calculated old price
                 const oldPriceNum = (currentPrice / (1 - ${DISCOUNT})).toFixed(2).replace('.', ',');
                 
                 el.innerHTML = '<span style="color: #b70832; font-weight: bold;">€' + currentPrice.toFixed(2).replace('.', ',') + '</span> ' +
@@ -76,5 +110,5 @@ uniqueProducts.forEach(prodFile => {
     }
 
     fs.writeFileSync(filePath, html);
-    console.log(`Updated JSON and script for ${prodFile}`);
+    console.log(`Updated JSON v2 and script for ${prodFile}`);
 });
