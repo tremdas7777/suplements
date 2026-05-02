@@ -9692,51 +9692,6 @@ Hol das Beste aus dir heraus – mit ESN!
                                    '<div style="position: absolute; top: 10px; left: 10px; background: #b70832; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; z-index: 10;">-40%</div>';
             }
         });
-    }
-    function injectBundle() {
-        const grid = document.querySelector('.product-grid');
-        if (!grid || document.getElementById('sys-bundle-card')) return;
-
-        const card = document.createElement('div');
-        card.id = 'sys-bundle-card';
-        card.className = 'col xs6 m4 l3 product-grid__item';
-        card.style.marginBottom = '20px';
-        card.innerHTML = `
-            <div class="product-card liquid">
-                <a href="/store/products_esn-elite-leistungs-paket.html" class="product-card__link">
-                    <div class="product-card__image-container">
-                        <img src="https://hwlevhfqsmyssdpktyhl.supabase.co/storage/v1/object/public/product-images/65743494644101/Designer_Bar_Bundle_Hero.jpg" 
-                             alt="ESN Elite Leistungs-Paket" 
-                             class="product-card__image" 
-                             style="width: 100%; border-radius: 8px;">
-                        <div style="position: absolute; top: 10px; left: 10px; background: #b70832; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; z-index: 10;">NEU</div>
-                    </div>
-                    <div class="product-card__info" style="padding: 10px 0;">
-                        <h3 class="product-card__title" style="margin: 5px 0; font-size: 16px; color: black;">ESN Elite Leistungs-Paket</h3>
-                        <p class="product-card__subtitle" style="margin: 0; font-size: 12px; color: #8d9093;">8 Premium Produkte Bundle</p>
-                        <div class="product-card__prices" style="margin-top: 5px;">
-                            <span style="color: #b70832; font-weight: bold;">€69,00</span>
-                            <span style="text-decoration: line-through; color: #8d9093; font-size: 0.8em; margin-left: 5px;">€115,00</span>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        `;
-        // Prepend after the filters
-        const filters = grid.querySelector('.product-grid__filters');
-        if (filters) {
-            filters.after(card);
-        } else {
-            grid.prepend(card);
-        }
-    }
-    
-    injectBundle();
-    applyDiscount();
-    setInterval(() => {
-        injectBundle();
-        applyDiscount();
-    }, 2000);
 })();
 </script></body>
 
