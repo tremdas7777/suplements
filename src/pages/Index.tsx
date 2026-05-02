@@ -335,6 +335,9 @@ const Index = () => {
                   const variants = product.variants;
                   const container = document.querySelector('.product-options');
                   if (!container) return;
+                  
+                  // Guard to prevent constant re-rendering from the interval
+                  if (container.getAttribute('data-sys-initialized')) return;
                   if (!container.innerText.includes('Wird geladen') && container.children.length > 5) return;
 
                   const selectedOptions = {};
@@ -371,12 +374,17 @@ const Index = () => {
                         btn.style.minHeight = '50px';
                         btn.innerText = val;
                         if (isSelected) btn.style.boxShadow = '0 0 0 1px #000';
-                        btn.onclick = () => { selectedOptions[opt.name] = val; update(); };
+                        btn.onclick = () => { 
+                          selectedOptions[opt.name] = val; 
+                          update(); 
+                          render(); // Re-render only on click
+                        };
                         grid.appendChild(btn);
                       });
                       optDiv.appendChild(grid);
                       container.appendChild(optDiv);
                     });
+                    container.setAttribute('data-sys-initialized', 'true');
                   }
 
                   function update() {
@@ -404,9 +412,10 @@ const Index = () => {
                         if (img) img.src = variant.imageUrl;
                       }
                     }
-                    render();
                   }
                   update();
+                  render();
+                }
                 }
 
                 function renderUpsells() {
@@ -474,7 +483,7 @@ const Index = () => {
                       const discountedPrice = currentPrice * 0.6; 
                       const oldPriceStr = currentPrice.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                       const newPriceStr = discountedPrice.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                      priceEl.innerHTML = '<span style="color: #b70832; font-weight: 900; font-size: 1.1em;">€' + newPriceStr + '</span><span style="text-decoration: line-through; color: #9ca3af; font-size: 0.85em; margin-left: 8px;">€' + oldPriceStr + '</span><div style="position: absolute; top: 12px; left: 12px; background: #b70832; color: white; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 900; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">SPARE 40%</div>';
+                      priceEl.innerHTML = '<span style="color: #b70832; font-weight: 900; font-size: 1.1em;">€' + newPriceStr + '</span><span style="text-decoration: line-through; color: #9ca3af; font-size: 0.85em; margin-left: 8px;">€' + oldPriceStr + '</span><div style="position: absolute; top: 12px; left: 12px; background: #b70832; color: white; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 900; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.2); pointer-events: none;">SPARE 40%</div>';
                       card.style.position = 'relative';
                     }
                   });
