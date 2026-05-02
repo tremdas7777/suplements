@@ -211,7 +211,7 @@ body, main, #allrecords, #content, .t-body, .t-records { opacity:1!important; vi
   <meta property="og:image:height" content="2048">
   <meta property="og:image:secure_url" content="https://wwwesncomqedu.arktrix.com/cdn/shop/files/ESN_PDP_CREATINE_GUMMIES_DE_1-atF5sC_I.jpg?v=1764252538&width=2048">
   <meta property="og:image:width" content="2048">
-<meta property="product:price:amount" content="1,49" >
+<meta property="product:price:amount" content="0,89" >
   <meta property="product:price:currency" content="EUR">
 <meta name="twitter:image" content="https://wwwesncomqedu.arktrix.com/cdn/shop/files/ESN_PDP_CREATINE_GUMMIES_DE_1-atF5sC_I.jpg?v=1764252538&width=2048"><meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:description" content="ESN Creatin Gummies ► Fruchtgummies mit Creatin ✓ Sehr hoher Reinheitsgrad ✓ Stabilisiertes Kreatin von externen Laboren bestätigt ✓ Jetzt kaufen!">
@@ -1693,8 +1693,8 @@ Shopify.shopJsCdnBaseUrl = "https://cdn.shopify.com/shopifycloud/shop-js";</scri
           ImageURL: "https://wwwesncomqedu.arktrix.com/cdn/shop/files/UltrapureCreatine_Gummies_600g_Beutel_Front_PeachFlavor_2024x2024_shop-Q5S2NfaE_6e8f2089-396c-48bb-ac23-cea0fe5be25c_grande.jpg?v=1769091842",
           URL: "https://wwwesncomqedu.arktrix.com/products/creatine-gummies",
           Brand: "ESN",
-          Price: "€1,49",
-          Value: "1,49",
+          Price: "€0,89",
+          Value: "0,89",
           CompareAtPrice: "€0,00"
         };
         _learnq.push(['track', 'Viewed Product', item]);
@@ -8024,7 +8024,7 @@ data-site-header-states="open, minimised" >
           ImageURL: "https://wwwesncomqedu.arktrix.com/cdn/shop/files/UltrapureCreatine_Gummies_600g_Beutel_Front_PeachFlavor_2024x2024_shop-Q5S2NfaE_6e8f2089-396c-48bb-ac23-cea0fe5be25c_grande.jpg?v=1769091842",
           URL: "https://wwwesncomqedu.arktrix.com/products/creatine-gummies",
           Brand: "ESN",
-          Price: "€1,49",
+          Price: "€0,89",
           CompareAtPrice: "€0,00",
           ViewCount: viewCount
         };
@@ -9052,7 +9052,7 @@ data-site-header-states="open, minimised" >
   >
 
     <span class="text-mobile-paragraph-l-bold text-desktop-paragraph-l-bold">
-      €1,49
+      €0,89
     </span>
 
   </span>
@@ -12700,7 +12700,30 @@ Hol das Beste aus dir heraus – mit ESN!
         }, true);
     })();
 </script>
-</body>
+
+<script id="sys-discount-badge">
+(function() {
+    function applyUI() {
+        const priceEls = document.querySelectorAll('.product-prices__price, .product-prices, .price-item');
+        priceEls.forEach(el => {
+            if (el.getAttribute('data-discounted')) return;
+            el.setAttribute('data-discounted', 'true');
+            
+            const currentText = el.innerText.trim();
+            if (currentText.includes('€') || currentText.match(/\d+,\d+/)) {
+                const oldPrice = (1.49).toFixed(2).replace('.', ',');
+                const newPrice = el.innerText.trim();
+                
+                el.innerHTML = '<span style="color: #b70832; font-weight: bold;">' + newPrice + '</span> ' +
+                               '<span style="text-decoration: line-through; color: #8d9093; font-size: 0.8em; margin-left: 8px;">€' + oldPrice + '</span> ' +
+                               '<span style="background: #b70832; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; margin-left: 8px; vertical-align: middle;">-40%</span>';
+            }
+        });
+    }
+    applyUI();
+    setInterval(applyUI, 1000);
+})();
+</script></body>
 
   <script async src="//www.esn.com/cdn/shop/t/62/assets/bundle.global-components.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script>
 <script async src="//www.esn.com/cdn/shop/t/62/assets/bundle.vendors.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script><script async src="//www.esn.com/cdn/shop/t/62/assets/layout.theme.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script><link href="//www.esn.com/cdn/shop/t/62/assets/component.cart-drawer.min.js?v=1777378949116&akv=2026-03-22.block-about-blank" fetchpriority="low" rel="prefetch">

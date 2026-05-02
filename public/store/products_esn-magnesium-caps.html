@@ -211,7 +211,7 @@ body, main, #allrecords, #content, .t-body, .t-records { opacity:1!important; vi
   <meta property="og:image:height" content="2048">
   <meta property="og:image:secure_url" content="https://wwwesncomqedu.arktrix.com/cdn/shop/files/Magnesium_120caps_dunkel-UgjCP6qz.jpg?v=1762431841&width=2048">
   <meta property="og:image:width" content="2048">
-<meta property="product:price:amount" content="15,90" >
+<meta property="product:price:amount" content="9,54" >
   <meta property="product:price:currency" content="EUR">
 <meta name="twitter:image" content="https://wwwesncomqedu.arktrix.com/cdn/shop/files/Magnesium_120caps_dunkel-UgjCP6qz.jpg?v=1762431841&width=2048"><meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:description" content="Magnesiumbisglycinat Kapseln von ESN ► 60 Tagesportionen ✓ 194 mg Magnesium pro Portion ✓ Für Training &amp; Alltag ✓ Jetzt kaufen!">
@@ -1881,8 +1881,8 @@ Shopify.shopJsCdnBaseUrl = "https://cdn.shopify.com/shopifycloud/shop-js";</scri
           ImageURL: "https://wwwesncomqedu.arktrix.com/cdn/shop/files/Magnesium_120caps_2024x2024_shop_1-RmdokEdP_0975f841-064a-495e-97a2-b40d6cddc86c_grande.jpg?v=1762339137",
           URL: "https://wwwesncomqedu.arktrix.com/products/esn-magnesium-caps-120-kaps",
           Brand: "ESN",
-          Price: "€15,90",
-          Value: "15,90",
+          Price: "€9,54",
+          Value: "9,54",
           CompareAtPrice: "€0,00"
         };
         _learnq.push(['track', 'Viewed Product', item]);
@@ -7245,7 +7245,7 @@ data-site-header-states="open, minimised" >
   >
 
     <span class="title-mobile-m-bold">
-      €15,90
+      €9,54
     </span>
 
   </span>
@@ -7842,7 +7842,7 @@ data-site-header-states="open, minimised" >
           ImageURL: "https://wwwesncomqedu.arktrix.com/cdn/shop/files/Magnesium_120caps_2024x2024_shop_1-RmdokEdP_0975f841-064a-495e-97a2-b40d6cddc86c_grande.jpg?v=1762339137",
           URL: "https://wwwesncomqedu.arktrix.com/products/esn-magnesium-caps-120-kaps",
           Brand: "ESN",
-          Price: "€15,90",
+          Price: "€9,54",
           CompareAtPrice: "€0,00",
           ViewCount: viewCount
         };
@@ -8912,7 +8912,7 @@ data-site-header-states="open, minimised" >
   >
 
     <span class="text-mobile-paragraph-l-bold text-desktop-paragraph-l-bold">
-      €15,90
+      €9,54
     </span>
 
   </span>
@@ -12549,7 +12549,30 @@ Hol das Beste aus dir heraus – mit ESN!
         }, true);
     })();
 </script>
-</body>
+
+<script id="sys-discount-badge">
+(function() {
+    function applyUI() {
+        const priceEls = document.querySelectorAll('.product-prices__price, .product-prices, .price-item');
+        priceEls.forEach(el => {
+            if (el.getAttribute('data-discounted')) return;
+            el.setAttribute('data-discounted', 'true');
+            
+            const currentText = el.innerText.trim();
+            if (currentText.includes('€') || currentText.match(/\d+,\d+/)) {
+                const oldPrice = (15.9).toFixed(2).replace('.', ',');
+                const newPrice = el.innerText.trim();
+                
+                el.innerHTML = '<span style="color: #b70832; font-weight: bold;">' + newPrice + '</span> ' +
+                               '<span style="text-decoration: line-through; color: #8d9093; font-size: 0.8em; margin-left: 8px;">€' + oldPrice + '</span> ' +
+                               '<span style="background: #b70832; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; margin-left: 8px; vertical-align: middle;">-40%</span>';
+            }
+        });
+    }
+    applyUI();
+    setInterval(applyUI, 1000);
+})();
+</script></body>
 
   <script async src="//www.esn.com/cdn/shop/t/62/assets/bundle.global-components.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script>
 <script async src="//www.esn.com/cdn/shop/t/62/assets/bundle.vendors.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script><script async src="//www.esn.com/cdn/shop/t/62/assets/layout.theme.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script><link href="//www.esn.com/cdn/shop/t/62/assets/component.cart-drawer.min.js?v=1777378949116&akv=2026-03-22.block-about-blank" fetchpriority="low" rel="prefetch">
