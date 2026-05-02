@@ -30,11 +30,9 @@ const Index = () => {
     // If we are inside an iframe
     if (window !== window.top) {
       if (path.startsWith("/store/")) {
-        const hasLocalhost = path.includes("localhost:");
-        const searchHasHtml = location.search.includes(".html");
-        const missingHtml = !path.endsWith(".html");
+        const isBrokenPath = path.includes("localhost:") || !path.endsWith(".html");
         
-        if (hasLocalhost || searchHasHtml || missingHtml) {
+        if (isBrokenPath) {
           let cleaned = path.replace("/store/", "").replace(".html", "").replace(/^localhost:\d+_/, "");
           let intendedPath = "/";
           
@@ -45,9 +43,6 @@ const Index = () => {
           
           const cleanSearch = location.search.replace(".html", "");
           window.top.location.href = intendedPath + cleanSearch;
-          return;
-        } else {
-          setIsIframe404(true);
           return;
         }
       }
@@ -123,7 +118,9 @@ const Index = () => {
     return null; // Do not render anything in iframe while redirecting top window
   }
 
-  const mappedPath = (path === '' || path === '/' || path === '/store/') ? 'index' : path.replace('/store/', '').replace('.html', '').replace(/\//g, '_');
+  const mappedPath = (path === '' || path === '/' || path === '/store/') 
+    ? 'index' 
+    : path.replace(/^\/store\//, '').replace(/^\//, '').replace(/\/$/, '').replace(/\.html$/, '').replace(/\//g, '_');
   const iframeSrc = `/store/${mappedPath}.html${location.search}`;
 
   return (
