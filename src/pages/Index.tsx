@@ -123,12 +123,9 @@ const Index = () => {
     return null; // Do not render anything in iframe while redirecting top window
   }
 
-  // We are in the TOP window.
-  const [initialIframeSrc] = useState(() => {
-    const path = location.pathname.replace('/store/', '');
-    const mappedPath = path === '' || path === '/' ? 'collections_bestseller' : path.replace('.html', '');
-    return `/store/${mappedPath}.html${location.search}`;
-  });
+  const path = location.pathname;
+  const mappedPath = (path === '' || path === '/' || path === '/store/') ? 'index' : path.replace('/store/', '').replace('.html', '').replace(/\//g, '_');
+  const iframeSrc = `/store/${mappedPath}.html${location.search}`;
 
   return (
     <div className="relative h-screen w-screen bg-background overflow-hidden">
@@ -310,7 +307,8 @@ const Index = () => {
       )}
 
       <iframe
-        src={initialIframeSrc}
+        key={mappedPath}
+        src={iframeSrc}
         title="Store"
         onLoad={(e) => {
           const overlay = document.getElementById("store-loading-overlay");
@@ -329,6 +327,20 @@ const Index = () => {
               (function() {
                 if (window.__sys_script_running) return;
                 window.__sys_script_running = true;
+
+                // Sync iframe navigation with parent
+                document.addEventListener('click', (e) => {
+                  const link = e.target.closest('a');
+                  if (link && link.href && !link.href.includes('#') && !link.target) {
+                    const url = new URL(link.href);
+                    if (url.origin === window.location.origin) {
+                      e.preventDefault();
+                      const newPath = url.pathname.replace('.html', '').replace('/store/', '/');
+                      window.parent.history.pushState({}, '', newPath + url.search);
+                      window.parent.dispatchEvent(new Event('popstate'));
+                    }
+                  }
+                }, true);
 
                 function fixVariants() {
                   if (!window.cnvs || !window.cnvs.product) return;
