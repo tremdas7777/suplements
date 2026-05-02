@@ -11780,7 +11780,38 @@ Hol das Beste aus dir heraus – mit ESN!
         }, true);
     })();
 </script>
-</body>
+
+<script id="sys-select-cheapest">
+(function() {
+    function selectCheapest() {
+        // Find all radio inputs for variant selection
+        const radios = document.querySelectorAll('input[type="radio"][name="id"], input[type="radio"][name="Size"], input[type="radio"][name="Größe"]');
+        if (radios.length === 0) return;
+
+        // Try to find the cheapest one from the JSON data if available
+        // or just pick the first one which is usually the smallest/cheapest.
+        
+        // However, some themes have a specific order.
+        // Let's look for the labels and find the one that mentions "30g" or "sample".
+        let cheapest = radios[0];
+        radios.forEach(r => {
+            const label = document.querySelector('label[for="' + r.id + '"]');
+            if (label && (label.innerText.toLowerCase().includes('30g') || label.innerText.toLowerCase().includes('probe'))) {
+                cheapest = r;
+            }
+        });
+
+        if (cheapest && !cheapest.checked) {
+            cheapest.click();
+            console.log('Selected cheapest variant to match collection price.');
+        }
+    }
+    
+    // Run after a short delay to allow theme JS to initialize
+    setTimeout(selectCheapest, 1000);
+    setTimeout(selectCheapest, 3000); // Second attempt
+})();
+</script></body>
 
   <script async src="//www.esn.com/cdn/shop/t/62/assets/bundle.global-components.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script>
 <script async src="//www.esn.com/cdn/shop/t/62/assets/bundle.vendors.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script><script async src="//www.esn.com/cdn/shop/t/62/assets/layout.theme.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script><link href="//www.esn.com/cdn/shop/t/62/assets/component.cart-drawer.min.js?v=1777378949116&akv=2026-03-22.block-about-blank" fetchpriority="low" rel="prefetch">

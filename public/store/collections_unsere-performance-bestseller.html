@@ -11113,15 +11113,14 @@ Hol das Beste aus dir heraus – mit ESN!
 </script>
 
 
+
 <script id="sys-collection-discount">
 (function() {
     function applyDiscount() {
-        // Target BOTH standard product cards and sample cards
         const cards = document.querySelectorAll('.product-card, .product-card-sample');
         cards.forEach(card => {
-            if (card.getAttribute('data-discounted')) return;
+            if (card.getAttribute('data-sys-processed')) return;
             
-            // Look for price elements
             const priceEl = card.querySelector('.product-prices__price') || card.querySelector('.product-card__prices');
             if (!priceEl) return;
             
@@ -11130,25 +11129,24 @@ Hol das Beste aus dir heraus – mit ESN!
 
             const match = text.match(/(\d+),(\d+)/);
             if (match) {
-                card.setAttribute('data-discounted', 'true');
+                card.setAttribute('data-sys-processed', 'true');
                 const euros = parseInt(match[1]);
                 const cents = parseInt(match[2]);
-                const oldPriceNum = euros + (cents / 100);
+                const currentPrice = euros + (cents / 100);
                 
-                // If the price is already suspiciously low/high or if we want to be sure it matches the product page:
-                // We apply 40% discount to whatever was scraped originally.
-                const newPriceNum = oldPriceNum * (1 - 0.4);
-                const newPriceStr = newPriceNum.toFixed(2).replace('.', ',');
-                const oldPriceStr = oldPriceNum.toFixed(2).replace('.', ',');
+                // We assume currentPrice is the DISCOUNTED one (because we hard-patched it)
+                // and we calculate the OLD price back.
+                const oldPriceNum = (currentPrice / (1 - 0.4)).toFixed(2).replace('.', ',');
+                const newPriceStr = currentPrice.toFixed(2).replace('.', ',');
                 
                 priceEl.innerHTML = '<span style="color: #b70832; font-weight: bold;">€' + newPriceStr + '</span> ' +
-                                   '<span style="text-decoration: line-through; color: #8d9093; font-size: 0.8em; margin-left: 5px;">€' + oldPriceStr + '</span>' +
+                                   '<span style="text-decoration: line-through; color: #8d9093; font-size: 0.8em; margin-left: 5px;">€' + oldPriceNum + '</span>' +
                                    '<div style="position: absolute; top: 10px; left: 10px; background: #b70832; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; z-index: 10;">-40%</div>';
             }
         });
     }
     applyDiscount();
-    setInterval(applyDiscount, 1000);
+    setInterval(applyDiscount, 2000);
 })();
 </script></body>
 
