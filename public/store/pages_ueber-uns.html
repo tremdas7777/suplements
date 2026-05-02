@@ -9374,12 +9374,15 @@ Hol das Beste aus dir heraus – mit ESN!
             const target = e.target.closest('a, [href], [data-href], [data-url]');
             if (target) {
                 const url = target.getAttribute('href') || target.getAttribute('data-href') || target.getAttribute('data-url');
+                if (!url || url === '#' || url.startsWith('javascript:')) return;
+                
                 const fixed = fixUrl(url);
-                if (fixed) {
-                    window.location.href = fixed;
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
+                const finalUrl = fixed || url;
+                
+                // Always tell the parent React app to navigate
+                window.parent.postMessage({ t: 'sys-click', u: finalUrl }, '*');
+                e.preventDefault();
+                e.stopPropagation();
             }
         }, true);
     })();
