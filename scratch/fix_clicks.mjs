@@ -59,7 +59,7 @@ const NEW_SCRIPT = `        document.addEventListener('click', (e) => {
                     };
                     
                     const productTitleEl = document.querySelector('h1') || document.querySelector('.product-title');
-                    const productPriceEl = document.querySelector('.price__regular') || document.querySelector('.price-item');
+                    const productPriceEl = document.querySelector('.product-prices__price') || document.querySelector('.price__regular') || document.querySelector('.price-item');
                     
                     item.title = productTitleEl ? productTitleEl.innerText.trim() : 'ESN Produto';
                     
@@ -71,7 +71,7 @@ const NEW_SCRIPT = `        document.addEventListener('click', (e) => {
                     }
                     
                     // Look for image
-                    const imgEl = document.querySelector('.product-media img') || document.querySelector('img');
+                    const imgEl = document.querySelector('img.preload-image') || document.querySelector('.product-media img') || document.querySelector('img');
                     if (imgEl) item.image = imgEl.src;
                     
                     window.parent.postMessage({ t: 'sys-add-to-cart', item: item }, '*');
