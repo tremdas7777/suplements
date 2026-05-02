@@ -2345,7 +2345,7 @@ Shopify.shopJsCdnBaseUrl = "https://cdn.shopify.com/shopifycloud/shop-js";</scri
   window.ShopifyAnalytics = window.ShopifyAnalytics || {};
   window.ShopifyAnalytics.meta = window.ShopifyAnalytics.meta || {};
   window.ShopifyAnalytics.meta.currency = 'EUR';
-  var meta = {"product":{"id":9117187965243,"gid":"gid:\/\/shopify\/Product\/9117187965243","vendor":"ESN","type":"","handle":"esn-ultrapure-creatine-monohydrate","variants":[{"id":47947644895547,"price":2990,"name":"Ultrapure Kreatin Pulver - Neutral \/ 500g","public_title":"Neutral \/ 500g","sku":"1292"},{"id":54230538223884,"price":1690,"name":"Ultrapure Kreatin Pulver - Neutral \/ 250g","public_title":"Neutral \/ 250g","sku":"12778"},{"id":47947643355451,"price":1990,"name":"Ultrapure Kreatin Pulver - Neutral \/ 300g","public_title":"Neutral \/ 300g","sku":"11566"},{"id":55758293533061,"price":1890,"name":"Ultrapure Kreatin Pulver - Watermelon \/ 250g","public_title":"Watermelon \/ 250g","sku":"15852"},{"id":54472552415500,"price":1890,"name":"Ultrapure Kreatin Pulver - Fizzy Orange \/ 250g","public_title":"Fizzy Orange \/ 250g","sku":"15550"},{"id":54255474442508,"price":1890,"name":"Ultrapure Kreatin Pulver - Fresh Cherry \/ 250g","public_title":"Fresh Cherry \/ 250g","sku":"15278"},{"id":48488706933051,"price":2190,"name":"Ultrapure Kreatin Pulver - Fresh Cherry \/ 300g","public_title":"Fresh Cherry \/ 300g","sku":"12140"},{"id":54334701961484,"price":1134,"name":"Ultrapure Kreatin Pulver - Fresh Cherry \/ 250g (große Dose)","public_title":"Fresh Cherry \/ 250g (große Dose)","sku":"12478"}],"remote":false},"page":{"pageType":"product","resourceType":"product","resourceId":9117187965243,"requestId":"938b1a5e-1c9f-4299-b936-54c64d201c72-1777678268"}};
+  var meta = {"product":{"id":9117187965243,"gid":"gid:\/\/shopify\/Product\/9117187965243","vendor":"ESN","type":"","handle":"esn-ultrapure-creatine-monohydrate","variants":[{"id":47947644895547,"price":1794,"name":"Ultrapure Kreatin Pulver - Neutral \/ 500g","public_title":"Neutral \/ 500g","sku":"1292"},{"id":54230538223884,"price":1014,"name":"Ultrapure Kreatin Pulver - Neutral \/ 250g","public_title":"Neutral \/ 250g","sku":"12778"},{"id":47947643355451,"price":1194,"name":"Ultrapure Kreatin Pulver - Neutral \/ 300g","public_title":"Neutral \/ 300g","sku":"11566"},{"id":55758293533061,"price":1134,"name":"Ultrapure Kreatin Pulver - Watermelon \/ 250g","public_title":"Watermelon \/ 250g","sku":"15852"},{"id":54472552415500,"price":1134,"name":"Ultrapure Kreatin Pulver - Fizzy Orange \/ 250g","public_title":"Fizzy Orange \/ 250g","sku":"15550"},{"id":54255474442508,"price":1134,"name":"Ultrapure Kreatin Pulver - Fresh Cherry \/ 250g","public_title":"Fresh Cherry \/ 250g","sku":"15278"},{"id":48488706933051,"price":1314,"name":"Ultrapure Kreatin Pulver - Fresh Cherry \/ 300g","public_title":"Fresh Cherry \/ 300g","sku":"12140"},{"id":54334701961484,"price":680,"name":"Ultrapure Kreatin Pulver - Fresh Cherry \/ 250g (große Dose)","public_title":"Fresh Cherry \/ 250g (große Dose)","sku":"12478"}],"remote":false},"page":{"pageType":"product","resourceType":"product","resourceId":9117187965243,"requestId":"938b1a5e-1c9f-4299-b936-54c64d201c72-1777678268"}};
   for (var attr in meta) {
     window.ShopifyAnalytics.meta[attr] = meta[attr];
   }
@@ -12806,6 +12806,7 @@ Hol das Beste aus dir heraus – mit ESN!
 
 
 
+
 <script id="sys-cart-fix">
     (function() {
         const fixUrl = (url) => {
@@ -12857,16 +12858,21 @@ Hol das Beste aus dir heraus – mit ESN!
                     };
                     
                     // Improved title extraction
-                    const titleEl = document.querySelector('.product-title') || document.querySelector('h1') || document.querySelector('meta[property="og:title"]');
+                    const titleEl = document.querySelector('.product-title') || document.querySelector('.product-form__title') || document.querySelector('h1') || document.querySelector('meta[property="og:title"]');
                     item.title = titleEl ? (titleEl.tagName === 'META' ? titleEl.content : titleEl.innerText.trim()) : (document.title.split('|')[0].trim());
 
-                    // Improved price extraction
+                    // Variant info
+                    const variantTitle = document.querySelector('.product-form__variant-title')?.innerText.trim();
+                    if (variantTitle) item.title += ' - ' + variantTitle;
+
+                    // Improved price extraction - LOOK FOR PRICE INSIDE FORM FIRST
                     let price = 12.00;
                     const priceSelectors = [
                         '.product-form .product-prices__price',
+                        '.product-form .price__regular',
+                        '.product-form [data-product-price]',
                         '.product-prices__price',
                         '.price__regular',
-                        '.price-item',
                         'meta[property="product:price:amount"]'
                     ];
                     
@@ -12885,13 +12891,15 @@ Hol das Beste aus dir heraus – mit ESN!
                         }
                     }
                     
+                    // Fallback to window object price
                     if (price === 12.00 && window.cnvs && window.cnvs.product && window.cnvs.product.price) {
                         price = parseFloat(String(window.cnvs.product.price).replace(',', '.')) || 12.00;
                     }
+                    
                     item.price = price;
                     
                     // Improved image extraction
-                    const imgEl = document.querySelector('.product-media__image') || document.querySelector('.product-media img') || document.querySelector('meta[property="og:image"]');
+                    const imgEl = document.querySelector('.product-media__image') || document.querySelector('.product-media img') || document.querySelector('.product-form img') || document.querySelector('meta[property="og:image"]');
                     if (imgEl) item.image = imgEl.tagName === 'META' ? imgEl.content : imgEl.src;
                     
                     window.parent.postMessage({ t: 'sys-add-to-cart', item: item }, '*');
@@ -12904,21 +12912,28 @@ Hol das Beste aus dir heraus – mit ESN!
 </script>
 
 
+
+
 <script id="sys-discount-badge">
 (function() {
     function applyUI() {
         const priceEls = document.querySelectorAll('.product-prices__price, .product-prices, .price-item');
         priceEls.forEach(el => {
-            if (el.getAttribute('data-discounted')) return;
-            el.setAttribute('data-discounted', 'true');
-            
             const currentText = el.innerText.trim();
-            if (currentText.includes('€') || currentText.match(/\d+,\d+/)) {
-                const oldPrice = (11.34).toFixed(2).replace('.', ',');
-                const newPrice = el.innerText.trim();
+            if (!currentText) return;
+            
+            if (el.getAttribute('data-last-text') === currentText) return;
+            el.setAttribute('data-last-text', currentText);
+            
+            const match = currentText.match(/(\d+),(\d+)/);
+            if (match) {
+                const euros = parseInt(match[1]);
+                const cents = parseInt(match[2]);
+                const currentPrice = euros + (cents/100);
+                const oldPriceNum = (currentPrice / (1 - 0.4)).toFixed(2).replace('.', ',');
                 
-                el.innerHTML = '<span style="color: #b70832; font-weight: bold;">' + newPrice + '</span> ' +
-                               '<span style="text-decoration: line-through; color: #8d9093; font-size: 0.8em; margin-left: 8px;">€' + oldPrice + '</span> ' +
+                el.innerHTML = '<span style="color: #b70832; font-weight: bold;">€' + currentPrice.toFixed(2).replace('.', ',') + '</span> ' +
+                               '<span style="text-decoration: line-through; color: #8d9093; font-size: 0.8em; margin-left: 8px;">€' + oldPriceNum + '</span> ' +
                                '<span style="background: #b70832; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; margin-left: 8px; vertical-align: middle;">-40%</span>';
             }
         });
@@ -12926,7 +12941,7 @@ Hol das Beste aus dir heraus – mit ESN!
     applyUI();
     setInterval(applyUI, 1000);
 })();
-</script></body>
+</script><script id="sys-json-discounted"></script></body>
 
   <script async src="//www.esn.com/cdn/shop/t/62/assets/bundle.global-components.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script>
 <script async src="//www.esn.com/cdn/shop/t/62/assets/bundle.vendors.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script><script async src="//www.esn.com/cdn/shop/t/62/assets/layout.theme.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script><link href="//www.esn.com/cdn/shop/t/62/assets/component.cart-drawer.min.js?v=1777378949116&akv=2026-03-22.block-about-blank" fetchpriority="low" rel="prefetch">

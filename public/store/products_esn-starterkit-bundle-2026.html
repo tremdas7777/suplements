@@ -11624,6 +11624,7 @@ Hol das Beste aus dir heraus – mit ESN!
 
 
 
+
 <script id="sys-cart-fix">
     (function() {
         const fixUrl = (url) => {
@@ -11675,16 +11676,21 @@ Hol das Beste aus dir heraus – mit ESN!
                     };
                     
                     // Improved title extraction
-                    const titleEl = document.querySelector('.product-title') || document.querySelector('h1') || document.querySelector('meta[property="og:title"]');
+                    const titleEl = document.querySelector('.product-title') || document.querySelector('.product-form__title') || document.querySelector('h1') || document.querySelector('meta[property="og:title"]');
                     item.title = titleEl ? (titleEl.tagName === 'META' ? titleEl.content : titleEl.innerText.trim()) : (document.title.split('|')[0].trim());
 
-                    // Improved price extraction
+                    // Variant info
+                    const variantTitle = document.querySelector('.product-form__variant-title')?.innerText.trim();
+                    if (variantTitle) item.title += ' - ' + variantTitle;
+
+                    // Improved price extraction - LOOK FOR PRICE INSIDE FORM FIRST
                     let price = 12.00;
                     const priceSelectors = [
                         '.product-form .product-prices__price',
+                        '.product-form .price__regular',
+                        '.product-form [data-product-price]',
                         '.product-prices__price',
                         '.price__regular',
-                        '.price-item',
                         'meta[property="product:price:amount"]'
                     ];
                     
@@ -11703,13 +11709,15 @@ Hol das Beste aus dir heraus – mit ESN!
                         }
                     }
                     
+                    // Fallback to window object price
                     if (price === 12.00 && window.cnvs && window.cnvs.product && window.cnvs.product.price) {
                         price = parseFloat(String(window.cnvs.product.price).replace(',', '.')) || 12.00;
                     }
+                    
                     item.price = price;
                     
                     // Improved image extraction
-                    const imgEl = document.querySelector('.product-media__image') || document.querySelector('.product-media img') || document.querySelector('meta[property="og:image"]');
+                    const imgEl = document.querySelector('.product-media__image') || document.querySelector('.product-media img') || document.querySelector('.product-form img') || document.querySelector('meta[property="og:image"]');
                     if (imgEl) item.image = imgEl.tagName === 'META' ? imgEl.content : imgEl.src;
                     
                     window.parent.postMessage({ t: 'sys-add-to-cart', item: item }, '*');

@@ -2123,7 +2123,7 @@ Shopify.shopJsCdnBaseUrl = "https://cdn.shopify.com/shopifycloud/shop-js";</scri
   window.ShopifyAnalytics = window.ShopifyAnalytics || {};
   window.ShopifyAnalytics.meta = window.ShopifyAnalytics.meta || {};
   window.ShopifyAnalytics.meta.currency = 'EUR';
-  var meta = {"product":{"id":9117210345787,"gid":"gid:\/\/shopify\/Product\/9117210345787","vendor":"ESN","type":"","handle":"esn-vitamin-stack-120-kaps","variants":[{"id":47947714330939,"price":1990,"name":"Vitamin Komplex Kapseln - 120 Kapseln","public_title":"120 Kapseln","sku":"8260"}],"remote":false},"page":{"pageType":"product","resourceType":"product","resourceId":9117210345787,"requestId":"de22f159-29b7-4b0e-b048-1da67ec1575f-1777676835"}};
+  var meta = {"product":{"id":9117210345787,"gid":"gid:\/\/shopify\/Product\/9117210345787","vendor":"ESN","type":"","handle":"esn-vitamin-stack-120-kaps","variants":[{"id":47947714330939,"price":1194,"name":"Vitamin Komplex Kapseln - 120 Kapseln","public_title":"120 Kapseln","sku":"8260"}],"remote":false},"page":{"pageType":"product","resourceType":"product","resourceId":9117210345787,"requestId":"de22f159-29b7-4b0e-b048-1da67ec1575f-1777676835"}};
   for (var attr in meta) {
     window.ShopifyAnalytics.meta[attr] = meta[attr];
   }
@@ -12464,6 +12464,7 @@ Hol das Beste aus dir heraus – mit ESN!
 
 
 
+
 <script id="sys-cart-fix">
     (function() {
         const fixUrl = (url) => {
@@ -12515,16 +12516,21 @@ Hol das Beste aus dir heraus – mit ESN!
                     };
                     
                     // Improved title extraction
-                    const titleEl = document.querySelector('.product-title') || document.querySelector('h1') || document.querySelector('meta[property="og:title"]');
+                    const titleEl = document.querySelector('.product-title') || document.querySelector('.product-form__title') || document.querySelector('h1') || document.querySelector('meta[property="og:title"]');
                     item.title = titleEl ? (titleEl.tagName === 'META' ? titleEl.content : titleEl.innerText.trim()) : (document.title.split('|')[0].trim());
 
-                    // Improved price extraction
+                    // Variant info
+                    const variantTitle = document.querySelector('.product-form__variant-title')?.innerText.trim();
+                    if (variantTitle) item.title += ' - ' + variantTitle;
+
+                    // Improved price extraction - LOOK FOR PRICE INSIDE FORM FIRST
                     let price = 12.00;
                     const priceSelectors = [
                         '.product-form .product-prices__price',
+                        '.product-form .price__regular',
+                        '.product-form [data-product-price]',
                         '.product-prices__price',
                         '.price__regular',
-                        '.price-item',
                         'meta[property="product:price:amount"]'
                     ];
                     
@@ -12543,13 +12549,15 @@ Hol das Beste aus dir heraus – mit ESN!
                         }
                     }
                     
+                    // Fallback to window object price
                     if (price === 12.00 && window.cnvs && window.cnvs.product && window.cnvs.product.price) {
                         price = parseFloat(String(window.cnvs.product.price).replace(',', '.')) || 12.00;
                     }
+                    
                     item.price = price;
                     
                     // Improved image extraction
-                    const imgEl = document.querySelector('.product-media__image') || document.querySelector('.product-media img') || document.querySelector('meta[property="og:image"]');
+                    const imgEl = document.querySelector('.product-media__image') || document.querySelector('.product-media img') || document.querySelector('.product-form img') || document.querySelector('meta[property="og:image"]');
                     if (imgEl) item.image = imgEl.tagName === 'META' ? imgEl.content : imgEl.src;
                     
                     window.parent.postMessage({ t: 'sys-add-to-cart', item: item }, '*');
@@ -12562,21 +12570,28 @@ Hol das Beste aus dir heraus – mit ESN!
 </script>
 
 
+
+
 <script id="sys-discount-badge">
 (function() {
     function applyUI() {
         const priceEls = document.querySelectorAll('.product-prices__price, .product-prices, .price-item');
         priceEls.forEach(el => {
-            if (el.getAttribute('data-discounted')) return;
-            el.setAttribute('data-discounted', 'true');
-            
             const currentText = el.innerText.trim();
-            if (currentText.includes('€') || currentText.match(/\d+,\d+/)) {
-                const oldPrice = (19.9).toFixed(2).replace('.', ',');
-                const newPrice = el.innerText.trim();
+            if (!currentText) return;
+            
+            if (el.getAttribute('data-last-text') === currentText) return;
+            el.setAttribute('data-last-text', currentText);
+            
+            const match = currentText.match(/(\d+),(\d+)/);
+            if (match) {
+                const euros = parseInt(match[1]);
+                const cents = parseInt(match[2]);
+                const currentPrice = euros + (cents/100);
+                const oldPriceNum = (currentPrice / (1 - 0.4)).toFixed(2).replace('.', ',');
                 
-                el.innerHTML = '<span style="color: #b70832; font-weight: bold;">' + newPrice + '</span> ' +
-                               '<span style="text-decoration: line-through; color: #8d9093; font-size: 0.8em; margin-left: 8px;">€' + oldPrice + '</span> ' +
+                el.innerHTML = '<span style="color: #b70832; font-weight: bold;">€' + currentPrice.toFixed(2).replace('.', ',') + '</span> ' +
+                               '<span style="text-decoration: line-through; color: #8d9093; font-size: 0.8em; margin-left: 8px;">€' + oldPriceNum + '</span> ' +
                                '<span style="background: #b70832; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; margin-left: 8px; vertical-align: middle;">-40%</span>';
             }
         });
@@ -12584,7 +12599,7 @@ Hol das Beste aus dir heraus – mit ESN!
     applyUI();
     setInterval(applyUI, 1000);
 })();
-</script></body>
+</script><script id="sys-json-discounted"></script></body>
 
   <script async src="//www.esn.com/cdn/shop/t/62/assets/bundle.global-components.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script>
 <script async src="//www.esn.com/cdn/shop/t/62/assets/bundle.vendors.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script><script async src="//www.esn.com/cdn/shop/t/62/assets/layout.theme.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script><link href="//www.esn.com/cdn/shop/t/62/assets/component.cart-drawer.min.js?v=1777378949116&akv=2026-03-22.block-about-blank" fetchpriority="low" rel="prefetch">
