@@ -338,7 +338,6 @@ const Index = () => {
                   const container = document.querySelector('.product-options');
                   if (!container) return;
                   
-                  // Guard to prevent constant re-rendering from the interval
                   if (container.getAttribute('data-sys-initialized')) return;
                   if (!container.innerText.includes('Wird geladen') && container.children.length > 5) return;
 
@@ -379,7 +378,7 @@ const Index = () => {
                         btn.onclick = () => { 
                           selectedOptions[opt.name] = val; 
                           update(); 
-                          render(); // Re-render only on click
+                          render(); 
                         };
                         grid.appendChild(btn);
                       });
@@ -401,14 +400,15 @@ const Index = () => {
                       }
                       idInput.value = variant.id;
 
-                      const priceEl = document.querySelector('.product-prices__price');
-                      if (priceEl) {
+                      const priceEls = document.querySelectorAll('.product-prices__price, .price__regular, .product-form__prices-container .product-prices__price');
+                      priceEls.forEach(priceEl => {
                         const priceNum = parseFloat(variant.price) / 100;
                         const discountedPrice = (priceNum * 0.6).toFixed(2).replace('.', ',');
                         const originalPrice = priceNum.toFixed(2).replace('.', ',');
                         priceEl.innerHTML = '<div style="display: flex; flex-direction: column; gap: 4px;"><div style="display: flex; align-items: center; gap: 10px;"><span style="font-size: 24px; font-weight: 900; color: #b70832;">€' + discountedPrice + '</span><span style="text-decoration: line-through; color: #8d9093; font-size: 16px;">€' + originalPrice + '</span><span style="background: #b70832; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 700;">-40%</span></div><span style="font-size: 12px; color: #6b7280;">inkl. MwSt. zzgl. Versand</span></div>';
                         priceEl.setAttribute('data-sys-processed', 'true');
-                      }
+                      });
+
                       if (variant.imageUrl) {
                         const img = document.querySelector('.product-media__image') || document.querySelector('.product-media img');
                         if (img) img.src = variant.imageUrl;
@@ -417,6 +417,22 @@ const Index = () => {
                   }
                   update();
                   render();
+                }
+
+                function fixPDPInitialPrice() {
+                  if (document.querySelector('[data-sys-processed]')) return;
+                  const priceEls = document.querySelectorAll('.product-prices__price, .price__regular, .product-form__prices-container .product-prices__price');
+                  priceEls.forEach(priceEl => {
+                     const text = priceEl.innerText.trim();
+                     const match = text.match(/(\\d+)[,.](\\d+)/);
+                     if (match) {
+                        const currentPrice = parseInt(match[1]) + (parseInt(match[2]) / 100);
+                        const discountedPrice = (currentPrice * 0.6).toFixed(2).replace('.', ',');
+                        const originalPrice = currentPrice.toFixed(2).replace('.', ',');
+                        priceEl.innerHTML = '<div style="display: flex; flex-direction: column; gap: 4px;"><div style="display: flex; align-items: center; gap: 10px;"><span style="font-size: 24px; font-weight: 900; color: #b70832;">€' + discountedPrice + '</span><span style="text-decoration: line-through; color: #8d9093; font-size: 16px;">€' + originalPrice + '</span><span style="background: #b70832; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 700;">-40%</span></div><span style="font-size: 12px; color: #6b7280;">inkl. MwSt. zzgl. Versand</span></div>';
+                        priceEl.setAttribute('data-sys-processed', 'true');
+                     }
+                  });
                 }
 
                 function renderUpsells() {
@@ -541,7 +557,7 @@ const Index = () => {
                 document.head.appendChild(style);
 
                 function runAll() {
-                  renderAnnouncementBar(); hideBuggyProducts(); fixVariants(); renderUpsells(); renderTrustShield(); renderReviews(); fixCollectionPrices(); renderFooterUSPs();
+                  renderAnnouncementBar(); hideBuggyProducts(); fixVariants(); fixPDPInitialPrice(); renderUpsells(); renderTrustShield(); renderReviews(); fixCollectionPrices(); renderFooterUSPs();
                   setTimeout(runAll, 2000); // Recursive timeout is safer than interval
                 }
 
