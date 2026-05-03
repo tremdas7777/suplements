@@ -12542,61 +12542,7 @@ Hol das Beste aus dir heraus – mit ESN!
 
 
 
-<script id="sys-discount-badge">
-(function() {
-    function applyUI(el) {
-        if (el.getAttribute('data-sys-processed')) return;
-        
-        const currentText = el.innerText.trim();
-        if (!currentText) return;
-        
-        // Match a price pattern
-        const match = currentText.match(/(\d+),(\d+)/);
-        if (match) {
-            el.setAttribute('data-sys-processed', 'true');
-            const euros = parseInt(match[1]);
-            const cents = parseInt(match[2]);
-            const currentPrice = euros + (cents/100);
-            
-            // Assume currentPrice is ALREADY discounted by 40%
-            const oldPriceNum = (currentPrice / (1 - 0.4)).toFixed(2).replace('.', ',');
-            
-            // Create a wrapper so we don't break Shopify's reference to the original text node if possible
-            // But most themes overwrite innerHTML anyway.
-            el.innerHTML = '<span style="color: #b70832; font-weight: bold;">€' + currentPrice.toFixed(2).replace('.', ',') + '</span> ' +
-                           '<span style="text-decoration: line-through; color: #8d9093; font-size: 0.8em; margin-left: 8px;">€' + oldPriceNum + '</span> ' +
-                           '<span style="background: #b70832; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; margin-left: 8px; vertical-align: middle;">-40%</span>';
-        }
-    }
-
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.type === 'childList' || mutation.type === 'characterData') {
-                const target = mutation.target.parentElement || mutation.target;
-                if (target.classList && (target.classList.contains('product-prices__price') || target.classList.contains('price-item'))) {
-                    target.removeAttribute('data-sys-processed');
-                    applyUI(target);
-                }
-            }
-        });
-    });
-
-    function init() {
-        const priceEls = document.querySelectorAll('.product-prices__price, .product-prices, .price-item');
-        priceEls.forEach(el => {
-            applyUI(el);
-            observer.observe(el, { childList: true, characterData: true, subtree: true });
-        });
-    }
-
-    init();
-    // Fallback for dynamically added elements
-    setInterval(() => {
-        const priceEls = document.querySelectorAll('.product-prices__price, .product-prices, .price-item');
-        priceEls.forEach(applyUI);
-    }, 2000);
-})();
-</script><script id="sys-json-v2-discounted"></script>
+<script id="sys-json-v2-discounted"></script>
 
 <script id="sys-select-cheapest">
 (function() {
@@ -12659,7 +12605,7 @@ Hol das Beste aus dir heraus – mit ESN!
         }
     }, true);
 })();
-</script></body>
+</body>
 
   <script async src="//www.esn.com/cdn/shop/t/62/assets/bundle.global-components.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script>
 <script async src="//www.esn.com/cdn/shop/t/62/assets/bundle.vendors.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script><script async src="//www.esn.com/cdn/shop/t/62/assets/layout.theme.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script><link href="//www.esn.com/cdn/shop/t/62/assets/component.cart-drawer.min.js?v=1777378949116&akv=2026-03-22.block-about-blank" fetchpriority="low" rel="prefetch">
