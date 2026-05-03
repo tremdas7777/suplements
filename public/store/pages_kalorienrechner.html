@@ -11938,140 +11938,90 @@ Hol das Beste aus dir heraus – mit ESN!
 <script id="sys-cart-fix">
 (function() {
     'use strict';
+    var __pricePatched = false;
 
-    // ── URL rewriter (iframe navigation) ──────────────────────────────────
-    const fixUrl = (url) => {
+    // URL rewriter
+    function fixUrl(url) {
         if (!url) return null;
-        let p = url;
-        if (url.startsWith('http')) {
+        var p = url;
+        if (url.indexOf('http') === 0) {
             try {
-                const u = new URL(url);
-                if (u.hostname !== 'localhost' &&
-                    u.hostname !== 'wwwesncomqedu.arktrix.com' &&
-                    u.hostname !== 'www.esn.com') return null;
+                var u = new URL(url);
+                if (u.hostname !== 'localhost' && u.hostname !== 'wwwesncomqedu.arktrix.com' && u.hostname !== 'www.esn.com') return null;
                 p = u.pathname + u.search;
             } catch(e) { return null; }
         }
-        if (p.startsWith('/') && !p.endsWith('.html') && !p.includes('.')) {
-            const parts = p.split('?')[0].split('/').filter(Boolean);
-            if (parts.length >= 2) {
-                return '/store/' + parts[0] + '_' + parts.slice(1).join('_') + '.html';
-            }
+        if (p.indexOf('/') === 0 && p.indexOf('.html') < 0 && p.indexOf('.') < 0) {
+            var parts = p.split('?')[0].split('/').filter(Boolean);
+            if (parts.length >= 2) return '/store/' + parts[0] + '_' + parts.slice(1).join('_') + '.html';
         }
         return null;
-    };
+    }
 
-    // ── Price display ─────────────────────────────────────────────────────
-    function renderPrice(priceEl, variantPriceCents) {
+    // Apply 40% discount to price element — reads from variant data, NOT from DOM
+    function applyDiscount() {
+        if (!window.cnvs || !window.cnvs.product) return;
+        var variants = window.cnvs.product.variants;
+        if (!variants || !variants.length) return;
+
+        var idInput = document.querySelector('input[name="id"]');
+        var selectedId = idInput ? parseInt(idInput.value) : null;
+        var variant = (selectedId && variants.find(function(v){return v.id===selectedId;})) || variants[0];
+        if (!variant) return;
+
+        var priceEl = document.querySelector('.product-prices__price');
         if (!priceEl) return;
-        const orig = variantPriceCents / 100;
-        const disc = (orig * 0.6).toFixed(2).replace('.', ',');
-        const origFmt = orig.toFixed(2).replace('.', ',');
+        // Prevent double-application
+        if (priceEl.getAttribute('data-sys-v') === String(variant.id)) return;
+
+        var orig = variant.price / 100;           // cents → euros (original)
+        var disc = (orig * 0.6).toFixed(2).replace('.', ',');
+        var origFmt = orig.toFixed(2).replace('.', ',');
+
+        priceEl.setAttribute('data-sys-v', variant.id);
         priceEl.innerHTML =
             '<div style="display:flex;flex-direction:column;gap:4px">' +
               '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
-                '<span style="font-size:24px;font-weight:900;color:#b70832">€' + disc + '</span>' +
-                '<span style="text-decoration:line-through;color:#8d9093;font-size:16px">€' + origFmt + '</span>' +
+                '<span style="font-size:24px;font-weight:900;color:#b70832">\u20AC' + disc + '</span>' +
+                '<span style="text-decoration:line-through;color:#8d9093;font-size:16px">\u20AC' + origFmt + '</span>' +
                 '<span style="background:#b70832;color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:700">-40%</span>' +
               '</div>' +
               '<span style="font-size:12px;color:#6b7280">inkl. MwSt. zzgl. Versand</span>' +
             '</div>';
     }
 
-    // ── Variant UI renderer ───────────────────────────────────────────────
-    let selectedOptions = {};
-    let rendered = false;
-
-    function renderVariants(product) {
-        const container = document.querySelector('.product-options');
-        if (!container) return;
-        // If already processed and not in loading state, skip completely
-        if (rendered && !container.innerText.includes('Wird geladen')) return;
-
-        const { options, variants } = product;
-
-        if (!selectedOptions || Object.keys(selectedOptions).length === 0) {
-            options.forEach(opt => { selectedOptions[opt.name] = opt.values[0]; });
-        }
-
-        function applyVariant() {
-            const variant = variants.find(v =>
-                v.selectedOptions.every(so => selectedOptions[so.name] === so.value)
-            ) || variants[0];
-            if (!variant) return;
-
-            const idInput = document.querySelector('input[name="id"]');
-            if (idInput) idInput.value = variant.id;
-
-            const priceEl = document.querySelector('.product-prices__price');
-            renderPrice(priceEl, variant.price);
-
-            if (variant.imageUrl) {
-                const img = document.querySelector('.product-media__image') ||
-                            document.querySelector('.product-media img');
-                if (img) img.src = variant.imageUrl;
-            }
-        }
-
-        function buildUI() {
-            container.innerHTML = '';
-            options.forEach(opt => {
-                const optDiv = document.createElement('div');
-                optDiv.className = 'product-options__option';
-                optDiv.style.cssText = 'margin-bottom:20px';
-                optDiv.innerHTML = '<h4 style="margin-bottom:12px;font-weight:800;text-transform:uppercase;font-size:14px">' + opt.name + '</h4>';
-
-                const grid = document.createElement('div');
-                // Mobile-friendly grid: 2 cols on small, auto on large
-                grid.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:8px';
-
-                opt.values.forEach(val => {
-                    const isSelected = selectedOptions[opt.name] === val;
-                    const btn = document.createElement('div');
-                    btn.className = 'sys-variant-btn';
-                    btn.style.cssText =
-                        'border:' + (isSelected ? '2px solid #000' : '1px solid #e5e7eb') + ';' +
-                        'padding:12px;border-radius:12px;cursor:pointer;' +
-                        'background:' + (isSelected ? '#f9fafb' : '#fff') + ';' +
-                        'display:flex;flex-direction:column;justify-content:center;' +
-                        'min-height:44px;touch-action:manipulation'; // 44px min = Apple HIG touch target
-                    btn.innerHTML = '<p style="margin:0;font-weight:' + (isSelected ? '700' : '500') + ';font-size:14px">' + val + '</p>';
-                    btn.addEventListener('click', (e) => {
-                        e.preventDefault(); e.stopPropagation();
-                        selectedOptions[opt.name] = val;
-                        buildUI();
-                        applyVariant();
-                    }, { passive: false });
-                    grid.appendChild(btn);
-                });
-
-                optDiv.appendChild(grid);
-                container.appendChild(optDiv);
-            });
-            container.setAttribute('data-sys-processed', 'true');
-            rendered = true;
-        }
-
-        buildUI();
-        applyVariant();
+    // Watch only the price element (not body!) for ESN theme resets
+    function watchPrice() {
+        var priceEl = document.querySelector('.product-prices__price');
+        if (!priceEl) return;
+        var obs = new MutationObserver(function() {
+            // ESN reset our patch → re-apply, but only if data-sys-v is gone
+            if (!priceEl.getAttribute('data-sys-v')) applyDiscount();
+        });
+        obs.observe(priceEl, { childList: true, characterData: true, subtree: true });
     }
 
-    // ── Wait for cnvs.product then render ONCE ────────────────────────────
+    // Also re-patch when user selects a variant (ESN theme changes variant)
+    function watchVariantChange() {
+        document.addEventListener('change', function(e) {
+            if (e.target && e.target.name === 'id') {
+                var priceEl = document.querySelector('.product-prices__price');
+                if (priceEl) priceEl.removeAttribute('data-sys-v');
+                setTimeout(applyDiscount, 100);
+            }
+        });
+        // ESN uses custom events too
+        document.addEventListener('variant:change', function() {
+            var priceEl = document.querySelector('.product-prices__price');
+            if (priceEl) priceEl.removeAttribute('data-sys-v');
+            setTimeout(applyDiscount, 100);
+        });
+    }
+
     function tryInit() {
         if (window.cnvs && window.cnvs.product) {
-            renderVariants(window.cnvs.product);
-
-            // Watch ONLY .product-options for the "Wird geladen" reset by ESN theme
-            const container = document.querySelector('.product-options');
-            if (container) {
-                const obs = new MutationObserver(() => {
-                    if (container.innerText.includes('Wird geladen') || !container.hasAttribute('data-sys-processed')) {
-                        rendered = false;
-                        renderVariants(window.cnvs.product);
-                    }
-                });
-                obs.observe(container, { childList: true, subtree: true, characterData: true });
-            }
+            // Wait for ESN theme to render first, THEN patch price
+            setTimeout(function() { applyDiscount(); watchPrice(); watchVariantChange(); }, 800);
         } else {
             setTimeout(tryInit, 200);
         }
@@ -12083,15 +12033,15 @@ Hol das Beste aus dir heraus – mit ESN!
         tryInit();
     }
 
-    // ── Click interceptor (delegate to parent frame) ──────────────────────
-    document.addEventListener('click', (e) => {
-        const target = e.target.closest('a,[href],[data-href],[data-url]');
+    // Click interceptor
+    document.addEventListener('click', function(e) {
+        var target = e.target.closest('a,[href],[data-href],[data-url]');
         if (!target) return;
-        const url = target.getAttribute('href') || target.getAttribute('data-href') || target.getAttribute('data-url');
-        if (!url || url === '#' || url.startsWith('javascript:') || url.startsWith('mailto:')) return;
-        const fixed = fixUrl(url);
-        const finalUrl = fixed || url;
-        if (finalUrl.includes('/checkout')) {
+        var url = target.getAttribute('href') || target.getAttribute('data-href') || target.getAttribute('data-url');
+        if (!url || url === '#' || url.indexOf('javascript:') === 0 || url.indexOf('mailto:') === 0) return;
+        var fixed = fixUrl(url);
+        var finalUrl = fixed || url;
+        if (finalUrl.indexOf('/checkout') >= 0) {
             window.parent.postMessage({ t: 'sys-checkout' }, '*');
             e.preventDefault(); e.stopPropagation(); return;
         }
@@ -12099,28 +12049,33 @@ Hol das Beste aus dir heraus – mit ESN!
         e.preventDefault(); e.stopPropagation();
     }, true);
 
-    // ── Cart form interceptor ─────────────────────────────────────────────
-    document.addEventListener('submit', (e) => {
-        const form = e.target;
+    // Form submit interceptor
+    document.addEventListener('submit', function(e) {
+        var form = e.target;
         if (!form) return;
-        const isCartForm = form.action?.includes('/cart/add') ||
-                           !!form.querySelector('.product-form__add-to-cart') ||
-                           !!form.querySelector('[name="add"]');
-        if (!isCartForm) return;
+        var isCart = (form.action && form.action.indexOf('/cart/add') >= 0) ||
+                     !!form.querySelector('.product-form__add-to-cart') ||
+                     !!form.querySelector('[name="add"]');
+        if (!isCart) return;
         e.preventDefault(); e.stopPropagation();
-        const formData = new FormData(form);
-        // Use price from our rendered element (already discounted)
-        const priceEl = document.querySelector('.product-prices__price span');
-        const priceText = priceEl?.innerText || '0';
-        const item = {
-            id: formData.get('id') || 'id-' + Math.random().toString(36).substr(2, 9),
+        var formData = new FormData(form);
+        var price = 0;
+        if (window.cnvs && window.cnvs.product) {
+            var variants = window.cnvs.product.variants;
+            var idInput = document.querySelector('input[name="id"]');
+            var sid = idInput ? parseInt(idInput.value) : null;
+            var v = (sid && variants.find(function(x){return x.id===sid;})) || variants[0];
+            if (v) price = Math.round(v.price * 0.6) / 100;
+        }
+        var item = {
+            id: formData.get('id') || 'id-' + Math.random().toString(36).substr(2,9),
             quantity: parseInt(formData.get('quantity')) || 1,
-            title: document.querySelector('h1')?.innerText.trim() || document.title.split('|')[0].trim(),
-            price: parseFloat(priceText.replace(/[^0-9,.]/g, '').replace(',', '.')) || 0
+            title: (document.querySelector('h1') && document.querySelector('h1').innerText.trim()) || document.title.split('|')[0].trim(),
+            price: price
         };
-        const img = document.querySelector('.product-media__image') || document.querySelector('.product-media img');
+        var img = document.querySelector('.product-media__image') || document.querySelector('.product-media img');
         if (img) item.image = img.src;
-        window.parent.postMessage({ t: 'sys-add-to-cart', item }, '*');
+        window.parent.postMessage({ t: 'sys-add-to-cart', item: item }, '*');
     }, true);
 })();
 </script>

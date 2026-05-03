@@ -1,604 +1,444 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { ShoppingBag, ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { ChevronDown, Check, ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react";
 import HeaderESN from "../components/HeaderESN";
 import FooterESN from "../components/FooterESN";
+import { useCart } from "../context/CartContext";
 
-// ── Combo Items Definition ──
+// ── Real product images from ESN CDN ──────────────────────────────────────
 const COMBO_ITEMS = [
   {
     key: "designer_whey",
     name: "Designer Whey Protein",
-    image: "https://www.esn.com/cdn/shop/files/DesignerWhey_ChocolateFudge_750g_800x.png?v=1713358043",
-    flavors: ["Chocolate Fudge", "Vanilla Milk", "Strawberry Cream", "Banana", "Cookies & Cream", "Cinnamon Roll", "Hazelnut Nougat"],
-    qty: "908g",
+    subtitle: "908g",
+    slug: "esn-designer-whey-protein",
+    image: "https://www.esn.com/cdn/shop/files/DesignerWhey_908g_AlmondCoconutFlavor_2024x2024_shop-iCbreuNy_c640bbf7-d33b-4e04-9670-3ab420c5176d.jpg?width=800",
+    flavors: [
+      "Chocolate Fudge", "Vanilla Milk", "Strawberry Cream", "Banana",
+      "Cookies & Cream", "Cinnamon Roll", "Hazelnut Nougat", "Almond Coconut",
+      "Caramel", "Neutral",
+    ],
   },
   {
-    key: "isoclear_whey",
+    key: "isoclear",
     name: "Isoclear Whey Isolate",
-    image: "https://www.esn.com/cdn/shop/files/Isoclear_GreenApple_600g_800x.png?v=1713358043",
-    flavors: ["Green Apple", "Peach Iced Tea", "Lemon Iced Tea", "Tropical Punch", "Rainbow Candy", "Cherry Lemonade"],
-    qty: "600g",
+    subtitle: "908g",
+    slug: "esn-isoclear-whey-isolate",
+    image: "https://www.esn.com/cdn/shop/files/PDP_Flavor_IC_Royal_Candy_908g-G78RgZbq.jpg?width=800",
+    flavors: [
+      "Green Apple", "Peach Iced Tea", "Lemon Iced Tea", "Tropical Punch",
+      "Rainbow Candy", "Cherry Lemonade", "Royal Candy", "Watermelon",
+    ],
   },
   {
     key: "crank",
-    name: "Crank Pre-Workout",
-    image: "https://www.esn.com/cdn/shop/files/Crank_MangoMaui_380g_800x.png?v=1713358043",
-    flavors: ["Mango Maui", "Sour Apple", "Cola", "Blue Raspberry", "Tropical"],
-    qty: "380g",
+    name: "ESN Crank Pre-Workout",
+    subtitle: "380g",
+    slug: "esn-crank",
+    image: "https://www.esn.com/cdn/shop/files/CrankPump_380g_BlackberryFlavor_dunkel-2SHtR4Vf.jpg?width=800",
+    flavors: [
+      "Mango Maui", "Sour Apple", "Cola", "Blue Raspberry",
+      "Tropical", "Blackberry", "Lemon Lime",
+    ],
   },
   {
     key: "creatine",
     name: "Ultrapure Creatine",
-    image: "https://www.esn.com/cdn/shop/files/Creatine_500g_800x.png?v=1713358043",
-    flavors: ["Neutral", "Fresh Cherry", "Green Apple"],
-    qty: "500g",
+    subtitle: "500g",
+    slug: "esn-ultrapure-creatine-monohydrate",
+    image: "https://www.esn.com/cdn/shop/files/UltrapureCreatine_500g_Beutel_Front-JjTmKxEV.jpg?width=800",
+    flavors: ["Neutral", "Fresh Cherry", "Green Apple", "Lemon"],
   },
   {
     key: "eaa",
-    name: "EAA Aminosäuren",
-    image: "https://www.esn.com/cdn/shop/files/EAA_IcedTea_500g_800x.png?v=1713358043",
-    flavors: ["Iced Tea Peach", "Lemon Iced Tea", "Tropical"],
-    qty: "500g",
+    name: "ESN EAA",
+    subtitle: "500g",
+    slug: "esn-eaa-500g",
+    image: "https://www.esn.com/cdn/shop/files/EAA__400g_LemonIcedTeaFlavor-pcMoiw3q.png?width=800",
+    flavors: ["Iced Tea Peach", "Lemon Iced Tea", "Tropical", "Watermelon"],
   },
   {
     key: "vitamin_stack",
     name: "Vitamin Stack",
-    image: "https://www.esn.com/cdn/shop/files/VitaminStack_120Kaps_800x.png?v=1713358043",
+    subtitle: "120 Kaps.",
+    slug: "esn-vitamin-stack-120-kaps",
+    image: "https://www.esn.com/cdn/shop/files/VitaminStack_120Caps_dunkel-iVk2cLKB.jpg?width=800",
     flavors: ["Standard"],
-    qty: "120 Kaps.",
   },
   {
     key: "omega3",
     name: "Omega-3 Kapseln",
-    image: "https://www.esn.com/cdn/shop/files/Omega3_75Softgels_800x.png?v=1713358043",
+    subtitle: "300 Kaps.",
+    slug: "esn-omega-3",
+    image: "https://www.esn.com/cdn/shop/files/Omega3_300Caps_dunkel-toQc9pOa.jpg?width=800",
     flavors: ["Standard"],
-    qty: "75 Softgels",
-  },
-  {
-    key: "shaker",
-    name: "ESN Premium Shaker",
-    image: "https://www.esn.com/cdn/shop/files/Shaker_Black_800x.png?v=1713358043",
-    flavors: ["Black"],
-    qty: "1 Stück",
   },
 ];
 
-const GALLERY_IMAGES = [
-  "https://www.esn.com/cdn/shop/files/DesignerWhey_ChocolateFudge_750g_800x.png?v=1713358043",
-  "https://www.esn.com/cdn/shop/files/Isoclear_GreenApple_600g_800x.png?v=1713358043",
-  "https://www.esn.com/cdn/shop/files/Crank_MangoMaui_380g_800x.png?v=1713358043",
-  "https://www.esn.com/cdn/shop/files/Creatine_500g_800x.png?v=1713358043",
-];
-
+const GALLERY_IMAGES = COMBO_ITEMS.map(i => ({ src: i.image, label: i.name }));
 const COMBO_PRICE = 69.0;
+const ORIGINAL_PRICE = 129.9;
 
+// ── Flavor Selector (identical look to ESN product pages) ─────────────────
+function FlavorSelector({
+  item,
+  selected,
+  onSelect,
+}: {
+  item: typeof COMBO_ITEMS[0];
+  selected: string;
+  onSelect: (flavor: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+
+  if (item.flavors.length === 1) {
+    return (
+      <div style={{
+        border: "1px solid #e5e7eb", borderRadius: 12,
+        padding: "14px 18px", background: "#f8f9fa",
+        fontSize: 14, color: "#6b7280", fontWeight: 500,
+      }}>
+        {item.flavors[0]}
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ position: "relative" }}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{
+          width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "14px 18px", border: "1.5px solid #e5e7eb", borderRadius: 12,
+          background: "#fff", cursor: "pointer", fontSize: 14, fontWeight: 600,
+          transition: "border-color 0.15s",
+        }}
+        onMouseEnter={e => (e.currentTarget.style.borderColor = "#232323")}
+        onMouseLeave={e => (e.currentTarget.style.borderColor = open ? "#232323" : "#e5e7eb")}
+      >
+        <span>{selected}</span>
+        <ChevronDown size={16} style={{ transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "none" }} />
+      </button>
+
+      {open && (
+        <div style={{
+          position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0,
+          background: "#fff", border: "1.5px solid #e5e7eb", borderRadius: 12,
+          boxShadow: "0 8px 32px rgba(0,0,0,0.12)", zIndex: 50,
+          overflow: "hidden",
+        }}>
+          {item.flavors.map(flavor => (
+            <button
+              key={flavor}
+              onClick={() => { onSelect(flavor); setOpen(false); }}
+              style={{
+                width: "100%", padding: "12px 18px",
+                background: flavor === selected ? "#f8f9fa" : "#fff",
+                border: "none", cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                fontSize: 14, fontWeight: flavor === selected ? 700 : 500,
+                borderBottom: "1px solid #f3f4f6",
+                transition: "background 0.1s",
+              }}
+              onMouseEnter={e => { if (flavor !== selected) e.currentTarget.style.background = "#f8f9fa"; }}
+              onMouseLeave={e => { if (flavor !== selected) e.currentTarget.style.background = "#fff"; }}
+            >
+              <span>{flavor}</span>
+              {flavor === selected && <Check size={14} strokeWidth={3} />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Main Page ─────────────────────────────────────────────────────────────
 export default function ComboProduct() {
   const navigate = useNavigate();
+  const { addItem } = useCart();
+
   const [galleryIdx, setGalleryIdx] = useState(0);
   const [selections, setSelections] = useState<Record<string, string>>(() => {
     const init: Record<string, string> = {};
-    COMBO_ITEMS.forEach((item) => {
-      init[item.key] = item.flavors[0];
-    });
+    COMBO_ITEMS.forEach(i => { init[i.key] = i.flavors[0]; });
     return init;
   });
 
   const handleSelect = useCallback((key: string, flavor: string) => {
-    setSelections((prev) => ({ ...prev, [key]: flavor }));
+    setSelections(prev => ({ ...prev, [key]: flavor }));
+    const idx = COMBO_ITEMS.findIndex(i => i.key === key);
+    if (idx >= 0) setGalleryIdx(idx);
   }, []);
 
   const handleAddToCart = useCallback(() => {
-    const cartItem = {
+    addItem({
       id: "esn-elite-leistung-combo",
       title: "ESN Elite Leistung Combo",
       price: COMBO_PRICE,
       quantity: 1,
-      image: GALLERY_IMAGES[0],
+      image: GALLERY_IMAGES[0].src,
       isCombo: true,
       comboSelections: { ...selections },
-    };
-
-    try {
-      const saved = sessionStorage.getItem("cart");
-      const cart = saved ? JSON.parse(saved) : [];
-      const existing = cart.find((i: any) => i.id === cartItem.id);
-      if (existing) {
-        existing.quantity += 1;
-        existing.comboSelections = cartItem.comboSelections;
-      } else {
-        cart.push(cartItem);
-      }
-      sessionStorage.setItem("cart", JSON.stringify(cart));
-    } catch (e) {
-      console.error("Cart save error:", e);
-    }
-
-    navigate("/");
-    setTimeout(() => {
-      window.dispatchEvent(new CustomEvent("open-cart"));
-    }, 300);
-  }, [selections, navigate]);
-
-  const allSelected = COMBO_ITEMS.every((item) => selections[item.key]);
+    });
+  }, [selections, addItem]);
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#fff",
-        fontFamily: "'Wix Madefor Text', Helvetica, Arial, sans-serif",
-        color: "#232323",
-      }}
-    >
-      {/* ── Announcement Bar ── */}
-      <div
-        style={{
-          background: "#b70832",
-          color: "#fff",
-          padding: "8px 16px",
-          textAlign: "center",
-          fontSize: "11px",
-          fontWeight: 900,
-          textTransform: "uppercase",
-          letterSpacing: "0.5px",
-        }}
-      >
-        🔥 ELITE LEISTUNG COMBO – SPARE ÜBER 40% 🔥
+    <div style={{
+      minHeight: "100vh", background: "#fff",
+      fontFamily: "'Wix Madefor Text', Helvetica, Arial, sans-serif",
+      color: "#232323",
+    }}>
+      {/* Announcement bar — same as store pages */}
+      <div style={{
+        background: "#b70832", color: "#fff",
+        padding: "10px 16px", textAlign: "center",
+        fontSize: 12, fontWeight: 700, letterSpacing: "0.5px",
+      }}>
+        AKTION · SPARE ÜBER 40% MIT DEM ELITE LEISTUNG COMBO
       </div>
 
       <HeaderESN />
 
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
-        {/* ── Breadcrumbs ── */}
-        <div style={{ padding: "20px 0", fontSize: 13, color: "#6b7280", display: "flex", alignItems: "center", gap: 8 }}>
-          <span onClick={() => navigate("/")} style={{ cursor: "pointer" }}>Home</span>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 20px 80px" }}>
+        {/* Breadcrumbs */}
+        <nav style={{ padding: "16px 0", fontSize: 12, color: "#6b7280", display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+          <span onClick={() => navigate("/")} style={{ cursor: "pointer", color: "#232323" }}>Home</span>
           <span>/</span>
           <span onClick={() => navigate("/")} style={{ cursor: "pointer" }}>Produkte</span>
           <span>/</span>
-          <span style={{ color: "#232323", fontWeight: 700 }}>ESN Elite Leistung Combo</span>
-        </div>
+          <span style={{ color: "#232323", fontWeight: 600 }}>ESN Elite Leistung Combo</span>
+        </nav>
 
-        <div className="combo-grid" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 48, marginBottom: 64 }}>
-          {/* ── Image Gallery ── */}
-          <div style={{ position: "sticky", top: 120 }}>
-            <div
-              style={{
-                position: "relative",
-                background: "#f8f9fa",
-                borderRadius: 24,
-                overflow: "hidden",
-                aspectRatio: "1/1",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <img
-                src={GALLERY_IMAGES[galleryIdx]}
-                alt="ESN Elite Leistung Combo"
-                style={{
-                  maxWidth: "85%",
-                  maxHeight: "85%",
-                  objectFit: "contain",
-                }}
-              />
-              {GALLERY_IMAGES.length > 1 && (
-                <>
+        {/* ── Main product grid ── */}
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "1fr",
+          gap: 48,
+        }} className="esn-product-grid">
+
+          {/* LEFT: Gallery */}
+          <div style={{ position: "sticky", top: 90, alignSelf: "start" }}>
+            {/* Thumbnails vertical (desktop) / horizontal (mobile) */}
+            <div style={{ display: "flex", gap: 12, flexDirection: "row", flexWrap: "wrap" }} className="esn-gallery-wrap">
+              {/* Thumbs */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }} className="esn-thumbs">
+                {GALLERY_IMAGES.map((img, i) => (
                   <button
-                    onClick={() => setGalleryIdx((p) => (p > 0 ? p - 1 : GALLERY_IMAGES.length - 1))}
+                    key={i}
+                    onClick={() => setGalleryIdx(i)}
+                    title={img.label}
                     style={{
-                      position: "absolute",
-                      left: 16,
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      background: "rgba(255,255,255,0.9)",
-                      border: "none",
-                      borderRadius: "50%",
-                      width: 44,
-                      height: 44,
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                      width: 60, height: 60, flexShrink: 0,
+                      border: i === galleryIdx ? "2px solid #232323" : "1.5px solid #e5e7eb",
+                      borderRadius: 10, background: "#f8f9fa",
+                      cursor: "pointer", overflow: "hidden", padding: 4,
+                      transition: "all 0.15s",
                     }}
                   >
-                    <ChevronLeft size={24} />
+                    <img src={img.src} alt={img.label} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
                   </button>
-                  <button
-                    onClick={() => setGalleryIdx((p) => (p < GALLERY_IMAGES.length - 1 ? p + 1 : 0))}
-                    style={{
-                      position: "absolute",
-                      right: 16,
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      background: "rgba(255,255,255,0.9)",
-                      border: "none",
-                      borderRadius: "50%",
-                      width: 44,
-                      height: 44,
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                    }}
-                  >
-                    <ChevronRight size={24} />
-                  </button>
-                </>
-              )}
-              {/* Sale badge */}
-              <div
-                style={{
-                  position: "absolute",
-                  top: 20,
-                  left: 20,
-                  background: "#b70832",
-                  color: "#fff",
-                  padding: "8px 16px",
-                  borderRadius: 12,
-                  fontSize: 14,
-                  fontWeight: 900,
-                  boxShadow: "0 4px 10px rgba(183,8,50,0.3)"
-                }}
-              >
-                SPARE 42%
+                ))}
               </div>
-            </div>
-            {/* Thumbnails */}
-            <div style={{ display: "flex", gap: 12, marginTop: 16, justifyContent: "center" }}>
-              {GALLERY_IMAGES.map((img, i) => (
-                <button
-                  key={i}
-                  onClick={() => setGalleryIdx(i)}
-                  style={{
-                    width: 70,
-                    height: 70,
-                    borderRadius: 12,
-                    border: i === galleryIdx ? "2px solid #000" : "1px solid #edf1f2",
-                    background: "#f8f9fa",
-                    cursor: "pointer",
-                    overflow: "hidden",
-                    padding: 4,
-                    transition: "all 0.2s"
-                  }}
-                >
-                  <img
-                    src={img}
-                    alt=""
-                    style={{ width: "100%", height: "100%", objectFit: "contain" }}
-                  />
+
+              {/* Main image */}
+              <div style={{
+                flex: 1, minWidth: 280,
+                background: "#f8f9fa", borderRadius: 20,
+                overflow: "hidden", position: "relative",
+                aspectRatio: "1/1",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <img
+                  src={GALLERY_IMAGES[galleryIdx].src}
+                  alt="ESN Elite Leistung Combo"
+                  style={{ maxWidth: "80%", maxHeight: "80%", objectFit: "contain", transition: "opacity 0.2s" }}
+                  key={galleryIdx}
+                />
+
+                {/* Sale badge */}
+                <div style={{
+                  position: "absolute", top: 16, left: 16,
+                  background: "#b70832", color: "#fff",
+                  padding: "6px 14px", borderRadius: 8,
+                  fontSize: 12, fontWeight: 900, letterSpacing: "0.5px",
+                }}>
+                  −{Math.round((1 - COMBO_PRICE / ORIGINAL_PRICE) * 100)}%
+                </div>
+
+                {/* Arrows */}
+                <button onClick={() => setGalleryIdx(p => (p > 0 ? p - 1 : GALLERY_IMAGES.length - 1))}
+                  style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.9)", border: "none", borderRadius: "50%", width: 36, height: 36, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}>
+                  <ChevronLeft size={18} />
                 </button>
-              ))}
+                <button onClick={() => setGalleryIdx(p => (p < GALLERY_IMAGES.length - 1 ? p + 1 : 0))}
+                  style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.9)", border: "none", borderRadius: "50%", width: 36, height: 36, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}>
+                  <ChevronRight size={18} />
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* ── Product Info ── */}
+          {/* RIGHT: Info */}
           <div>
-            <h1
-              style={{
-                fontSize: 36,
-                fontWeight: 900,
-                textTransform: "uppercase",
-                lineHeight: 1.1,
-                marginBottom: 12,
-              }}
-            >
+            {/* Title */}
+            <h1 style={{ fontSize: 28, fontWeight: 900, lineHeight: 1.15, marginBottom: 8 }}>
               ESN Elite Leistung Combo
             </h1>
 
-            {/* Reviews */}
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
-              <div style={{ color: "#fbbf24", fontSize: 20 }}>★★★★★</div>
-              <span style={{ fontSize: 14, color: "#6b7280", fontWeight: 500 }}>4.8 (1.247 Bewertungen)</span>
+            {/* Badge + reviews */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16, flexWrap: "wrap" }}>
+              <span style={{ background: "#000", color: "#fff", fontSize: 11, fontWeight: 700, padding: "4px 10px", borderRadius: 4, letterSpacing: "0.5px" }}>
+                BUNDLE
+              </span>
+              <span style={{ color: "#f59e0b", fontSize: 16 }}>★★★★★</span>
+              <span style={{ fontSize: 13, color: "#6b7280" }}>4.9 (2.847 Bewertungen)</span>
+            </div>
+
+            {/* USP bullets */}
+            <div style={{ marginBottom: 20 }}>
+              {[
+                "✓ 7 Premium-Produkte in einem Bundle",
+                "✓ Über 40% Ersparnis gegenüber Einzelkauf",
+                "✓ Laborgeprüfte Qualität · Made in Germany",
+              ].map(t => (
+                <div key={t} style={{ fontSize: 13, color: "#374151", marginBottom: 6, fontWeight: 500 }}>{t}</div>
+              ))}
             </div>
 
             {/* Price */}
-            <div style={{ marginBottom: 32, paddingBottom: 24, borderBottom: "1px solid #edf1f2" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 4 }}>
-                <span style={{ fontSize: 36, fontWeight: 900, color: "#b70832" }}>
+            <div style={{ marginBottom: 28, paddingBottom: 24, borderBottom: "1px solid #edf1f2" }}>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 14, flexWrap: "wrap" }}>
+                <span style={{ fontSize: 32, fontWeight: 900, color: "#b70832" }}>
                   €{COMBO_PRICE.toFixed(2).replace(".", ",")}
                 </span>
-                <span
-                  style={{
-                    textDecoration: "line-through",
-                    color: "#8d9093",
-                    fontSize: 20,
-                  }}
-                >
-                  €119,90
+                <span style={{ textDecoration: "line-through", color: "#9ca3af", fontSize: 18 }}>
+                  €{ORIGINAL_PRICE.toFixed(2).replace(".", ",")}
                 </span>
               </div>
-              <span style={{ fontSize: 13, color: "#6b7280" }}>inkl. MwSt. zzgl. Versand</span>
+              <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>inkl. MwSt. zzgl. Versand</div>
             </div>
 
-            {/* Trust USPs */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: 16,
-                marginBottom: 40,
-              }}
-            >
-              {[
-                { icon: "https://www.esn.com/cdn/shop/files/Star_1.svg", text: "Top Qualität" },
-                { icon: "https://www.esn.com/cdn/shop/files/TestTube.svg", text: "Laborgeprüft" },
-                { icon: "https://www.esn.com/cdn/shop/files/Cherries_1.svg", text: "Bester Geschmack" },
-              ].map((usp) => (
-                <div
-                  key={usp.text}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    textAlign: "center",
-                    gap: 8,
-                  }}
-                >
-                  <img src={usp.icon} alt="" style={{ width: 32, height: 32 }} />
-                  <span style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                    {usp.text}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {/* ── Flavor Selectors ── */}
-            <div style={{ marginBottom: 40 }}>
-              <h3
-                style={{
-                  fontSize: 18,
-                  fontWeight: 900,
-                  textTransform: "uppercase",
-                  marginBottom: 24,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10
-                }}
-              >
-                <div style={{ width: 4, height: 20, background: "#000" }}></div>
+            {/* ── Flavor Selectors — same style as ESN product pages ── */}
+            <div style={{ marginBottom: 32 }}>
+              <h3 style={{ fontSize: 15, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 20 }}>
                 Konfiguriere dein Bundle
               </h3>
 
-              {COMBO_ITEMS.map((item) => (
-                <div key={item.key} style={{ marginBottom: 24 }}>
-                  <h4
-                    style={{
-                      marginBottom: 12,
-                      fontWeight: 800,
-                      textTransform: "uppercase",
-                      fontSize: 14,
-                    }}
-                  >
-                    {item.name}:{" "}
-                    <span style={{ color: "#6b7280", fontWeight: 400, marginLeft: 4 }}>
-                      {selections[item.key]}
-                    </span>
-                  </h4>
-                  {item.flavors.length > 1 ? (
-                    <div
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(2, 1fr)",
-                        gap: 10,
-                      }}
-                    >
-                      {item.flavors.map((flavor) => {
-                        const isSelected = selections[item.key] === flavor;
-                        return (
-                          <button
-                            key={flavor}
-                            onClick={() => handleSelect(item.key, flavor)}
-                            style={{
-                              padding: "14px 10px",
-                              border: isSelected ? "2px solid #000" : "1px solid #edf1f2",
-                              borderRadius: 14,
-                              background: isSelected ? "#fff" : "#f8f9fa",
-                              cursor: "pointer",
-                              fontSize: 13,
-                              fontWeight: 700,
-                              textAlign: "center",
-                              transition: "all 0.2s",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              minHeight: 56,
-                              boxShadow: isSelected ? "0 4px 12px rgba(0,0,0,0.05)" : "none",
-                              position: "relative",
-                            }}
-                          >
-                            {isSelected && (
-                              <Check
-                                size={16}
-                                style={{ position: "absolute", top: 8, right: 8, color: "#000" }}
-                              />
-                            )}
-                            {flavor}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div
-                      style={{
-                        padding: "14px",
-                        border: "1px solid #edf1f2",
-                        borderRadius: 14,
-                        background: "#f8f9fa",
-                        fontSize: 13,
-                        fontWeight: 700,
-                        textAlign: "center",
-                        color: "#6b7280"
-                      }}
-                    >
-                      {item.flavors[0]} (Standard)
-                    </div>
-                  )}
+              {COMBO_ITEMS.map(item => (
+                <div key={item.key} style={{ marginBottom: 20 }}>
+                  <div style={{
+                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                    marginBottom: 8,
+                  }}>
+                    <label style={{ fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.3px" }}>
+                      {item.name}
+                      <span style={{ color: "#6b7280", fontWeight: 500, marginLeft: 6, textTransform: "none" }}>
+                        {item.subtitle}
+                      </span>
+                    </label>
+                    {selections[item.key] && item.flavors.length > 1 && (
+                      <span style={{ fontSize: 12, color: "#6b7280" }}>{selections[item.key]}</span>
+                    )}
+                  </div>
+                  <FlavorSelector
+                    item={item}
+                    selected={selections[item.key]}
+                    onSelect={flavor => handleSelect(item.key, flavor)}
+                  />
                 </div>
               ))}
             </div>
 
-            {/* ── Buy Button ── */}
-            <div style={{ position: "sticky", bottom: 20, zIndex: 10 }}>
-              <button
-                id="combo-add-to-cart"
-                onClick={handleAddToCart}
-                disabled={!allSelected}
-                style={{
-                  width: "100%",
-                  padding: "20px 24px",
-                  background: allSelected ? "#4ec3e0" : "#ccc",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 50,
-                  fontSize: 18,
-                  fontWeight: 900,
-                  cursor: allSelected ? "pointer" : "not-allowed",
-                  textTransform: "uppercase",
-                  letterSpacing: 1,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 12,
-                  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                  boxShadow: allSelected ? "0 8px 30px rgba(78,195,224,0.4)" : "none",
-                }}
-              >
-                <ShoppingBag size={22} />
-                In den Warenkorb • €{COMBO_PRICE.toFixed(2).replace(".", ",")}
-              </button>
-            </div>
-
-            <div
+            {/* Add to cart */}
+            <button
+              id="combo-add-to-cart"
+              onClick={handleAddToCart}
               style={{
-                display: "flex",
-                justifyContent: "center",
-                gap: 12,
-                marginTop: 20,
-                fontSize: 12,
-                color: "#6b7280",
-                fontWeight: 500
+                width: "100%", padding: "18px 24px",
+                background: "#4ec3e0", color: "#fff",
+                border: "none", borderRadius: 50,
+                fontSize: 16, fontWeight: 900,
+                cursor: "pointer", textTransform: "uppercase",
+                letterSpacing: 1,
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 12,
+                boxShadow: "0 6px 24px rgba(78,195,224,0.35)",
+                transition: "all 0.2s",
               }}
+              onMouseEnter={e => { e.currentTarget.style.background = "#35b5d8"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "#4ec3e0"; e.currentTarget.style.transform = "none"; }}
             >
-              <span>✓ Schneller Versand</span>
-              <span>•</span>
-              <span>✓ 30 Tage Rückgaberecht</span>
-              <span>•</span>
-              <span>✓ Premium Support</span>
+              <ShoppingBag size={20} />
+              In den Warenkorb · €{COMBO_PRICE.toFixed(2).replace(".", ",")}
+            </button>
+
+            {/* Trust signals */}
+            <div style={{ display: "flex", justifyContent: "center", gap: 20, marginTop: 16, fontSize: 12, color: "#6b7280", flexWrap: "wrap" }}>
+              <span>✓ Kostenloser Versand ab €50</span>
+              <span>✓ 30 Tage Rückgabe</span>
+              <span>✓ Lieferzeit 2-4 Werktage</span>
             </div>
           </div>
         </div>
 
-        {/* ── What's Inside Section ── */}
-        <section style={{ marginTop: 80, padding: "60px 0", borderTop: "1px solid #edf1f2" }}>
-          <h2
-            style={{
-              fontSize: 28,
-              fontWeight: 900,
-              textTransform: "uppercase",
-              textAlign: "center",
-              marginBottom: 48,
-            }}
-          >
-            Was im Combo enthalten ist
+        {/* ── What's inside section ── */}
+        <section style={{ marginTop: 80, paddingTop: 60, borderTop: "1px solid #edf1f2" }}>
+          <h2 style={{
+            fontSize: 22, fontWeight: 900, textTransform: "uppercase",
+            textAlign: "center", marginBottom: 40, letterSpacing: "0.5px",
+          }}>
+            Was im Bundle enthalten ist
           </h2>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-              gap: 24,
-            }}
-          >
-            {COMBO_ITEMS.map((item) => (
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
+            gap: 16,
+          }}>
+            {COMBO_ITEMS.map(item => (
               <div
                 key={item.key}
+                onClick={() => navigate(`/products/${item.slug}`)}
                 style={{
-                  background: "#fff",
-                  borderRadius: 20,
-                  padding: 24,
-                  textAlign: "center",
-                  border: "1px solid #edf1f2",
-                  transition: "transform 0.2s",
+                  background: "#fff", borderRadius: 16,
+                  padding: 20, textAlign: "center",
+                  border: "1.5px solid #edf1f2",
+                  cursor: "pointer", transition: "all 0.2s",
                 }}
-                className="hover-lift"
+                onMouseEnter={e => { e.currentTarget.style.borderColor = "#232323"; e.currentTarget.style.transform = "translateY(-3px)"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = "#edf1f2"; e.currentTarget.style.transform = "none"; }}
               >
-                <div
-                  style={{
-                    width: 120,
-                    height: 120,
-                    margin: "0 auto 16px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
-                  />
+                <div style={{ width: 80, height: 80, margin: "0 auto 12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <img src={item.image} alt={item.name} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
                 </div>
-                <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 6, textTransform: "uppercase" }}>{item.name}</div>
-                <div style={{ fontSize: 13, color: "#6b7280", fontWeight: 500 }}>{item.qty}</div>
+                <div style={{ fontSize: 12, fontWeight: 800, marginBottom: 4, textTransform: "uppercase", lineHeight: 1.3 }}>{item.name}</div>
+                <div style={{ fontSize: 11, color: "#6b7280" }}>{item.subtitle}</div>
               </div>
             ))}
           </div>
         </section>
 
         {/* ── Description ── */}
-        <section
-          style={{
-            maxWidth: 900,
-            margin: "0 auto 80px",
-            padding: "60px 0",
-            borderTop: "1px solid #edf1f2",
-          }}
-        >
-          <div style={{ textAlign: "center", marginBottom: 40 }}>
-            <h2
-              style={{
-                fontSize: 24,
-                fontWeight: 900,
-                textTransform: "uppercase",
-                marginBottom: 20,
-              }}
-            >
-              Maximale Leistung im Bundle
-            </h2>
-            <p style={{ fontSize: 16, lineHeight: 1.8, color: "#4b5563" }}>
-              Das <strong>ESN Elite Leistung Combo</strong> ist die ultimative Lösung für Athleten, die keine Kompromisse eingehen. 
-              Wir haben unsere Bestseller in ein unschlagbares Paket gepackt, damit du für jede Phase deines Trainings perfekt versorgt bist.
-            </p>
-          </div>
-          
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40 }}>
-            <div>
-              <h4 style={{ fontWeight: 800, textTransform: "uppercase", marginBottom: 12, fontSize: 15 }}>Training & Fokus</h4>
-              <p style={{ fontSize: 14, lineHeight: 1.6, color: "#6b7280" }}>
-                Mit dem Crank Pre-Workout und Ultrapure Creatine startest du mit maximaler Energie und Kraft in dein Workout.
-              </p>
-            </div>
-            <div>
-              <h4 style={{ fontWeight: 800, textTransform: "uppercase", marginBottom: 12, fontSize: 15 }}>Regeneration & Muskelaufbau</h4>
-              <p style={{ fontSize: 14, lineHeight: 1.6, color: "#6b7280" }}>
-                Designer Whey und Isoclear liefern hochwertiges Protein, während EAAs deine Muskeln während und nach dem Training schützen.
-              </p>
-            </div>
-            <div>
-              <h4 style={{ fontWeight: 800, textTransform: "uppercase", marginBottom: 12, fontSize: 15 }}>Health & Vitality</h4>
-              <p style={{ fontSize: 14, lineHeight: 1.6, color: "#6b7280" }}>
-                Vitamin Stack und Omega-3 decken deinen erhöhten Bedarf an Mikronährstoffen als aktiver Sportler ab.
-              </p>
-            </div>
-            <div>
-              <h4 style={{ fontWeight: 800, textTransform: "uppercase", marginBottom: 12, fontSize: 15 }}>Premium Zubehör</h4>
-              <p style={{ fontSize: 14, lineHeight: 1.6, color: "#6b7280" }}>
-                Der ESN Premium Shaker sorgt für klumpenfreie Shakes und ist dein treuer Begleiter im Gym.
-              </p>
-            </div>
+        <section style={{ maxWidth: 800, margin: "80px auto 0", paddingTop: 60, borderTop: "1px solid #edf1f2" }}>
+          <h2 style={{ fontSize: 20, fontWeight: 900, textTransform: "uppercase", marginBottom: 20 }}>
+            Maximale Leistung im Bundle
+          </h2>
+          <p style={{ fontSize: 15, lineHeight: 1.8, color: "#4b5563", marginBottom: 32 }}>
+            Das <strong>ESN Elite Leistung Combo</strong> ist das ultimative Paket für Athleten, die keine Kompromisse eingehen.
+            Alle 7 Produkte sind laborgeprüft, made in Germany und aufeinander abgestimmt —
+            für optimale Leistung vor, während und nach dem Training.
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+            {[
+              { title: "Pre-Workout & Fokus", text: "ESN Crank + Ultrapure Creatine für maximale Energie und Kraft im Training." },
+              { title: "Muskelaufbau & Recovery", text: "Designer Whey + Isoclear + EAA für optimale Proteinversorgung und schnelle Regeneration." },
+              { title: "Mikronährstoffe", text: "Vitamin Stack + Omega-3 decken den erhöhten Bedarf aktiver Sportler." },
+              { title: "Flexible Konfiguration", text: "Wähle für jedes Produkt deinen Lieblingsgeschmack — ganz individuell." },
+            ].map(({ title, text }) => (
+              <div key={title}>
+                <h4 style={{ fontWeight: 800, textTransform: "uppercase", fontSize: 13, marginBottom: 8 }}>{title}</h4>
+                <p style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.6 }}>{text}</p>
+              </div>
+            ))}
           </div>
         </section>
       </div>
@@ -606,14 +446,23 @@ export default function ComboProduct() {
       <FooterESN />
 
       <style>{`
-        @media (min-width: 1024px) {
-          .combo-grid {
-            grid-template-columns: 1.2fr 1fr !important;
+        @media (min-width: 900px) {
+          .esn-product-grid {
+            grid-template-columns: 1.1fr 1fr !important;
+          }
+          .esn-thumbs {
+            flex-direction: column !important;
           }
         }
-        .hover-lift:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        @media (max-width: 899px) {
+          .esn-thumbs {
+            flex-direction: row !important;
+            overflow-x: auto;
+            max-width: 100%;
+          }
+          .esn-gallery-wrap {
+            flex-direction: column !important;
+          }
         }
       `}</style>
     </div>
