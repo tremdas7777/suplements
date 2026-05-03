@@ -13,31 +13,23 @@ const Index = () => {
 
   const normalizeStorePath = (inputUrl: string) => {
     let targetPath = inputUrl;
-
     if (targetPath.startsWith("http")) {
       try {
         const parsed = new URL(targetPath);
         targetPath = parsed.pathname + parsed.search;
       } catch (err) {}
     }
-
-    targetPath = targetPath.replace("/store/", "");
-    targetPath = targetPath.replace(/^localhost:\d+_/, "");
-
+    targetPath = targetPath.replace("/store/", "").replace(/^localhost:\d+_/, "");
     if (targetPath.endsWith(".html") || !targetPath.includes("/")) {
       targetPath = targetPath.replace(".html", "").replace(/^\//, "");
-      
       if (targetPath.startsWith("products_")) targetPath = "/products/" + targetPath.replace("products_", "");
       else if (targetPath.startsWith("collections_")) targetPath = "/collections/" + targetPath.replace("collections_", "");
       else if (targetPath.startsWith("pages_")) targetPath = "/pages/" + targetPath.replace("pages_", "");
       else if (targetPath.startsWith("policies_")) targetPath = "/policies/" + targetPath.replace("policies_", "");
       else if (targetPath.startsWith("blogs_")) targetPath = "/blogs/" + targetPath.replace("blogs_", "");
       else if (targetPath === "index" || targetPath === "") targetPath = "/";
-      else if (!targetPath.startsWith("/")) {
-        targetPath = "/products/" + targetPath;
-      }
+      else if (!targetPath.startsWith("/")) targetPath = "/products/" + targetPath;
     }
-
     return targetPath;
   };
 
@@ -46,7 +38,6 @@ const Index = () => {
       const saved = sessionStorage.getItem('cart');
       if (saved) setCartItems(JSON.parse(saved));
     } catch(e) {}
-
     const handleOpenCart = () => {
       try {
         const saved = sessionStorage.getItem('cart');
@@ -67,7 +58,6 @@ const Index = () => {
   useEffect(() => {
     const handleMessage = (e: MessageEvent) => {
       if (!e.data || !e.data.t) return;
-      
       if (e.data.t === "sys-add-to-cart" && e.data.item) {
         const item = {
           ...e.data.item,
@@ -76,39 +66,26 @@ const Index = () => {
             : (Number(e.data.item.price) || 0),
           quantity: Number(e.data.item.quantity) || 1
         };
-
         setCartItems(prev => {
            const existing = prev.find(i => i.id === item.id);
-           if (existing) {
-             return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i);
-           }
+           if (existing) return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i);
            return [...prev, item];
         });
         setIsCartOpen(true);
         return;
       }
-      
-      if (e.data.t === "sys-checkout") {
-        navigate('/checkout');
-        return;
-      }
-
+      if (e.data.t === "sys-checkout") { navigate('/checkout'); return; }
       if ((e.data.t === "sys-click" || e.data.t === "sys-nav") && e.data.u) {
         const targetPath = normalizeStorePath(e.data.u);
-        if (targetPath !== location.pathname + location.search) {
-          navigate(targetPath);
-        }
+        if (targetPath !== location.pathname + location.search) navigate(targetPath);
         return;
       }
     };
-
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
   }, [path, location.search, navigate]);
 
-  if (window !== window.top) {
-    return null;
-  }
+  if (window !== window.top) return null;
 
   const getMappedPath = () => {
     if (path === '' || path === '/' || path === '/store/') return 'index';
@@ -126,23 +103,14 @@ const Index = () => {
 
   return (
     <div className="relative h-screen w-screen bg-background overflow-hidden">
-      <div 
-        id="store-loading-overlay"
-        className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background text-foreground transition-opacity duration-500"
-      >
+      <div id="store-loading-overlay" className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background text-foreground transition-opacity duration-500">
         <div className="h-16 w-16 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
         <p className="mt-4 text-lg font-semibold animate-pulse">Shop wird geladen...</p>
       </div>
 
       {cartItems.length > 0 && !isCartOpen && (
-        <button 
-          onClick={() => setIsCartOpen(true)}
-          className="absolute bottom-6 right-6 z-20 bg-primary text-primary-foreground p-4 rounded-full shadow-2xl flex items-center justify-center hover:scale-105 transition-transform"
-        >
-          <ShoppingBag size={24} />
-          <span className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">
-            {cartItems.reduce((acc, i) => acc + i.quantity, 0)}
-          </span>
+        <button onClick={() => setIsCartOpen(true)} className="absolute bottom-6 right-6 z-20 bg-primary text-primary-foreground p-4 rounded-full shadow-2xl flex items-center justify-center hover:scale-105 transition-transform">
+          <ShoppingBag size={24} /><span className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">{cartItems.reduce((acc, i) => acc + i.quantity, 0)}</span>
         </button>
       )}
 
@@ -150,37 +118,23 @@ const Index = () => {
         <div className="absolute inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm">
           <div className="w-full max-w-sm bg-background h-full shadow-2xl flex flex-col animate-in slide-in-from-right-full duration-300">
             <div className="flex items-center justify-between p-5 border-b border-border">
-              <h2 className="text-xl font-bold flex items-center gap-2">
-                <ShoppingBag size={24} /> Warenkorb
-              </h2>
-              <button onClick={() => setIsCartOpen(false)} className="p-2 hover:bg-muted rounded-full transition-colors">
-                <X size={20} />
-              </button>
+              <h2 className="text-xl font-bold flex items-center gap-2"><ShoppingBag size={24} /> Warenkorb</h2>
+              <button onClick={() => setIsCartOpen(false)} className="p-2 hover:bg-muted rounded-full transition-colors"><X size={20} /></button>
             </div>
-            
             <div className="flex-1 overflow-y-auto p-6">
               {cartItems.length === 0 ? (
-                <div className="text-center text-muted-foreground mt-20 flex flex-col items-center gap-4">
-                  <ShoppingBag size={48} className="opacity-20" />
-                  <p>Der Warenkorb ist leer</p>
-                </div>
+                <div className="text-center text-muted-foreground mt-20 flex flex-col items-center gap-4"><ShoppingBag size={48} className="opacity-20" /><p>Der Warenkorb ist leer</p></div>
               ) : (
                 cartItems.map((item, i) => (
                   <div key={i} className="flex gap-4 border-b border-border pb-6 last:border-0 mb-4">
-                    {item.image && (
-                      <img src={item.image} alt={item.title} className="w-20 h-20 object-cover rounded-lg border border-border" />
-                    )}
+                    {item.image && <img src={item.image} alt={item.title} className="w-20 h-20 object-cover rounded-lg border border-border" />}
                     <div className="flex-1 min-w-0">
                       <h3 className="font-bold text-sm truncate">{item.title}</h3>
                       <div className="flex items-center justify-between mt-2">
                         <div className="flex items-center gap-2 bg-muted rounded px-2 py-1">
-                          <button onClick={() => {
-                            setCartItems(prev => prev.map(it => it.id === item.id ? { ...it, quantity: Math.max(0, it.quantity - 1) } : it).filter(it => it.quantity > 0));
-                          }}><Minus size={12}/></button>
+                          <button onClick={() => setCartItems(prev => prev.map(it => it.id === item.id ? { ...it, quantity: Math.max(0, it.quantity - 1) } : it).filter(it => it.quantity > 0))}><Minus size={12}/></button>
                           <span className="text-xs font-bold w-4 text-center">{item.quantity}</span>
-                          <button onClick={() => {
-                            setCartItems(prev => prev.map(it => it.id === item.id ? { ...it, quantity: it.quantity + 1 } : it));
-                          }}><Plus size={12}/></button>
+                          <button onClick={() => setCartItems(prev => prev.map(it => it.id === item.id ? { ...it, quantity: it.quantity + 1 } : it))}><Plus size={12}/></button>
                         </div>
                         <p className="font-bold text-sm">€{(item.price * item.quantity).toFixed(2).replace('.', ',')}</p>
                       </div>
@@ -189,19 +143,10 @@ const Index = () => {
                 ))
               )}
             </div>
-            
             {cartItems.length > 0 && (
               <div className="p-6 border-t border-border bg-muted/30">
-                <div className="flex justify-between mb-4 font-bold text-lg">
-                  <span>Total</span>
-                  <span>{cartItems.reduce((acc, it) => acc + it.price * it.quantity, 0).toFixed(2).replace('.', ',')}€</span>
-                </div>
-                <button 
-                  onClick={() => navigate('/checkout')}
-                  className="w-full py-4 bg-[#b70832] text-white font-bold rounded-xl hover:bg-[#8d0628] transition-colors uppercase tracking-wider"
-                >
-                  Zur Kasse
-                </button>
+                <div className="flex justify-between mb-4 font-bold text-lg"><span>Total</span><span>{cartItems.reduce((acc, it) => acc + it.price * it.quantity, 0).toFixed(2).replace('.', ',')}€</span></div>
+                <button onClick={() => navigate('/checkout')} className="w-full py-4 bg-[#b70832] text-white font-bold rounded-xl hover:bg-[#8d0628] transition-colors uppercase tracking-wider">Zur Kasse</button>
               </div>
             )}
           </div>
@@ -214,139 +159,85 @@ const Index = () => {
         title="Store"
         onLoad={(e) => {
           const overlay = document.getElementById("store-loading-overlay");
-          if (overlay) {
-            overlay.style.opacity = "0";
-            setTimeout(() => { overlay.style.display = "none"; }, 500);
-          }
-
+          if (overlay) { overlay.style.opacity = "0"; setTimeout(() => { overlay.style.display = "none"; }, 500); }
           try {
             const iframe = e.target as HTMLIFrameElement;
             const doc = iframe.contentDocument || iframe.contentWindow?.document;
             if (!doc) return;
-
             const script = doc.createElement('script');
             script.textContent = `
               (function() {
                 if (window.__sys_script_running) return;
                 window.__sys_script_running = true;
-
-                // CSS INJECTION TO HIDE ORIGINAL PRICES AND AVOID FLICKER
                 const style = document.createElement('style');
                 style.textContent = \`
-                  .sys-discounted-price { 
-                    display: inline-flex !important; 
-                    align-items: center !important; 
-                    gap: 12px !important; 
-                    color: #b70832 !important; 
-                    font-weight: 900 !important;
-                    font-size: 1.2em !important;
-                  }
-                  .sys-original-strikethrough {
-                    text-decoration: line-through !important;
-                    color: #8d9093 !important;
-                    font-size: 0.8em !important;
-                    font-weight: 400 !important;
-                  }
-                  .sys-badge {
-                    background: #b70832 !important;
-                    color: white !important;
-                    padding: 2px 8px !important;
-                    border-radius: 4px !important;
-                    font-size: 12px !important;
-                    font-weight: 700 !important;
-                  }
-                  /* Hide original prices once we've processed them */
-                  [data-sys-processed=\"true\"] > *:not(.sys-discounted-price) {
-                    display: none !important;
-                  }
+                  .sys-discounted-price { display: inline-flex !important; align-items: center !important; gap: 12px !important; color: #b70832 !important; font-weight: 900 !important; font-size: 1.2em !important; }
+                  .sys-original-strikethrough { text-decoration: line-through !important; color: #8d9093 !important; font-size: 0.8em !important; font-weight: 400 !important; }
+                  .sys-badge { background: #b70832 !important; color: white !important; padding: 2px 8px !important; border-radius: 4px !important; font-size: 12px !important; font-weight: 700 !important; }
+                  [data-sys-processed=\"true\"] > *:not(.sys-discounted-price) { display: none !important; }
                   [href*=\"elite-leistung-combo\"], [href*=\"elite-performance-paket\"] { display: none !important; }
                 \`;
                 document.head.appendChild(style);
 
-                // INTERCEPT CLICKS
                 document.addEventListener('click', (e) => {
                   const target = e.target.closest('a, [data-href]');
                   if (!target) return;
                   let urlStr = target.getAttribute('href') || target.getAttribute('data-href');
                   if (!urlStr || urlStr.startsWith('javascript:') || urlStr.includes('#')) return;
-                  if (target.tagName === 'A' && target.target) return;
                   try {
                     const url = new URL(urlStr, window.location.origin);
-                    if (url.origin === window.location.origin) {
-                      e.preventDefault();
-                      window.parent.postMessage({ t: 'sys-click', u: url.pathname + url.search }, '*');
-                    }
+                    if (url.origin === window.location.origin) { e.preventDefault(); window.parent.postMessage({ t: 'sys-click', u: url.pathname + url.search }, '*'); }
                   } catch (err) {
-                    if (urlStr.startsWith('/') || urlStr.startsWith('./') || urlStr.startsWith('../')) {
-                      e.preventDefault();
-                      window.parent.postMessage({ t: 'sys-click', u: urlStr }, '*');
-                    }
+                    if (urlStr.startsWith('/') || urlStr.startsWith('./') || urlStr.startsWith('../')) { e.preventDefault(); window.parent.postMessage({ t: 'sys-click', u: urlStr }, '*'); }
                   }
                 }, true);
 
-                // NAVIGATION SYNC
-                window.addEventListener('popstate', () => {
-                   window.parent.postMessage({ t: 'sys-nav', u: window.location.pathname + window.location.search }, '*');
-                });
+                window.addEventListener('popstate', () => { window.parent.postMessage({ t: 'sys-nav', u: window.location.pathname + window.location.search }, '*'); });
 
-                function applyDiscount(priceStr) {
-                    // Avoid double discounting: if price looks like it was already discounted, skip
+                function getBasePriceFromStore() {
+                    if (window.cnvs && window.cnvs.product && window.cnvs.product.variants) {
+                        const id = new URLSearchParams(window.location.search).get('variant') || window.cnvs.product.variants[0].id;
+                        const v = window.cnvs.product.variants.find(v => String(v.id) === String(id));
+                        if (v) return parseFloat(v.price) / 100;
+                    }
+                    return null;
+                }
+
+                function applyDiscount(priceStr, isPDP = false) {
                     if (priceStr.includes('sys-discounted-price')) return null;
                     
+                    // If we are on PDP, use the JSON data as the absolute source of truth
+                    if (isPDP) {
+                        const base = getBasePriceFromStore();
+                        if (base) return { original: base.toFixed(2).replace('.', ','), discounted: (base * 0.6).toFixed(2).replace('.', ',') };
+                    }
+
                     const match = priceStr.match(/(\\d+)[,.](\\d+)/);
                     if (!match) return null;
                     const val = parseInt(match[1]) + parseInt(match[2])/100;
                     
-                    // CRITICAL: Check if this price is already very low compared to what we expect
-                    // (e.g. if we already applied 40% once)
-                    // This is a heuristic but works well. 
-                    // However, it's better to rely on DOM markers.
+                    // Avoid double discounting on cards by checking if value is plausible as "original"
+                    // (heuristic: if it's already discounted, it would be much lower than the store average)
+                    // But a better way is to check the DOM for signs of our discount.
                     
-                    const discounted = val * 0.6;
-                    return {
-                        original: val.toFixed(2).replace('.', ','),
-                        discounted: discounted.toFixed(2).replace('.', ',')
-                    };
+                    return { original: val.toFixed(2).replace('.', ','), discounted: (val * 0.6).toFixed(2).replace('.', ',') };
                 }
 
                 function fixPrices() {
-                    const selectors = [
-                        '.product-prices__price', 
-                        '.price__regular', 
-                        '.product-form__prices-container .product-prices__price',
-                        '.product-card__price',
-                        '.price-item--regular',
-                        '.price'
-                    ];
+                    const isPDP = !!document.querySelector('.product-form, .main-product');
+                    const selectors = ['.product-prices__price', '.price__regular', '.product-card__price', '.price-item--regular', '.price'];
                     
                     document.querySelectorAll(selectors.join(',')).forEach(el => {
-                        // Skip if already processed OR if it contains our custom price
-                        if (el.getAttribute('data-sys-processed') === 'true') return;
+                        // Crucial: check if we've already injected our price here
                         if (el.querySelector('.sys-discounted-price')) return;
                         
-                        // We need the RAW text before we've modified it
                         const text = el.innerText.trim();
                         if (text && (text.includes('€') || text.includes('EUR'))) {
-                            const res = applyDiscount(text);
+                            const res = applyDiscount(text, isPDP);
                             if (res) {
-                                // Clear content and add our custom structure
-                                el.innerHTML = \`<div class=\"sys-discounted-price\">
-                                    <span>€\${res.discounted}</span>
-                                    <span class=\"sys-original-strikethrough\">€\${res.original}</span>
-                                    <span class=\"sys-badge\">-40%</span>
-                                </div>\`;
+                                el.innerHTML = \`<div class=\"sys-discounted-price\"><span>€\${res.discounted}</span><span class=\"sys-original-strikethrough\">€\${res.original}</span><span class=\"sys-badge\">-40%</span></div>\`;
                                 el.setAttribute('data-sys-processed', 'true');
                             }
-                        }
-                    });
-                    
-                    // Fix Isoclear specific complex structures
-                    document.querySelectorAll('.unit-price, .price__unit').forEach(el => {
-                        if (el.getAttribute('data-sys-processed')) return;
-                        const res = applyDiscount(el.innerText);
-                        if (res) {
-                            el.innerHTML = \`€\${res.discounted} / kg <span class=\"sys-original-strikethrough\" style=\"font-size: 0.7em\">€\${res.original}</span>\`;
-                            el.setAttribute('data-sys-processed', 'true');
                         }
                     });
                 }
@@ -355,7 +246,6 @@ const Index = () => {
                   if (!window.cnvs || !window.cnvs.product) return;
                   const container = document.querySelector('.product-options');
                   if (!container || container.getAttribute('data-sys-initialized')) return;
-                  
                   const product = window.cnvs.product;
                   const options = product.options;
                   const variants = product.variants;
@@ -369,26 +259,23 @@ const Index = () => {
                       optDiv.style.marginBottom = '20px';
                       optDiv.innerHTML = '<h4 style="margin-bottom: 8px; font-weight: 800; font-size: 13px; text-transform: uppercase;">' + opt.name + ': <span style="font-weight: 400; color: #6b7280;">' + selectedOptions[opt.name] + '</span></h4>';
                       const grid = document.createElement('div');
-                      grid.style.display = 'grid';
-                      grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
-                      grid.style.gap = '8px';
+                      grid.style.display = 'grid'; grid.style.gridTemplateColumns = 'repeat(2, 1fr)'; grid.style.gap = '8px';
                       opt.values.forEach(val => {
                         const isSelected = selectedOptions[opt.name] === val;
                         const b = document.createElement('div');
-                        b.style.padding = '10px';
-                        b.style.border = isSelected ? '2px solid #000' : '1px solid #e5e7eb';
-                        b.style.borderRadius = '10px';
-                        b.style.textAlign = 'center';
-                        b.style.cursor = 'pointer';
-                        b.style.fontSize = '12px';
-                        b.style.fontWeight = '700';
+                        b.style.padding = '10px'; b.style.border = isSelected ? '2px solid #000' : '1px solid #e5e7eb'; b.style.borderRadius = '10px'; b.style.textAlign = 'center'; b.style.cursor = 'pointer'; b.style.fontSize = '12px'; b.style.fontWeight = '700';
                         b.innerText = val;
                         b.onclick = () => { 
                           selectedOptions[opt.name] = val; 
-                          update(); 
+                          const v = variants.find(v => v.selectedOptions.every(so => selectedOptions[so.name] === so.value));
+                          if (v) {
+                             const url = new URL(window.location.href);
+                             url.searchParams.set('variant', v.id);
+                             window.history.replaceState(null, '', url.toString());
+                             // Trigger price fix refresh
+                             document.querySelectorAll('[data-sys-processed]').forEach(el => el.removeAttribute('data-sys-processed'));
+                          }
                           render(); 
-                          // Reset processed flags so price engine runs again for new variant
-                          document.querySelectorAll('[data-sys-processed]').forEach(el => el.removeAttribute('data-sys-processed'));
                         };
                         grid.appendChild(b);
                       });
@@ -397,33 +284,14 @@ const Index = () => {
                     });
                     container.setAttribute('data-sys-initialized', 'true');
                   }
-
-                  function update() {
-                    const variant = variants.find(v => v.selectedOptions.every(so => selectedOptions[so.name] === so.value));
-                    if (variant) {
-                      const idInput = document.querySelector('input[name=\"id\"]') || document.createElement('input');
-                      idInput.type = 'hidden'; idInput.name = 'id'; idInput.value = variant.id;
-                      document.querySelector('form[action*=\"/cart/add\"]')?.appendChild(idInput);
-                    }
-                  }
-                  update();
                   render();
                 }
 
-                function run() {
-                    fixPrices();
-                    fixVariants();
-                }
-
+                function run() { fixPrices(); fixVariants(); }
                 run();
-                const observer = new MutationObserver((mutations) => {
-                    // Check if any significant DOM change happened
-                    if (mutations.some(m => m.addedNodes.length > 0)) {
-                        run();
-                    }
-                });
+                const observer = new MutationObserver(run);
                 observer.observe(document.body, { childList: true, subtree: true });
-                setInterval(run, 1500);
+                setInterval(run, 1000);
               })();
             `;
             doc.body.appendChild(script);
@@ -434,5 +302,4 @@ const Index = () => {
     </div>
   );
 };
-
 export default Index;
