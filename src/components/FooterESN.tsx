@@ -190,11 +190,11 @@ export default function FooterESN() {
 
       <style>{`
         .esn-footer {
-          background: #fff;
-          border-top: 1px solid #edf1f2;
+          background: #000;
+          color: #fff;
         }
         .esn-footer__newsletter {
-          background: #f8f9fa;
+          background: #0d0d0d;
           text-align: center;
           padding: 40px 24px 48px;
         }
@@ -205,6 +205,7 @@ export default function FooterESN() {
         .esn-footer__newsletter-img {
           width: 100%;
           height: auto;
+          filter: brightness(0) invert(1);
         }
         .esn-footer__newsletter-content {
           max-width: 600px;
@@ -214,11 +215,11 @@ export default function FooterESN() {
           font-size: 22px;
           font-weight: 700;
           margin: 0 0 12px;
-          color: #232323;
+          color: #fff;
         }
         .esn-footer__newsletter-text {
           font-size: 14px;
-          color: #6e7173;
+          color: #a1a1a6;
           margin: 0 0 24px;
           line-height: 1.5;
         }
@@ -231,17 +232,21 @@ export default function FooterESN() {
         .esn-footer__newsletter-form label {
           font-size: 13px;
           font-weight: 600;
-          color: #232323;
+          color: #fff;
           align-self: flex-start;
         }
         .esn-footer__newsletter-input {
           width: 100%;
           padding: 14px 16px;
-          border: 1px solid #edf1f2;
+          border: 1px solid #333;
           border-radius: 4px;
           font-size: 14px;
-          background: #fff;
+          background: #1a1a1a;
+          color: #fff;
           font-family: inherit;
+        }
+        .esn-footer__newsletter-input::placeholder {
+          color: #777;
         }
         .esn-footer__newsletter-btn {
           width: 100%;
@@ -261,11 +266,11 @@ export default function FooterESN() {
         }
         .esn-footer__newsletter-disclaimer {
           font-size: 12px;
-          color: #6e7173;
+          color: #a1a1a6;
           margin: 16px 0 0;
         }
         .esn-footer__newsletter-disclaimer a {
-          color: #232323;
+          color: #fff;
           text-decoration: underline;
         }
         .esn-footer__main {
@@ -288,18 +293,18 @@ export default function FooterESN() {
         .esn-footer__logo {
           width: 80px;
           height: auto;
-          color: #000;
+          color: #fff;
           margin-bottom: 12px;
         }
         .esn-footer__copyright {
           font-size: 12px;
-          color: #6e7173;
+          color: #a1a1a6;
           margin: 0;
         }
         .esn-footer__col-title {
           font-size: 14px;
           font-weight: 700;
-          color: #232323;
+          color: #fff;
           margin: 0 0 16px;
           text-transform: uppercase;
           letter-spacing: 0.3px;
@@ -314,11 +319,12 @@ export default function FooterESN() {
         }
         .esn-footer__links li a {
           font-size: 13px;
-          color: #232323;
+          color: #a1a1a6;
           text-decoration: none;
           line-height: 1.4;
         }
         .esn-footer__links li a:hover {
+          color: #fff;
           text-decoration: underline;
         }
         .esn-footer__social-icons {
@@ -326,7 +332,7 @@ export default function FooterESN() {
           gap: 12px;
         }
         .esn-footer__social-icons a {
-          color: #232323;
+          color: #fff;
           display: flex;
           align-items: center;
         }
@@ -342,6 +348,7 @@ export default function FooterESN() {
         .esn-footer__payment-icon {
           height: 24px;
           width: auto;
+          filter: brightness(0) invert(1);
         }
         .esn-footer__payment-fallback {
           display: none;
@@ -350,8 +357,8 @@ export default function FooterESN() {
         }
         .esn-footer__payment-fallback span {
           font-size: 11px;
-          color: #6e7173;
-          background: #f8f9fa;
+          color: #a1a1a6;
+          background: #1a1a1a;
           padding: 4px 8px;
           border-radius: 4px;
         }
@@ -361,10 +368,13 @@ export default function FooterESN() {
           gap: 8px;
           margin-top: 16px;
           font-size: 13px;
-          color: #6e7173;
+          color: #a1a1a6;
+        }
+        .esn-footer__shipping img {
+          filter: brightness(0) invert(1);
         }
         .esn-footer__bottom {
-          border-top: 1px solid #edf1f2;
+          border-top: 1px solid #222;
           margin-top: 40px;
           padding: 20px 0;
         }
@@ -374,7 +384,7 @@ export default function FooterESN() {
         }
         .esn-footer__bottom span {
           font-size: 12px;
-          color: #6e7173;
+          color: #a1a1a6;
         }
         @media (min-width: 768px) {
           .esn-footer__col--brand {
