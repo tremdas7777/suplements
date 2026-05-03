@@ -165,82 +165,12 @@ const Index = () => {
             if (!doc) return;
 
             const script = doc.createElement('script');
-            // Using a simple string for the inner script content to avoid template literal escaping issues in TSX
             script.textContent = `
               (function() {
-                if (window.__sys_script_running_v3) return;
-                window.__sys_script_running_v3 = true;
+                if (window.__sys_nav_only) return;
+                window.__sys_nav_only = true;
 
-                const style = document.createElement('style');
-                style.textContent = ".sys-discounted-price { display: inline-flex !important; align-items: center !important; gap: 12px !important; color: #b70832 !important; font-weight: 900 !important; font-size: 1.2em !important; } .sys-original-strikethrough { text-decoration: line-through !important; color: #8d9093 !important; font-size: 0.8em !important; font-weight: 400 !important; } .sys-badge { background: #b70832 !important; color: white !important; padding: 2px 8px !important; border-radius: 4px !important; font-size: 12px !important; font-weight: 700 !important; } [data-sys-processed='true'] > *:not(.sys-discounted-price) { display: none !important; } [href*='elite-leistung-combo'], [href*='elite-performance-paket'] { display: none !important; }";
-                document.head.appendChild(style);
-
-                function fixPrices() {
-                    const selectors = ['.product-prices__price', '.price__regular', '.product-card__price', '.price-item--regular', '.price'];
-                    document.querySelectorAll(selectors.join(',')).forEach(el => {
-                        if (el.querySelector('.sys-discounted-price')) return;
-                        const text = el.innerText.trim();
-                        const match = text.match(/(\\d+)[,.](\\d+)/);
-                        if (match) {
-                            const val = parseInt(match[1]) + parseInt(match[2])/100;
-                            const original = (val / 0.6).toFixed(2).replace('.', ',');
-                            const discounted = val.toFixed(2).replace('.', ',');
-                            el.innerHTML = '<div class="sys-discounted-price"><span>€' + discounted + '</span><span class="sys-original-strikethrough">€' + original + '</span><span class="sys-badge">-40%</span></div>';
-                            el.setAttribute('data-sys-processed', 'true');
-                        }
-                    });
-                }
-
-                function fixVariants() {
-                  if (!window.cnvs || !window.cnvs.product) return;
-                  const container = document.querySelector('.product-options');
-                  if (!container || container.getAttribute('data-sys-initialized')) return;
-                  const product = window.cnvs.product;
-                  const options = product.options;
-                  const variants = product.variants;
-                  const selectedOptions = {};
-                  options.forEach(opt => { selectedOptions[opt.name] = opt.values[0]; });
-
-                  function render() {
-                    container.innerHTML = '';
-                    options.forEach(opt => {
-                      const optDiv = document.createElement('div');
-                      optDiv.style.marginBottom = '20px';
-                      optDiv.innerHTML = '<h4 style="margin-bottom: 8px; font-weight: 800; font-size: 13px; text-transform: uppercase;">' + opt.name + ': <span style="font-weight: 400; color: #6b7280;">' + selectedOptions[opt.name] + '</span></h4>';
-                      const grid = document.createElement('div');
-                      grid.style.display = 'grid'; grid.style.gridTemplateColumns = 'repeat(2, 1fr)'; grid.style.gap = '8px';
-                      opt.values.forEach(val => {
-                        const isSelected = selectedOptions[opt.name] === val;
-                        const b = document.createElement('div');
-                        b.style.padding = '10px'; b.style.border = isSelected ? '2px solid #000' : '1px solid #e5e7eb'; b.style.borderRadius = '10px'; b.style.textAlign = 'center'; b.style.cursor = 'pointer'; b.style.fontSize = '12px'; b.style.fontWeight = '700';
-                        b.innerText = val;
-                        b.onclick = () => { 
-                          selectedOptions[opt.name] = val; 
-                          const v = variants.find(v => v.selectedOptions.every(so => selectedOptions[so.name] === so.value));
-                          if (v) {
-                             const url = new URL(window.location.href);
-                             url.searchParams.set('variant', v.id);
-                             window.history.replaceState(null, '', url.toString());
-                             document.querySelectorAll('[data-sys-processed]').forEach(el => el.removeAttribute('data-sys-processed'));
-                          }
-                          render(); 
-                        };
-                        grid.appendChild(b);
-                      });
-                      optDiv.appendChild(grid);
-                      container.appendChild(optDiv);
-                    });
-                    container.setAttribute('data-sys-initialized', 'true');
-                  }
-                  render();
-                }
-
-                function run() { fixPrices(); fixVariants(); }
-                run();
-                const observer = new MutationObserver(run);
-                observer.observe(document.body, { childList: true, subtree: true });
-                setInterval(run, 1500);
-
+                // NAVIGATION ONLY - No price scripts to avoid flickering
                 document.addEventListener('click', (e) => {
                   const target = e.target.closest('a, [data-href]');
                   if (!target) return;
@@ -254,6 +184,11 @@ const Index = () => {
                     }
                   } catch (err) {}
                 }, true);
+
+                // Hide buggy combo products if they appear in search/home
+                const style = document.createElement('style');
+                style.textContent = "[href*='elite-leistung-combo'], [href*='elite-performance-paket'] { display: none !important; }";
+                document.head.appendChild(style);
               })();
             `;
             doc.body.appendChild(script);
