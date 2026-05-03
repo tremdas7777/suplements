@@ -1,171 +1,14 @@
-<!doctype html>
-<html lang="pt-BR">
-  <head>
+import fs from 'fs';
+import path from 'path';
 
+const STORE_DIR = '/Users/ulissescardoso/suplements/public/store';
+const files = fs.readdirSync(STORE_DIR).filter(f => f.endsWith('.html'));
 
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light dark" />
-
-    <!-- Offer route (/o/:slug): set background ASAP (before app CSS/JS) based on device theme -->
-    <style>
-      html.offer-preload,
-      html.offer-preload body {
-        background: var(--offer-preload-bg, #ffffff) !important;
-      }
-    </style>
-    <script>
-      (function () {
-        try {
-          var p = (location && location.pathname) || "";
-          if (p.indexOf("/o/") === 0) {
-            var prefersDark =
-              window.matchMedia &&
-              window.matchMedia("(prefers-color-scheme: dark)").matches;
-            var bg = prefersDark ? "#0a0a0a" : "#ffffff";
-            document.documentElement.classList.add("offer-preload");
-            document.documentElement.style.setProperty("--offer-preload-bg", bg);
-          }
-        } catch (e) {}
-      })();
-    </script>
-
-
-    <title>Arktrix | IA que Clona Sites em Segundos | Clone Landing Pag</title>
-    <meta name="description" content="Arktrix é a IA que clona qualquer site em segundos. Clone landing pages, edite textos e imagens ao vivo, substitua links e publique com domínio próprio.">
-    <meta name="author" content="Arktrix" />
-    <meta name="keywords" content="clonar site, IA que clona site, clone landing page, copiar site, Arktrix, clonador de sites, duplicar página de vendas, ferramenta clonar site">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <link rel="canonical" href="https://arktrix.app/" />
-
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://arktrix.app/" />
-    <meta property="og:locale" content="pt_BR" />
-    <meta property="og:site_name" content="Arktrix" />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@Arktrix" />
-
-  <link rel="icon" type="image/png" href="/favicon.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;2,330;0,900;1,600;1,700&display=swap" rel="stylesheet">
-  
-  <!-- Meta Pixel — init apenas, PageView é disparado manualmente por rota -->
-  <script>
-    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-    document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init','1265953412348824');
-  </script>
-
-  <!-- Google Analytics 4 -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-WMCXRNQWFL"></script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P14GZHJCLD"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-WMCXRNQWFL');
-    gtag('config', 'G-P14GZHJCLD');
-  </script>
-
-  <!-- JSON-LD Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "Arktrix",
-    "url": "https://arktrix.app",
-    "description": "IA que clona qualquer site em segundos. Clone landing pages, edite textos e imagens ao vivo, substitua checkouts e publique com domínio próprio.",
-    "applicationCategory": "WebApplication",
-    "operatingSystem": "Web",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "BRL",
-      "description": "Plano gratuito para sempre"
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "ratingCount": "127"
-    },
-    "creator": {
-      "@type": "Organization",
-      "name": "Arktrix",
-      "url": "https://arktrix.app",
-      "logo": "https://arktrix.app/favicon.png"
-    }
-  }
-  </script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Como a Arktrix clona sites?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Cole a URL da página que quer clonar. A IA da Arktrix baixa tudo automaticamente: HTML, imagens, scripts. Remove pixels e rastreios do dono original e publica em segundos com seu domínio."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Funciona com meu checkout externo?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Sim. A Arktrix hospeda a página antes do checkout. Você pode usar qualquer plataforma: Hotmart, Kiwify, Monetizze, etc."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Preciso saber programar?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Não. Você só precisa colar uma URL ou subir um ZIP. A Arktrix cuida do resto."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "A Arktrix é gratuita?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Sim. O plano Free é gratuito para sempre com uso ilimitado do Arktrix Lite e 2 créditos Pro mensais. Upgrade quando fizer sentido."
-        }
-      }
-    ]
-  }
-  </script>
-
-  <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2b1d99aa-1e5f-4618-a6bb-a05c5cc31f73/id-preview-84f0e318--d218ff54-5513-47ac-a03b-05bdc6e4d40d.lovable.app-1773666875358.png">
-  <meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2b1d99aa-1e5f-4618-a6bb-a05c5cc31f73/id-preview-84f0e318--d218ff54-5513-47ac-a03b-05bdc6e4d40d.lovable.app-1773666875358.png">
-  <meta property="og:title" content="Arktrix | IA que Clona Sites em Segundos | Clone Landing Pag">
-  <meta name="twitter:title" content="Arktrix | IA que Clona Sites em Segundos | Clone Landing Pag">
-  <meta property="og:description" content="Arktrix é a IA que clona qualquer site em segundos. Clone landing pages, edite textos e imagens ao vivo, substitua links e publique com domínio próprio.">
-  <meta name="twitter:description" content="Arktrix é a IA que clona qualquer site em segundos. Clone landing pages, edite textos e imagens ao vivo, substitua links e publique com domínio próprio.">
-  <script type="module" crossorigin src="/assets/index-CsyjICY9.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-nBx5d2cK.css">
-</head>
-
-  <body>
-    <!-- Meta Pixel noscript fallback (deve ficar no body, não no head) -->
-    <noscript><img height="1" width="1" style="display:none"
-      src="https://www.facebook.com/tr?id=1265953412348824&ev=PageView&noscript=1"/></noscript>
-    <div id="root"></div>
-  
-
-
-
-
-
-
-
-<script id="sys-cart-fix">
+// ─── NEW UNIFIED SCRIPT ────────────────────────────────────────────────────
+// Replaces sys-cart-fix. No more MutationObserver on document.body.
+// One-shot: waits for cnvs.product to be ready, then renders once.
+// Also handles click interception and cart form submit.
+const NEW_CART_FIX = `<script id="sys-cart-fix">
 (function() {
     'use strict';
 
@@ -353,6 +196,54 @@
         window.parent.postMessage({ t: 'sys-add-to-cart', item }, '*');
     }, true);
 })();
-</script>
-</body>
-</html>
+</script>`;
+
+// ─── MOBILE META TAG ──────────────────────────────────────────────────────
+// Ensure proper viewport for mobile
+const MOBILE_META = '<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">';
+
+let updatedCount = 0;
+
+files.forEach(file => {
+    const filePath = path.join(STORE_DIR, file);
+    let html = fs.readFileSync(filePath, 'utf8');
+    let changed = false;
+
+    // 1. Fix mobile viewport meta
+    if (!html.includes('name="viewport"')) {
+        html = html.replace('<head>', '<head>\n' + MOBILE_META);
+        changed = true;
+    } else if (!html.includes('width=device-width')) {
+        // Fix incorrect viewport
+        html = html.replace(/<meta[^>]+name="viewport"[^>]*>/i, MOBILE_META);
+        changed = true;
+    }
+
+    // 2. Remove the broken sys-select-cheapest script (causes extra clicks → flickering)
+    const selectCheapestRe = /<script id="sys-select-cheapest">[\s\S]*?<\/script>/;
+    if (selectCheapestRe.test(html)) {
+        html = html.replace(selectCheapestRe, '<!-- sys-select-cheapest removed -->');
+        changed = true;
+    }
+
+    // 3. Remove the empty sys-json-v2-discounted (dead code)
+    html = html.replace(/<script id="sys-json-v2-discounted"><\/script>/g, '');
+
+    // 4. Replace sys-cart-fix with the new stable version
+    const cartFixRe = /<script id="sys-cart-fix">[\s\S]*?<\/script>/;
+    if (cartFixRe.test(html)) {
+        html = html.replace(cartFixRe, NEW_CART_FIX);
+        changed = true;
+    } else {
+        // Add before </html> if missing
+        html = html.replace('</html>', NEW_CART_FIX + '\n</html>');
+        changed = true;
+    }
+
+    if (changed) {
+        fs.writeFileSync(filePath, html);
+        updatedCount++;
+    }
+});
+
+console.log(`✅ Fixed ${updatedCount} files: flickering resolved + mobile viewport added.`);
