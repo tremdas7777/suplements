@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import NotFound from "./NotFound";
 import { X, ShoppingBag, Minus, Plus } from "lucide-react";
 
@@ -9,16 +9,22 @@ const Index = () => {
   const path = location.pathname;
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const lastIframeUrl = useRef<string>("");
 
   const normalizeStorePath = (inputUrl: string) => {
     let targetPath = inputUrl;
     if (targetPath.startsWith("http")) {
       try {
         const parsed = new URL(targetPath);
-        targetPath = parsed.pathname + parsed.search;
+        // Consistently remove trailing slashes from path
+        let pathname = parsed.pathname.replace(/\/$/, "");
+        targetPath = pathname + parsed.search;
       } catch (err) {}
     }
+    
+    // Remove /store/ prefix and .html extension
     targetPath = targetPath.replace("/store/", "").replace(/^localhost:\d+_/, "");
+    
     if (targetPath.endsWith(".html") || !targetPath.includes("/")) {
       targetPath = targetPath.replace(".html", "").replace(/^\//, "");
       if (targetPath.startsWith("products_")) targetPath = "/products/" + targetPath.replace("products_", "");
@@ -29,7 +35,11 @@ const Index = () => {
       else if (targetPath === "index" || targetPath === "") targetPath = "/";
       else if (!targetPath.startsWith("/")) targetPath = "/products/" + targetPath;
     }
-    return targetPath;
+    
+    // Final normalization: ensure leading slash and no trailing slash
+    if (!targetPath.startsWith("/")) targetPath = "/" + targetPath;
+    const [p, s] = targetPath.split("?");
+    return p.replace(/\/$/, "") + (s ? "?" + s : "");
   };
 
   useEffect(() => {
@@ -57,6 +67,7 @@ const Index = () => {
   useEffect(() => {
     const handleMessage = (e: MessageEvent) => {
       if (!e.data || !e.data.t) return;
+      
       if (e.data.t === "sys-add-to-cart" && e.data.item) {
         const item = {
           ...e.data.item,
@@ -73,10 +84,20 @@ const Index = () => {
         setIsCartOpen(true);
         return;
       }
+      
       if (e.data.t === "sys-checkout") { navigate('/checkout'); return; }
+      
       if ((e.data.t === "sys-click" || e.data.t === "sys-nav") && e.data.u) {
         const targetPath = normalizeStorePath(e.data.u);
-        if (targetPath !== location.pathname + location.search) navigate(targetPath);
+        const currentPath = (location.pathname + location.search).replace(/\/$/, "");
+        
+        // Update our tracking of where the iframe is
+        lastIframeUrl.current = e.data.u;
+
+        if (targetPath !== currentPath) {
+          console.log(`[Router] Navigating from ${currentPath} to ${targetPath} due to iframe message`);
+          navigate(targetPath);
+        }
         return;
       }
     };
@@ -94,6 +115,9 @@ const Index = () => {
     if (path.startsWith('/pages/')) return 'pages_' + clean.replace('pages/', '');
     if (path.startsWith('/blogs/')) return 'blogs_' + clean.replace('blogs/', '');
     if (path.startsWith('/policies/')) return 'policies_' + clean.replace('policies/', '');
+
+    
+    // If it's something like /esn-designer-whey-protein
     return 'products_' + clean;
   };
 
@@ -110,7 +134,6 @@ const Index = () => {
     }
   };
 
-  // Aggressive loader removal fallback
   useEffect(() => {
     const timer = setTimeout(removeLoader, 3000);
     return () => clearTimeout(timer);
@@ -169,7 +192,6 @@ const Index = () => {
       )}
 
       <iframe
-        key={mappedPath}
         src={iframeSrc}
         title="Store"
         onLoad={removeLoader}
@@ -178,4 +200,8 @@ const Index = () => {
     </div>
   );
 };
+
 export default Index;
+
+
+

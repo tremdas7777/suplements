@@ -9,7 +9,7 @@
   <head>
 
 
-<base href="/store/index.html" target="_top">
+<base href="/store/index.html" target="_self">
 <script data-sys-proxy-guard>(function(){if(window.__sys_proxy_guard)return;window.__sys_proxy_guard=true;
 var O="www.esn.com";var P="wwwesncomqedu.arktrix.com";
 function rw(url){
@@ -38,64 +38,7 @@ try{var _lor=Object.getOwnPropertyDescriptor(Location.prototype,'origin');if(_lo
 // This is the most reliable way to block about:blank on browsers where Location.prototype is non-configurable
 try{if(window.navigation&&typeof window.navigation.addEventListener==='function'){window.navigation.addEventListener('navigate',function(ev){if(ev.destination&&ev.destination.url==='about:blank'&&ev.cancelable){ev.preventDefault();}});}}catch(e){}
 })()</script>
-<script data-store-link-fallback>(function(){
-if(window.__storeLinkFallbackInstalled)return;
-window.__storeLinkFallbackInstalled=true;
-function normalizeStorePath(raw){
-  if(!raw||typeof raw!=='string')return '';
-  var value=raw.trim();
-  if(!value||value==='#'||value.startsWith('javascript:')||value.startsWith('mailto:')||value.startsWith('tel:'))return '';
-  try{
-    var url=new URL(value,window.location.href);
-    if(url.origin!==window.location.origin)return '';
-    if(!url.pathname.startsWith('/store/'))return '';
-    return url.pathname+url.search+url.hash;
-  }catch(e){return '';}
-}
-function hasInteractiveAncestor(node){
-  return !!(node&&node.closest('button,input,select,textarea,label,summary,[role="button"],[contenteditable="true"],.swym-button,[js-cart-button],[js-quantity-button]'));
-}
-function resolveLinkTarget(node){
-  if(!(node instanceof Element))return null;
-  if(hasInteractiveAncestor(node))return null;
-  return node.closest('a[href],[data-href]');
-}
-function extractPath(el){
-  if(!el)return '';
-  return normalizeStorePath(el.getAttribute('href')||el.getAttribute('data-href')||'');
-}
-function shouldIgnoreEvent(ev,el){
-  if(!el)return true;
-  if('button' in ev&&ev.button!==0)return true;
-  if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return true;
-  if(el instanceof HTMLAnchorElement){
-    if(el.hasAttribute('download'))return true;
-    if(el.target&&el.target!=='_self'&&el.target!=='')return true;
-  }
-  return false;
-}
-function navigateTo(path){
-  if(!path)return;
-  var current=window.location.pathname+window.location.search+window.location.hash;
-  if(current===path)return;
-  window.location.assign(path);
-}
-document.addEventListener('click',function(ev){
-  var el=resolveLinkTarget(ev.target);
-  var path=extractPath(el);
-  if(!path||shouldIgnoreEvent(ev,el))return;
-  ev.preventDefault();
-  navigateTo(path);
-},true);
-document.addEventListener('keydown',function(ev){
-  if(ev.key!=='Enter'&&ev.key!==' ')return;
-  var el=resolveLinkTarget(ev.target);
-  var path=extractPath(el);
-  if(!path||shouldIgnoreEvent(ev,el))return;
-  ev.preventDefault();
-  navigateTo(path);
-},true);
-})();</script>
+
 
 <style data-arktrix-visibility-fix>
 /* Fallback: force visibility after 2s if builder JS fails */
@@ -9934,6 +9877,116 @@ Hol das Beste aus dir heraus – mit ESN!
             return null;
         };
 
+        function fixVariants() {
+            if (!window.cnvs || !window.cnvs.product) return;
+            const product = window.cnvs.product;
+            const options = product.options;
+            const variants = product.variants;
+            const container = document.querySelector('.product-options');
+            if (!container) return;
+
+            const isProcessed = container.hasAttribute('data-sys-processed');
+            const isLoading = container.innerText.includes('Wird geladen') || container.children.length < 2;
+            
+            if (isProcessed && !isLoading) return;
+
+            const selectedOptions = {};
+            options.forEach(opt => {
+                selectedOptions[opt.name] = opt.values[0];
+            });
+
+            function render() {
+                container.innerHTML = '';
+                options.forEach(opt => {
+                    const optDiv = document.createElement('div');
+                    optDiv.className = 'product-options__option';
+                    optDiv.style.marginBottom = '20px';
+                    optDiv.innerHTML = '<h4 style="margin-bottom: 12px; font-weight: 800; text-transform: uppercase; font-size: 14px;">' + opt.name + '</h4>';
+                    
+                    const grid = document.createElement('div');
+                    grid.style.display = 'grid';
+                    grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+                    grid.style.gap = '8px';
+
+                    opt.values.forEach(val => {
+                        const isChecked = selectedOptions[opt.name] === val;
+                        const item = document.createElement('div');
+                        item.className = 'sys-variant-btn';
+                        item.style.border = isChecked ? '2px solid black' : '1px solid #e5e7eb';
+                        item.style.padding = '12px';
+                        item.style.borderRadius = '12px';
+                        item.style.cursor = 'pointer';
+                        item.style.background = isChecked ? '#f9fafb' : 'white';
+                        item.style.display = 'flex';
+                        item.style.flexDirection = 'column';
+                        item.style.justifyContent = 'center';
+                        item.innerHTML = '<p style="margin:0; font-weight: ' + (isChecked ? '700' : '500') + '; font-size: 14px;">' + val + '</p>';
+                        item.onclick = (e) => {
+                            e.preventDefault(); e.stopPropagation();
+                            selectedOptions[opt.name] = val;
+                            update();
+                        };
+                        grid.appendChild(item);
+                    });
+                    optDiv.appendChild(grid);
+                    container.appendChild(optDiv);
+                });
+                container.setAttribute('data-sys-processed', 'true');
+            }
+
+            function update() {
+                const variant = variants.find(v => 
+                    v.selectedOptions.every(so => selectedOptions[so.name] === so.value)
+                );
+
+                if (variant) {
+                    let idInput = document.querySelector('input[name="id"]');
+                    if (idInput) idInput.value = variant.id;
+
+                    const priceEl = document.querySelector('.product-prices__price');
+                    if (priceEl) {
+                        const priceNum = parseFloat(variant.price) / 100;
+                        const discountedPrice = (priceNum * 0.6).toFixed(2).replace('.', ',');
+                        const originalPrice = priceNum.toFixed(2).replace('.', ',');
+                        
+                        priceEl.innerHTML = '<div style="display: flex; flex-direction: column; gap: 4px;">' +
+                                '<div style="display: flex; align-items: center; gap: 10px;">' +
+                                    '<span style="font-size: 24px; font-weight: 900; color: #b70832;">€' + discountedPrice + '</span>' +
+                                    '<span style="text-decoration: line-through; color: #8d9093; font-size: 16px;">€' + originalPrice + '</span>' +
+                                    '<span style="background: #b70832; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 700;">-40%</span>' +
+                                '</div>' +
+                                '<span style="font-size: 12px; color: #6b7280;">inkl. MwSt. zzgl. Versand</span>' +
+                            '</div>';
+                    }
+
+                    if (variant.imageUrl) {
+                        const img = document.querySelector('.product-media__image') || document.querySelector('.product-media img');
+                        if (img) img.src = variant.imageUrl;
+                    }
+                }
+                render();
+            }
+            update();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', fixVariants);
+        } else {
+            fixVariants();
+        }
+        
+        const observer = new MutationObserver((mutations) => {
+            for (const mutation of mutations) {
+                if (mutation.type === 'childList') {
+                    const container = document.querySelector('.product-options');
+                    if (container && (!container.hasAttribute('data-sys-processed') || container.innerText.includes('Wird geladen'))) {
+                        fixVariants();
+                    }
+                }
+            }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+
         document.addEventListener('click', (e) => {
             const target = e.target.closest('a, [href], [data-href], [data-url]');
             if (target) {
@@ -9952,70 +10005,22 @@ Hol das Beste aus dir heraus – mit ESN!
 
         document.addEventListener('submit', (e) => {
             const form = e.target;
-            if (form && (form.action && form.action.includes('/cart/add') || form.querySelector('.product-form__add-to-cart') || form.querySelector('[name="add"]'))) {
+            if (form && (form.action?.includes('/cart/add') || form.querySelector('.product-form__add-to-cart') || form.querySelector('[name="add"]'))) {
                 e.preventDefault(); e.stopPropagation();
-                
-                try {
-                    const formData = new FormData(form);
-                    const item = {
-                        id: formData.get('id') || 'id-' + Math.random().toString(36).substr(2, 9),
-                        quantity: parseInt(formData.get('quantity')) || 1,
-                        product_id: formData.get('product-id')
-                    };
-                    
-                    // Improved title extraction
-                    const titleEl = document.querySelector('.product-title') || document.querySelector('.product-form__title') || document.querySelector('h1') || document.querySelector('meta[property="og:title"]');
-                    item.title = titleEl ? (titleEl.tagName === 'META' ? titleEl.content : titleEl.innerText.trim()) : (document.title.split('|')[0].trim());
-
-                    // Variant info
-                    const variantTitle = document.querySelector('.product-form__variant-title')?.innerText.trim();
-                    if (variantTitle) item.title += ' - ' + variantTitle;
-
-                    // Improved price extraction - LOOK FOR PRICE INSIDE FORM FIRST
-                    let price = 12.00;
-                    const priceSelectors = [
-                        '.product-form .product-prices__price',
-                        '.product-form .price__regular',
-                        '.product-form [data-product-price]',
-                        '.product-prices__price',
-                        '.price__regular',
-                        'meta[property="product:price:amount"]'
-                    ];
-                    
-                    for (const sel of priceSelectors) {
-                        const el = document.querySelector(sel);
-                        if (el) {
-                            let text = el.tagName === 'META' ? el.content : el.innerText;
-                            if (text) {
-                                const clean = text.replace(/[^0-9,.]/g, '').replace(',', '.');
-                                const num = parseFloat(clean);
-                                if (!isNaN(num) && num > 0) {
-                                    price = num;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    
-                    // Fallback to window object price
-                    if (price === 12.00 && window.cnvs && window.cnvs.product && window.cnvs.product.price) {
-                        price = parseFloat(String(window.cnvs.product.price).replace(',', '.')) || 12.00;
-                    }
-                    
-                    item.price = price;
-                    
-                    // Improved image extraction
-                    const imgEl = document.querySelector('.product-media__image') || document.querySelector('.product-media img') || document.querySelector('.product-form img') || document.querySelector('meta[property="og:image"]');
-                    if (imgEl) item.image = imgEl.tagName === 'META' ? imgEl.content : imgEl.src;
-                    
-                    window.parent.postMessage({ t: 'sys-add-to-cart', item: item }, '*');
-                } catch(err) {
-                    window.parent.postMessage({ t: 'sys-add-to-cart', item: { id: 'error-id', title: 'ESN Produto', price: 7.00, quantity: 1 } }, '*');
-                }
+                const formData = new FormData(form);
+                const priceText = document.querySelector('.product-prices__price span')?.innerText || '12,00';
+                const item = {
+                    id: formData.get('id') || 'id-' + Math.random().toString(36).substr(2, 9),
+                    quantity: parseInt(formData.get('quantity')) || 1,
+                    title: document.querySelector('h1')?.innerText.trim() || document.title.split('|')[0].trim(),
+                    price: parseFloat(priceText.replace(/[^0-9,.]/g, '').replace(',', '.')) || 12.0
+                };
+                const imgEl = document.querySelector('.product-media__image') || document.querySelector('.product-media img');
+                if (imgEl) item.image = imgEl.src;
+                window.parent.postMessage({ t: 'sys-add-to-cart', item: item }, '*');
             }
         }, true);
-    })();
-</script>
+    })();</script>
 <script async src="//www.esn.com/cdn/shop/t/62/assets/bundle.global-components.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script>
 <script async src="//www.esn.com/cdn/shop/t/62/assets/bundle.vendors.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script><script async src="//www.esn.com/cdn/shop/t/62/assets/layout.theme.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script><link href="//www.esn.com/cdn/shop/t/62/assets/component.cart-drawer.min.js?v=1777378949116&akv=2026-03-22.block-about-blank" fetchpriority="low" rel="prefetch">
 <link href="//www.esn.com/cdn/shop/t/62/assets/component.main-product.min.js?v=1777378949116&akv=2026-03-22.block-about-blank" fetchpriority="low" rel="prefetch">
