@@ -100,6 +100,22 @@ const Index = () => {
   const mappedPath = getMappedPath();
   const iframeSrc = `/store/${mappedPath}.html${location.search}`;
 
+  const removeLoader = () => {
+    const overlay = document.getElementById("store-loading-overlay");
+    if (overlay) {
+      overlay.style.opacity = "0";
+      setTimeout(() => {
+        overlay.style.display = "none";
+      }, 500);
+    }
+  };
+
+  // Aggressive loader removal fallback
+  useEffect(() => {
+    const timer = setTimeout(removeLoader, 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="relative h-screen w-screen bg-background overflow-hidden">
       <div id="store-loading-overlay" className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background text-foreground transition-opacity duration-500">
@@ -156,44 +172,7 @@ const Index = () => {
         key={mappedPath}
         src={iframeSrc}
         title="Store"
-        onLoad={(e) => {
-          const overlay = document.getElementById("store-loading-overlay");
-          if (overlay) { overlay.style.opacity = "0"; setTimeout(() => { overlay.style.display = "none"; }, 500); }
-          try {
-            const iframe = e.target as HTMLIFrameElement;
-            const doc = iframe.contentDocument || iframe.contentWindow?.document;
-            if (!doc) return;
-
-            const script = doc.createElement('script');
-            script.textContent = `
-              (function() {
-                if (window.__sys_nav_only) return;
-                window.__sys_nav_only = true;
-
-                // NAVIGATION ONLY - No price scripts to avoid flickering
-                document.addEventListener('click', (e) => {
-                  const target = e.target.closest('a, [data-href]');
-                  if (!target) return;
-                  let urlStr = target.getAttribute('href') || target.getAttribute('data-href');
-                  if (!urlStr || urlStr.startsWith('javascript:') || urlStr.includes('#')) return;
-                  try {
-                    const url = new URL(urlStr, window.location.origin);
-                    if (url.origin === window.location.origin) {
-                      e.preventDefault();
-                      window.parent.postMessage({ t: 'sys-click', u: url.pathname + url.search }, '*');
-                    }
-                  } catch (err) {}
-                }, true);
-
-                // Hide buggy combo products if they appear in search/home
-                const style = document.createElement('style');
-                style.textContent = "[href*='elite-leistung-combo'], [href*='elite-performance-paket'] { display: none !important; }";
-                document.head.appendChild(style);
-              })();
-            `;
-            doc.body.appendChild(script);
-          } catch (err) {}
-        }}
+        onLoad={removeLoader}
         style={{ width: "100%", height: "100%", border: "none", position: "absolute", top: 0, left: 0 }}
       />
     </div>
