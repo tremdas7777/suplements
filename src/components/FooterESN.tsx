@@ -92,6 +92,7 @@ export default function FooterESN() {
           <div className="esn-footer__col">
             <p className="esn-footer__col-title">Kategorien</p>
             <ul className="esn-footer__links">
+              <li><a href="/products/esn-elite-leistung-combo" style={{ color: "#4ec3e0", fontWeight: 800 }}>Elite Combo ⚡</a></li>
               <li><a href="/collections/proteine">Proteinpulver</a></li>
               <li><a href="/collections/whey-protein">Whey Protein</a></li>
               <li><a href="/collections/protein-shaker">Protein Shaker</a></li>

@@ -58,6 +58,27 @@ export default function HeaderESN() {
             </button>
           </div>
 
+          <nav className="esnhdr__nav esnhdr__desktop-only" style={{ display: "flex", gap: 20, marginLeft: 24 }}>
+            <button 
+              onClick={() => navigate("/products/esn-elite-leistung-combo")}
+              style={{ background: "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 800, color: "#b70832", textTransform: "uppercase", letterSpacing: "0.5px" }}
+            >
+              Elite Combo ⚡
+            </button>
+            <button 
+              onClick={() => navigate("/collections/proteine")}
+              style={{ background: "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 700, color: "#232323", textTransform: "uppercase" }}
+            >
+              Proteine
+            </button>
+            <button 
+              onClick={() => navigate("/collections/bestseller")}
+              style={{ background: "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 700, color: "#232323", textTransform: "uppercase" }}
+            >
+              Bestseller
+            </button>
+          </nav>
+
           {/* Right: Search, Country, Account, Wishlist, Cart */}
           <div className="esnhdr__right">
             {/* Desktop Search */}
