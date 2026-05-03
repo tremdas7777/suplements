@@ -5,137 +5,172 @@ import HeaderESN from "../components/HeaderESN";
 import FooterESN from "../components/FooterESN";
 import { useCart } from "../context/CartContext";
 
+const COMBO_HERO =
+  "https://kazoomglobal.lovable.app/esn-combo-main.jpg";
+
 const COMBO_ITEMS = [
   {
     key: "designer_whey",
     name: "Designer Whey Protein",
     subtitle: "908g",
     slug: "esn-designer-whey-protein",
-    image: "https://www.esn.com/cdn/shop/files/DesignerWhey_908g_AlmondCoconutFlavor_2024x2024_shop-iCbreuNy_c640bbf7-d33b-4e04-9670-3ab420c5176d.jpg?width=800",
+    image: "https://www.esn.com/cdn/shop/files/DesignerWhey_908g_MilkChocolateFlavor_2024x2024_shop-rHcG0v3w_609c8915-2161-4548-9969-93857677536b_grande.jpg?v=1744207024",
     flavors: [
       "Chocolate Fudge", "Vanilla Milk", "Strawberry Cream", "Banana",
       "Cookies & Cream", "Cinnamon Roll", "Hazelnut Nougat", "Almond Coconut",
       "Caramel", "Neutral",
     ],
+    flavorImages: {
+      "Chocolate Fudge": "https://www.esn.com/cdn/shop/files/DesignerWhey_908g_MilkChocolateFlavor_2024x2024_shop-rHcG0v3w_609c8915-2161-4548-9969-93857677536b_grande.jpg?v=1744207024",
+      "Vanilla Milk": "https://www.esn.com/cdn/shop/files/DesignerWhey_908g_VanillaMilkFlavor_2024x2024_shop-6m4UKnvQ_d7f770e0-8cc4-464a-92cf-45c0ec1b4c8f_grande.jpg?v=1770125111",
+      "Strawberry Cream": "https://www.esn.com/cdn/shop/files/DesignerWhey_908g_StrawberryCreamFlavor_2024x2024_shop-ACyKV-vb_8ba46feb-21f8-4752-89ec-09c7a5e8fce6_grande.jpg?v=1744207029",
+      "Banana": "https://www.esn.com/cdn/shop/files/DesignerWhey_908g_BananaMilkFlavor_2024x2024_shop-JWA6s_XC_61ae5c68-a385-4524-aba7-fba0aa0a64bc_grande.jpg?v=1744207024",
+      "Cookies & Cream": "https://www.esn.com/cdn/shop/files/DesignerWhey_908g_DarkCookies_CreamFlavor_2024x2024_shop-Hz8p4pvq_f50ebbb0-b4a5-48a5-8cd0-c65fe58b5503_grande.jpg?v=1744207026",
+      "Cinnamon Roll": "https://www.esn.com/cdn/shop/files/DesignerWhey_908g_CinnamonCerealFlavor_2024x2024_shop-rDT1jzi2_76e58790-825e-4162-8a90-dab97fe6732d_grande.jpg?v=1744207029",
+      "Hazelnut Nougat": "https://www.esn.com/cdn/shop/files/DesignerWhey_908g_MilkyHazelnutFlavor_2024x2024_shop-_CrSra0j_a43383b2-de83-4a2c-9c79-bcc60dd5a182_grande.jpg?v=1744207025",
+      "Almond Coconut": "https://www.esn.com/cdn/shop/files/DesignerWhey_908g_AlmondCoconutFlavor_2024x2024_shop-iCbreuNy_c640bbf7-d33b-4e04-9670-3ab420c5176d_grande.jpg?v=1744207018",
+      "Caramel": "https://www.esn.com/cdn/shop/files/DesignerWhey_908g_StroopwafelFlavor_2024x2024_shop-6SKtnm6Q_2058ab2f-6a1d-4e75-9294-503618c39aa9_grande.jpg?v=1760971147",
+      "Neutral": "https://www.esn.com/cdn/shop/files/DesignerWhey_908g_NeutralFlavor_2024x2024_shop-fObg7Bqh_61341654-6b3c-4e34-89b4-e3647a506a6a_grande.jpg?v=1744207027",
+    },
   },
   {
     key: "isoclear",
     name: "Isoclear Whey Isolate",
     subtitle: "908g",
     slug: "esn-isoclear-whey-isolate",
-    image: "https://www.esn.com/cdn/shop/files/PDP_Flavor_IC_Royal_Candy_908g-G78RgZbq.jpg?width=800",
+    image: "https://www.esn.com/cdn/shop/files/IsoClear_908g_RoyalCandyFlavor_2024x2024_shop-bPcaSXnC_b832db6a-040c-4214-8957-cec62c0f6245_grande.jpg?v=1775741941",
     flavors: [
       "Green Apple", "Peach Iced Tea", "Lemon Iced Tea", "Tropical Punch",
-      "Rainbow Candy", "Cherry Lemonade", "Royal Candy", "Watermelon",
+      "Royal Candy", "Cherry Lemonade", "Strawberry Lime",
     ],
+    flavorImages: {
+      "Green Apple": "https://www.esn.com/cdn/shop/files/IsoClear_908g_GreenAppleFlavor_2024x2024_shop-PTedBm7D_9eafa0fc-ddc0-4a9a-9082-c5a24c2cd810_grande.jpg?v=1750793074",
+      "Peach Iced Tea": "https://www.esn.com/cdn/shop/files/IsoClear_908g_PeachIcedTeaFlavor_2024x2024_shop-YaY8xvyE_d0bdad97-4b4a-48e2-b6cd-74880a53648c_grande.jpg?v=1750793075",
+      "Lemon Iced Tea": "https://www.esn.com/cdn/shop/files/IsoClear_908g_LemonIcedTeaFlavor_2024x2024_shop-oesb3JOI_12638e5f-8923-47ca-99e3-8dcdb1be0e47_grande.jpg?v=1750793074",
+      "Tropical Punch": "https://www.esn.com/cdn/shop/files/IsoClear_908g_TropicalPunchFlavor_2024x2024_shop-h_ENX4yh_58822942-a31d-46a1-aa8d-34151c02182d_grande.jpg?v=1769161832",
+      "Royal Candy": "https://www.esn.com/cdn/shop/files/IsoClear_908g_RoyalCandyFlavor_2024x2024_shop-bPcaSXnC_b832db6a-040c-4214-8957-cec62c0f6245_grande.jpg?v=1775741941",
+      "Cherry Lemonade": "https://www.esn.com/cdn/shop/files/IsoClear_908g_CherryLemonadeFlavor_2024x2024_shop-_7uaw3Tc_4902cd58-f92f-4bdc-b030-6b903b3d3465_grande.jpg?v=1750793072",
+      "Strawberry Lime": "https://www.esn.com/cdn/shop/files/IsoClear_908g_StrawberryLimeFlavor_2024x2024_shop-CNT7rmQH_4371189c-ef25-4061-801e-d5f87defeec9_grande.jpg?v=1750793076",
+    },
   },
   {
     key: "crank",
     name: "Crank Pre-Workout",
     subtitle: "380g",
     slug: "esn-crank",
-    image: "https://www.esn.com/cdn/shop/files/CrankPump_380g_BlackberryFlavor_dunkel-2SHtR4Vf.jpg?width=800",
+    image: "https://www.esn.com/cdn/shop/files/Crank_380g_BlackberryFlavor_2024x2024_shop-Ky6j3hay_e04a4802-9642-4856-ad9b-69379cd8f308_grande.jpg?width=800",
     flavors: [
       "Mango Maui", "Sour Apple", "Cola", "Blue Raspberry",
       "Tropical", "Blackberry", "Lemon Lime",
     ],
+    flavorImages: {
+      "Mango Maui": "https://www.esn.com/cdn/shop/files/Crank_380g_TropicalPunchFlavor_2024x2024_shop-ZU6htQAB_e3bdf344-0570-4539-92f4-26423f9da1ae_grande.jpg?width=800",
+      "Sour Apple": "https://www.esn.com/cdn/shop/files/Crank_380g_SourPowerFlavor_2024x2024_shop-Qh3Xo9i0_df3d2f9b-1e08-4d98-a43f-7f0a1db332f7_grande.jpg?width=800",
+      "Cola": "https://www.esn.com/cdn/shop/files/Crank_380g_ColaFlavor_2024x2024_shop-ndz-vYDZ_c8f21012-f0d7-4a90-911b-4eccda846822_grande.jpg?width=800",
+      "Blue Raspberry": "https://www.esn.com/cdn/shop/files/Crank_380g_BlackberryFlavor_2024x2024_shop-Ky6j3hay_e04a4802-9642-4856-ad9b-69379cd8f308_grande.jpg?width=800",
+      "Tropical": "https://www.esn.com/cdn/shop/files/Crank_380g_TropicalPunchFlavor_2024x2024_shop-ZU6htQAB_e3bdf344-0570-4539-92f4-26423f9da1ae_grande.jpg?width=800",
+      "Blackberry": "https://www.esn.com/cdn/shop/files/Crank_380g_BlackberryFlavor_2024x2024_shop-Ky6j3hay_e04a4802-9642-4856-ad9b-69379cd8f308_grande.jpg?width=800",
+      "Lemon Lime": "https://www.esn.com/cdn/shop/files/Crank_380g_ColaFlavor_2024x2024_shop-ndz-vYDZ_c8f21012-f0d7-4a90-911b-4eccda846822_grande.jpg?width=800",
+    },
   },
   {
     key: "designer_bar",
-    name: "Designer Protein Bar",
-    subtitle: "12x45g",
+    name: "Designer Protein Bar Box",
+    subtitle: "12x45g Box",
     slug: "designer-bar",
-    image: "https://www.esn.com/cdn/shop/files/DesignerBar_RoyalChocolate_12x45gFront_2024x2024_shop-1_01d346b7-42b6-4635-a216-9c3a25719296.jpg?width=800",
+    image: "https://www.esn.com/cdn/shop/files/DesignerBar_45g_Tray_DarkChocolateSaltedAlmondFlavor_2024x2024_shop-4mvbqa9t_ff7823ec-c07e-4039-80a7-f3bf95d0638a_grande.jpg?v=1773753890",
     flavors: [
-      "Royal Chocolate", "Strawberry Cream", "Salted Caramel", "Cookies & Cream",
-      "Coconut", "Peanut Butter Cup", "Vanilla Crunch",
+      "Hazelnut Nougat", "White Chocolate Pistachio", "Strawberry Yogurt", "Dark Cookie White Choc",
+      "Cinnamon Cereal", "Dark Chocolate Salted Almond", "Fudge Brownie", "Almond Coconut",
+      "Peanut Caramel",
     ],
+    flavorImages: {
+      "Hazelnut Nougat": "https://www.esn.com/cdn/shop/files/DesignerBar_45g_Tray_HazelnutNougatFlavor_2024x2024_shop-ET2nendt_5f890e73-0059-418d-89d1-a13f30acc5cb_grande.jpg?v=1773753890",
+      "White Chocolate Pistachio": "https://www.esn.com/cdn/shop/files/DesignerBar_45g_Tray_WhiteChocolatePistachioFlavor_2024x2024_shop-zVk2d4vy_8620a7dd-2c80-4c28-b139-43621561eb6e_grande.jpg?v=1773666563",
+      "Strawberry Yogurt": "https://www.esn.com/cdn/shop/files/DesignerBar_45g_Tray_StrawberryYogurtFlavor_2024x2024_shop-2O331kPD_f4de1673-b0fe-4be6-8b6e-e7820f3d04fb_grande.jpg?v=1774018443",
+      "Dark Cookie White Choc": "https://www.esn.com/cdn/shop/files/DesignerBar_45g_Tray_DarkCookieWhiteChocFlavor_2024x2024_shop-BIZkYGGC_5ff82805-9cc1-436a-a5da-dc4d21a26286_grande.jpg?v=1773753890",
+      "Cinnamon Cereal": "https://www.esn.com/cdn/shop/files/DesignerBar_45g_Tray_CinnamonCerealFlavor_2024x2024_shop-nSvCXZu_932d9be0-b929-477a-abae-5b11fe4db8f6_grande.jpg?v=1773753890",
+      "Dark Chocolate Salted Almond": "https://www.esn.com/cdn/shop/files/DesignerBar_45g_Tray_DarkChocolateSaltedAlmondFlavor_2024x2024_shop-4mvbqa9t_ff7823ec-c07e-4039-80a7-f3bf95d0638a_grande.jpg?v=1773753890",
+      "Fudge Brownie": "https://www.esn.com/cdn/shop/files/DesignerBar_45g_Tray_FudgeBrownieFlavor_2024x2024_shop-J7HtK_vk_9b11199f-c7c3-4427-8d09-a54706b38c73_grande.jpg?v=1773753890",
+      "Almond Coconut": "https://www.esn.com/cdn/shop/files/DesignerBar_45g_Tray_AlmondCoconutFlavor_2024x2024_shop-vR2hiYO1_8ba69622-ec3b-4b5e-a91c-38ac88f42cea_grande.jpg?v=1773753890",
+      "Peanut Caramel": "https://www.esn.com/cdn/shop/files/DesignerBar_45g_Tray_PeanutCaramelFlavor_2024x2024_shop-T23IBZeb_f41fa2c6-62e8-47cc-b56e-937c982e4195_grande.jpg?v=1774280361",
+    },
   },
   {
     key: "daily",
     name: "ESN Daily",
     subtitle: "30 Sachets",
     slug: "esn-daily",
-    image: "https://www.esn.com/cdn/shop/files/DesignerWhey_908g_StrawberryCreamFlavor_2024x2024_shop-4bFh8F4I_c7e7c5e3-9e63-46a0-a63e-3f0b5b9e0c00.jpg?width=800",
+    image: "https://www.esn.com/cdn/shop/files/Daily_480g_CactusFruitFlavor_2024x2024_shop-ZTJBj2Ln_f6c0fd1b-c9af-43b4-9ff0-00a180714e8b_grande.jpg?width=800",
     flavors: ["Lemon", "Orange", "Mixed"],
+    flavorImages: {
+      "Lemon": "https://www.esn.com/cdn/shop/files/Daily_480g_CactusFruitFlavor_2024x2024_shop-ZTJBj2Ln_f6c0fd1b-c9af-43b4-9ff0-00a180714e8b_grande.jpg?width=800",
+      "Orange": "https://www.esn.com/cdn/shop/files/Daily_480g_SourPowerFlavor_2024x2024_shop-0opuo55Y_0b69a8d3-33c2-48bf-bb54-ebd83231c412_grande.jpg?width=800",
+      "Mixed": "https://www.esn.com/cdn/shop/files/Daily_480g_GreenAppleFlavor_2024x2024_shop-kp6ACJIR_a42c6590-af99-454d-bfba-1996eded22ef_grande.jpg?width=800",
+    },
   },
   {
     key: "creatine",
     name: "Ultrapure Kreatin Pulver",
     subtitle: "500g",
     slug: "esn-ultrapure-creatine-monohydrate",
-    image: "https://www.esn.com/cdn/shop/files/UltrapureCreatine_500g_Beutel_Front-JjTmKxEV.jpg?width=800",
+    image: "https://www.esn.com/cdn/shop/files/UltrapureCreatine_500g_Beutel_NeutralFlavor_2024x2024_shop-6v02cWzQ_a41b1095-1dad-4771-9e1b-4d233d8f358b_grande.jpg?width=800",
     flavors: ["Neutral", "Fresh Cherry", "Green Apple", "Lemon"],
+    flavorImages: {
+      "Neutral": "https://www.esn.com/cdn/shop/files/UltrapureCreatine_500g_Beutel_NeutralFlavor_2024x2024_shop-6v02cWzQ_a41b1095-1dad-4771-9e1b-4d233d8f358b_grande.jpg?width=800",
+      "Fresh Cherry": "https://www.esn.com/cdn/shop/files/UltrapureCreatine_250g_FreshCherryFlavor_2024x2024_shop-u7_Pb9i1_97ca7821-3baa-4706-ac4e-6b6fa1f803ae_grande.jpg?width=800",
+      "Green Apple": "https://www.esn.com/cdn/shop/files/UltrapureCreatine_500g_Beutel_NeutralFlavor_2024x2024_shop-6v02cWzQ_a41b1095-1dad-4771-9e1b-4d233d8f358b_grande.jpg?width=800",
+      "Lemon": "https://www.esn.com/cdn/shop/files/UltrapureCreatine_500g_Beutel_NeutralFlavor_2024x2024_shop-6v02cWzQ_a41b1095-1dad-4771-9e1b-4d233d8f358b_grande.jpg?width=800",
+    },
   },
   {
     key: "ashwa",
     name: "Ashwa+ Kapseln",
     subtitle: "90 Kaps.",
     slug: "esn-ashwa-pro",
-    image: "https://www.esn.com/cdn/shop/files/AshwaPro_90Caps_dunkel.jpg?width=800",
+    image: "https://www.esn.com/cdn/shop/files/Ashwa__120Caps_2024x2024_shop-ZiGfqmvZ_617765a7-6ae0-4a08-8e92-cc92773b2760_grande.jpg?width=800",
     flavors: ["Standard"],
+    flavorImages: {
+      "Standard": "https://www.esn.com/cdn/shop/files/Ashwa__120Caps_2024x2024_shop-ZiGfqmvZ_617765a7-6ae0-4a08-8e92-cc92773b2760_grande.jpg?width=800",
+    },
   },
   {
     key: "magnesium",
     name: "Magnesium Complex",
     subtitle: "120 Kaps.",
     slug: "magnesium-complex",
-    image: "https://www.esn.com/cdn/shop/files/MagnesiumComplex_120Caps_dunkel.jpg?width=800",
+    image: "https://www.esn.com/cdn/shop/files/MagnesiumComplex_90VeganCaps_2024x2024_shop-Nyzniicd_ab59e585-d0b9-45e7-92f6-a9ee5b94598a_grande.jpg?width=800",
     flavors: ["Standard"],
+    flavorImages: {
+      "Standard": "https://www.esn.com/cdn/shop/files/MagnesiumComplex_90VeganCaps_2024x2024_shop-Nyzniicd_ab59e585-d0b9-45e7-92f6-a9ee5b94598a_grande.jpg?width=800",
+    },
   },
 ];
 
-const GALLERY_IMAGES = COMBO_ITEMS.map(i => ({ src: i.image, label: i.name }));
+function getFlavorImage(item: typeof COMBO_ITEMS[0], flavor: string): string {
+  return item.flavorImages[flavor] || item.image;
+}
+
+const GALLERY_IMAGES = [
+  { src: COMBO_HERO, label: "ESN Elite Leistung Combo" },
+  ...COMBO_ITEMS.map(i => ({ src: i.image, label: i.name })),
+];
+
 const COMBO_PRICE = 69.0;
 const ORIGINAL_PRICE = 129.9;
 const DISCOUNT_PCT = Math.round((1 - COMBO_PRICE / ORIGINAL_PRICE) * 100);
 
-/* ── Selection tile (ESN selection-tab style) ── */
-function SelectionTile({
-  label,
-  subtitle,
-  selected,
-  onClick,
-}: {
-  label: string;
-  subtitle?: string;
-  selected: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <div
-      className={`selection-tab product-options__value ${selected ? "selection-tab--active" : ""}`}
-      onClick={onClick}
-    >
-      <input
-        type="radio"
-        name="flavor"
-        className="selection-tab__input visually-hidden"
-        checked={selected}
-        onChange={onClick}
-        tabIndex={0}
-      />
-      <label className="selection-tab__label text-body-s-regular text-body-m-regular-desktop">
-        <p className="text-mobile-paragraph-m-semibold text-desktop-paragraph-m-semibold">{label}</p>
-        {subtitle && (
-          <p className="text-mobile-paragraph-xs-regular text-desktop-paragraph-xs-regular">{subtitle}</p>
-        )}
-      </label>
-    </div>
-  );
-}
-
-/* ── Custom select dropdown (ESN product-custom-select) ── */
-function CustomSelect({
-  label,
-  options,
+/* ── Dropdown flavor selector with thumbnails ── */
+function FlavorDropdown({
+  flavorImageMap,
+  flavors,
   selected,
   onSelect,
 }: {
-  label: string;
-  options: string[];
+  flavorImageMap: Record<string, string>;
+  flavors: string[];
   selected: string;
-  onSelect: (v: string) => void;
+  onSelect: (f: string) => void;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -149,131 +184,108 @@ function CustomSelect({
   }, [open]);
 
   return (
-    <div className="product-options__option" ref={ref}>
-      <div className="product-options__dropdown">
-        <div className="product-custom-select">
-          <button
-            type="button"
-            className="product-custom-select__trigger product-options__variant-select text-mobile-paragraph-m-bold text-desktop-paragraph-m-bold"
-            onClick={() => setOpen(o => !o)}
-          >
-            <div className="product-custom-select__image-wrapper" />
-            <div className="product-custom-select__content">
-              <div className="product-custom-select__title-row">
-                <span className="text-mobile-paragraph-m-bold text-desktop-paragraph-s-bold">{selected}</span>
-              </div>
-              <div className="product-custom-select__option-count text-mobile-paragraph-xs-regular text-desktop-paragraph-xs-regular">
-                {options.length} Varianten
-              </div>
-            </div>
-          </button>
-          {open && (
-            <div className="product-custom-select__dropdown">
-              {options.map(opt => (
-                <button
-                  key={opt}
-                  type="button"
-                  className={`product-custom-select__option ${opt === selected ? "active" : ""}`}
-                  onClick={() => { onSelect(opt); setOpen(false); }}
-                >
-                  <span>{opt}</span>
-                  {opt === selected && (
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                  )}
-                </button>
-              ))}
-            </div>
-          )}
+    <div className="flavor-dropdown" ref={ref}>
+      <button
+        type="button"
+        className="flavor-dropdown__trigger"
+        onClick={() => setOpen(o => !o)}
+      >
+        <span className="flavor-dropdown__trigger-content">
+          <img src={flavorImageMap[selected]} alt={selected} className="flavor-dropdown__trigger-img" />
+          <span>{selected}</span>
+        </span>
+        <svg className={`flavor-dropdown__chevron ${open ? "open" : ""}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+      {open && (
+        <div className="flavor-dropdown__list">
+          {flavors.map(f => (
+            <button
+              key={f}
+              type="button"
+              className={`flavor-dropdown__option ${f === selected ? "active" : ""}`}
+              onClick={() => { onSelect(f); setOpen(false); }}
+            >
+              <img src={flavorImageMap[f]} alt={f} className="flavor-dropdown__option-img" />
+              <span className="flavor-dropdown__option-name">{f}</span>
+              {f === selected && (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              )}
+            </button>
+          ))}
         </div>
-      </div>
+      )}
     </div>
   );
 }
 
-/* ── Flavor selector: tiles for ≤6, dropdown for more ── */
-function FlavorSelector({
-  name,
-  flavors,
+/* ── Flavor selector per product ── */
+function ProductFlavorSelector({
+  item,
   selected,
   onSelect,
 }: {
-  name: string;
-  flavors: string[];
+  item: typeof COMBO_ITEMS[0];
   selected: string;
   onSelect: (f: string) => void;
 }) {
-  if (flavors.length <= 1) {
+  if (item.flavors.length <= 1) {
     return (
-      <div className="product-options__option">
-        <div className="flavor-single">{selected}</div>
-      </div>
-    );
-  }
-
-  if (flavors.length <= 6) {
-    return (
-      <div className="product-options__option">
-        <div className="product-options__values product-options__grid-2">
-          {flavors.map(f => (
-            <SelectionTile
-              key={f}
-              label={f}
-              selected={f === selected}
-              onClick={() => onSelect(f)}
-            />
-          ))}
-        </div>
+      <div className="flavor-static">
+        <span className="flavor-static__inner">
+          <img src={getFlavorImage(item, selected)} alt={selected} className="flavor-static__img" />
+          <span>{selected}</span>
+        </span>
       </div>
     );
   }
 
   return (
-    <CustomSelect
-      label={name}
-      options={flavors}
+    <FlavorDropdown
+      flavorImageMap={item.flavorImages}
+      flavors={item.flavors}
       selected={selected}
       onSelect={onSelect}
     />
   );
 }
 
-/* ── Accordion (ESN product-info-overlay style) ── */
+/* ── Accordion ── */
 function AccordionSection({ title, children }: { title: string; children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="product-info-overlay__item">
+    <div className="overlay-item">
       <button
         type="button"
-        className="button product-info-overlay__accordion-item button--text button--medium"
+        className="overlay-btn"
         onClick={() => setOpen(o => !o)}
       >
-        <span className="button__icon">
-          <span className="button__default-icon">
-            <svg className="icon icon__plus" viewBox="0 0 24 24">
-              <path d="M2.75 12a1 1 0 0 1 1-1h16.5a1 1 0 1 1 0 2H3.75a1 1 0 0 1-1-1Z" fillRule="evenodd" clipRule="evenodd" />
-              <path d="M12 2.75a1 1 0 0 1 1 1v16.5a1 1 0 1 1-2 0V3.75a1 1 0 0 1 1-1Z" fillRule="evenodd" clipRule="evenodd" />
-            </svg>
-          </span>
+        <span className="overlay-btn__icon">
+          <svg viewBox="0 0 24 24" style={{
+            width: 20, height: 20, transition: "transform 0.2s",
+            transform: open ? "rotate(45deg)" : "none",
+          }}>
+            <path d="M2.75 12a1 1 0 011-1h16.5a1 1 0 110 2H3.75a1 1 0 01-1-1Z" fill="currentColor" />
+            <path d="M12 2.75a1 1 0 011 1v16.5a1 1 0 11-2 0V3.75a1 1 0 011-1Z" fill="currentColor" />
+          </svg>
         </span>
-        <span className="button__label text-button-medium-textlink">
+        <span className="overlay-btn__label">
           <span className="text-desktop">{title}</span>
           <span className="text-mobile">{title}</span>
         </span>
       </button>
       <div
-        className="product-info-overlay__content-wrapper"
         style={{
-          maxHeight: open ? "3000px" : "0",
+          maxHeight: open ? "4000px" : "0",
           opacity: open ? 1 : 0,
           overflow: "hidden",
-          transition: "max-height 0.35s ease, opacity 0.25s ease",
+          transition: "max-height 0.4s ease, opacity 0.3s ease",
         }}
       >
-        <div className="product-info-overlay__content">
-          {children}
-        </div>
+        <div className="overlay-content">{children}</div>
       </div>
     </div>
   );
@@ -295,7 +307,7 @@ export default function ComboProduct() {
   const handleSelect = useCallback((key: string, flavor: string) => {
     setSelections(prev => ({ ...prev, [key]: flavor }));
     const idx = COMBO_ITEMS.findIndex(i => i.key === key);
-    if (idx >= 0) setGalleryIdx(idx);
+    if (idx >= 0) setGalleryIdx(idx + 1);
   }, []);
 
   const handleAddToCart = useCallback(() => {
@@ -304,7 +316,7 @@ export default function ComboProduct() {
       title: "ESN Elite Leistung Combo",
       price: COMBO_PRICE,
       quantity: 1,
-      image: GALLERY_IMAGES[0].src,
+      image: COMBO_HERO,
       isCombo: true,
       comboSelections: { ...selections },
     });
@@ -314,312 +326,199 @@ export default function ComboProduct() {
   }, [selections, addItem, openCart]);
 
   return (
-    <div className="esn-page">
-      {/* Announcement bar */}
-      <div className="announcement-bar">
-        FIBO WEEK · SPARE {DISCOUNT_PCT}% MIT DEM ELITE LEISTUNG COMBO
+    <div className="combo-page">
+      {/* Announcement */}
+      <div className="combo-announcement">
+        ESN WEEK · SPARE BIS ZU 47% MIT DEM ELITE LEISTUNGSPAKET
       </div>
 
       <HeaderESN />
 
-      {/* ── USP Bar (ESN product-usps) ── */}
-      <div className="product-usps" style={{ backgroundColor: "#000", color: "#fff" }}>
-        <div className="product-usps__item">
-          <img
-            src="//www.esn.com/cdn/shop/files/Star_1.svg?v=1766158638&width=48"
-            alt=""
-            width="48"
-            height="48"
-            className="product-usps__icon"
-          />
-          <span className="product-usps__title">&gt;76.000 5 Sterne Bewertungen</span>
-        </div>
-        <div className="product-usps__item">
-          <img
-            src="//www.esn.com/cdn/shop/files/TestTube.svg?v=1766161275&width=48"
-            alt=""
-            width="48"
-            height="48"
-            className="product-usps__icon"
-          />
-          <span className="product-usps__title">Laborgeprüfte Qualität</span>
-        </div>
-        <div className="product-usps__item">
-          <img
-            src="//www.esn.com/cdn/shop/files/Cherries_1.svg?v=1766158638&width=48"
-            alt=""
-            width="48"
-            height="48"
-            className="product-usps__icon"
-          />
-          <span className="product-usps__title">Abgestimmte Flavor-Profile</span>
-        </div>
-      </div>
+      {/* ── Main ── */}
+      <section className="combo-main">
+        <div className="combo-wrapper">
+          <div className="combo-layout">
 
-      {/* ── Main Product Section ── */}
-      <section
-        className="main-product__section"
-        style={{
-          "--color-background": "#000000",
-          "--color-background-custom": "#4ec3e0",
-          "--color-text-custom": "#000000",
-          "--color-background-product-usps": "#000000",
-          "--color-text-product-usps": "#ffffff",
-        } as React.CSSProperties}
-        aria-labelledby="template-title"
-      >
-        <div className="main-product">
-          <div className="grid">
             {/* ── Gallery ── */}
-            <div
-              id="product-gallery"
-              className="product-gallery-wrapper col xs-span l7"
-            >
-              <div className="product-gallery product-gallery--tabs product-gallery--vertical-desktop">
-                <div className="product-gallery__thumbnails-container col l1">
-                  <div className="product-gallery-carousel product-gallery-carousel--gallery product-gallery__thumbnails-carousel">
-                    {GALLERY_IMAGES.map((img, i) => (
-                      <button
-                        key={i}
-                        className={`gallery-thumb ${i === galleryIdx ? "is-active" : ""}`}
-                        onClick={() => setGalleryIdx(i)}
-                      >
-                        <img src={img.src} alt={img.label} />
-                      </button>
-                    ))}
-                  </div>
+            <div className="combo-gallery">
+              {/* Main image */}
+              <div className="combo-gallery__main">
+                <div className="combo-gallery__ratio">
+                  <img
+                    src={GALLERY_IMAGES[galleryIdx].src}
+                    alt={GALLERY_IMAGES[galleryIdx].label}
+                    className="combo-gallery__img"
+                  />
                 </div>
-                <div className="col xs-span l6">
-                  <div className="product-gallery__main-container">
-                    <div className="product-gallery-carousel product-gallery-carousel--gallery product-gallery__main-carousel">
-                      <div className="product-gallery-carousel__media-container">
-                        <button className="product-gallery__zoom" type="button">
-                          <svg className="icon icon__plus" viewBox="0 0 24 24">
-                            <path d="M2.75 12a1 1 0 0 1 1-1h16.5a1 1 0 1 1 0 2H3.75a1 1 0 0 1-1-1Z" fillRule="evenodd" clipRule="evenodd" />
-                            <path d="M12 2.75a1 1 0 0 1 1 1v16.5a1 1 0 1 1-2 0V3.75a1 1 0 0 1 1-1Z" fillRule="evenodd" clipRule="evenodd" />
-                          </svg>
-                          <span className="visually-hidden">Zoomen</span>
-                        </button>
-                        <span
-                          className="preload-image product-gallery-carousel__image"
-                          style={{ paddingBottom: "100%" }}
-                        >
-                          <img
-                            src={GALLERY_IMAGES[galleryIdx].src}
-                            alt={GALLERY_IMAGES[galleryIdx].label}
-                            width="720"
-                            height="720"
-                            className="preload-image"
-                            style={{ objectPosition: "50% 50%" }}
-                          />
-                        </span>
-                      </div>
-                    </div>
-                    {/* Navigation arrows */}
-                    <div className="splide__arrows">
-                      <button
-                        className="splide__arrow splide__arrow--prev"
-                        onClick={() => setGalleryIdx(p => (p > 0 ? p - 1 : GALLERY_IMAGES.length - 1))}
-                      >
-                        <ChevronLeft size={16} />
-                      </button>
-                      <button
-                        className="splide__arrow splide__arrow--next"
-                        onClick={() => setGalleryIdx(p => (p < GALLERY_IMAGES.length - 1 ? p + 1 : 0))}
-                      >
-                        <ChevronRight size={16} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <button
+                  className="combo-gallery__arrow combo-gallery__arrow--prev"
+                  onClick={() => setGalleryIdx(p => (p > 0 ? p - 1 : GALLERY_IMAGES.length - 1))}
+                >
+                  <ChevronLeft size={20} />
+                </button>
+                <button
+                  className="combo-gallery__arrow combo-gallery__arrow--next"
+                  onClick={() => setGalleryIdx(p => (p < GALLERY_IMAGES.length - 1 ? p + 1 : 0))}
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </div>
+
+              {/* Thumbnails - desktop left sidebar */}
+              <div className="combo-gallery__thumbs-side">
+                {GALLERY_IMAGES.map((img, i) => (
+                  <button
+                    key={i}
+                    className={`combo-gallery__thumb ${i === galleryIdx ? "is-active" : ""}`}
+                    onClick={() => setGalleryIdx(i)}
+                  >
+                    <img src={img.src} alt={img.label} />
+                  </button>
+                ))}
+              </div>
+
+              {/* Thumbnails - mobile bottom row */}
+              <div className="combo-gallery__thumbs-mobile">
+                {GALLERY_IMAGES.map((img, i) => (
+                  <button
+                    key={i}
+                    className={`combo-gallery__thumb ${i === galleryIdx ? "is-active" : ""}`}
+                    onClick={() => setGalleryIdx(i)}
+                  >
+                    <img src={img.src} alt={img.label} />
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* ── Product info (buy box) ── */}
-            <div className="main-product__main col xs-span l5">
-              <div className="main-product__buy-box">
-                <div className="main-product__details">
-                  <h1
-                    id="template-title"
-                    className="title-mobile-m-bold title-desktop-m-bold main-product__title"
-                  >
-                    ESN Elite Leistung Combo
-                  </h1>
+            {/* ── Buy box ── */}
+            <div className="combo-buybox">
+              <h1 className="combo-title">ESN Elite Leistung Combo</h1>
 
-                  {/* Star rating */}
-                  <a className="star-rating-link main-product__reviews" href="#reviews">
-                    <span className="visually-hidden">Produktbewertungen</span>
-                    <div className="star-rating">
-                      <div className="star-rating__stars">
-                        {[1, 2, 3, 4, 5].map(i => (
-                          <svg key={i} className="icon icon__star-filled" viewBox="0 0 20 20">
-                            <path d="m10.002 14.774 4.275 2.629a.656.656 0 0 0 .978-.717l-1.163-4.905 3.805-3.282a.662.662 0 0 0-.374-1.154l-4.993-.406-1.923-4.657a.654.654 0 0 0-1.21 0L7.474 6.94l-4.993.406a.661.661 0 0 0-.375 1.158l3.805 3.282-1.162 4.901a.656.656 0 0 0 .978.717z" />
-                          </svg>
-                        ))}
-                      </div>
-                    </div>
-                  </a>
-
-                  {/* USP list */}
-                  <ul className="main-product__usp">
-                    <li>
-                      <svg className="icon icon__check-outline" viewBox="0 0 24 24">
-                        <path d="M20.957 6.043a1 1 0 0 1 0 1.415l-10.5 10.5a1 1 0 0 1-1.414 0l-5.25-5.25a1 1 0 1 1 1.414-1.415l4.543 4.543 9.793-9.793a1 1 0 0 1 1.414 0Z" fill="#FFF" fillRule="evenodd" clipRule="evenodd" />
-                      </svg>
-                      <span>8 Premium-Produkte in einem Bundle</span>
-                    </li>
-                    <li>
-                      <svg className="icon icon__check-outline" viewBox="0 0 24 24">
-                        <path d="M20.957 6.043a1 1 0 0 1 0 1.415l-10.5 10.5a1 1 0 0 1-1.414 0l-5.25-5.25a1 1 0 1 1 1.414-1.415l4.543 4.543 9.793-9.793a1 1 0 0 1 1.414 0Z" fill="#FFF" fillRule="evenodd" clipRule="evenodd" />
-                      </svg>
-                      <span>Über {DISCOUNT_PCT}% Ersparnis gegenüber Einzelkauf</span>
-                    </li>
-                    <li>
-                      <svg className="icon icon__check-outline" viewBox="0 0 24 24">
-                        <path d="M20.957 6.043a1 1 0 0 1 0 1.415l-10.5 10.5a1 1 0 0 1-1.414 0l-5.25-5.25a1 1 0 1 1 1.414-1.415l4.543 4.543 9.793-9.793a1 1 0 0 1 1.414 0Z" fill="#FFF" fillRule="evenodd" clipRule="evenodd" />
-                      </svg>
-                      <span>Laborgeprüfte Qualität · Made in Germany</span>
-                    </li>
-                  </ul>
+              {/* Stars */}
+              <a href="#reviews" className="combo-stars">
+                <div className="combo-stars__row">
+                  {[1, 2, 3, 4, 5].map(i => (
+                    <svg key={i} className="combo-stars__star" viewBox="0 0 20 20">
+                      <path d="m10.002 14.774 4.275 2.629a.656.656 0 0 0 .978-.717l-1.163-4.905 3.805-3.282a.662.662 0 0 0-.374-1.154l-4.993-.406-1.923-4.657a.654.654 0 0 0-1.21 0L7.474 6.94l-4.993.406a.661.661 0 0 0-.375 1.158l3.805 3.282-1.162 4.901a.656.656 0 0 0 .978.717z" fill="#f59e0b" />
+                    </svg>
+                  ))}
                 </div>
+              </a>
 
-                {/* ── Product form ── */}
-                <div id="product-form" className="product-form main-product__form">
-                  <form className="product-form__form" onSubmit={e => e.preventDefault()}>
-                    {/* Price */}
-                    <p className="product-prices product-prices--form product-form__prices-container">
-                      <span className="product-prices__price">
-                        <span className="title-mobile-m-bold">
-                          €{COMBO_PRICE.toFixed(2).replace(".", ",")}
-                        </span>
-                      </span>
-                      <span className="product-prices__compare-at-price title-mobile-m-bold">
-                        €{ORIGINAL_PRICE.toFixed(2).replace(".", ",")}
-                      </span>
-                      <span className="product-prices__unit-price text-mobile-paragraph-xs-regular text-desktop-paragraph-xs-regular">
-                        inkl. MwSt. zzgl. Versand.
-                      </span>
-                    </p>
+              {/* USPs */}
+              <ul className="combo-usp-list">
+                <li>
+                  <svg className="combo-usp__check" viewBox="0 0 24 24"><path d="M20.957 6.043a1 1 0 010 1.415l-10.5 10.5a1 1 0 01-1.414 0l-5.25-5.25a1 1 0 111.414-1.415l4.543 4.543 9.793-9.793a1 1 0 011.414 0Z" fill="currentColor" /></svg>
+                  <span>8 Premium-Produkte in einem Bundle</span>
+                </li>
+                <li>
+                  <svg className="combo-usp__check" viewBox="0 0 24 24"><path d="M20.957 6.043a1 1 0 010 1.415l-10.5 10.5a1 1 0 01-1.414 0l-5.25-5.25a1 1 0 111.414-1.415l4.543 4.543 9.793-9.793a1 1 0 011.414 0Z" fill="currentColor" /></svg>
+                  <span>Über {DISCOUNT_PCT}% Ersparnis gegenüber Einzelkauf</span>
+                </li>
+                <li>
+                  <svg className="combo-usp__check" viewBox="0 0 24 24"><path d="M20.957 6.043a1 1 0 010 1.415l-10.5 10.5a1 1 0 01-1.414 0l-5.25-5.25a1 1 0 111.414-1.415l4.543 4.543 9.793-9.793a1 1 0 011.414 0Z" fill="currentColor" /></svg>
+                  <span>Laborgeprüfte Qualität · Made in Germany</span>
+                </li>
+              </ul>
 
-                    {/* Options / Flavor selectors */}
-                    <div className="product-options">
-                      {COMBO_ITEMS.map(item => (
-                        <FlavorSelector
-                          key={item.key}
-                          name={item.name}
-                          flavors={item.flavors}
-                          selected={selections[item.key]}
-                          onSelect={f => handleSelect(item.key, f)}
-                        />
-                      ))}
-                    </div>
+              {/* Price */}
+              <div className="combo-price">
+                <span className="combo-price__current">€{COMBO_PRICE.toFixed(2).replace(".", ",")}</span>
+                <span className="combo-price__original">€{ORIGINAL_PRICE.toFixed(2).replace(".", ",")}</span>
+                <span className="combo-price__note">inkl. MwSt. zzgl. Versand.</span>
+              </div>
 
-                    <input name="quantity" readOnly type="hidden" value="1" />
-
-                    {/* Add to cart */}
-                    <div className="product-form__add-to-cart-container">
-                      <button
-                        id="combo-add-to-cart"
-                        className={`button product-form__add-to-cart button--custom button--center button--semimedium ${addedToCart ? "button--success" : ""}`}
-                        type="submit"
-                      >
-                        <span className="button__label text-button-semimedium">
-                          <span className="text-desktop">
-                            {addedToCart ? "✓ Hinzugefügt" : "In den Warenkorb"}
-                          </span>
-                          <span className="text-mobile">
-                            {addedToCart ? "✓ Hinzugefügt" : "In den Warenkorb"}
-                          </span>
-                        </span>
-                      </button>
-                    </div>
-                  </form>
-
-                  {/* Delivery time */}
-                  <div className="delivery-time product-form__delivery">
-                    <span className="delivery-time__icon">
-                      <svg className="icon icon__truck-order" viewBox="0 0 24 17">
-                        <g fill="#1C6C3C" fillRule="evenodd" clipRule="evenodd">
-                          <path d="M15.5 2.5a1 1 0 0 1 1-1h3.992a1.75 1.75 0 0 1 1.625 1.1l-.928.371.928-.37 1.311 3.278A1 1 0 0 1 22.5 7.25h-6a1 1 0 0 1-1-1zm2 1v1.75h3.523l-.7-1.75zM.5 8.5a1 1 0 0 1 1-1h15a1 1 0 1 1 0 2h-15a1 1 0 0 1-1-1M17.625 11.75a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5M14.375 13a3.25 3.25 0 1 1 6.5 0 3.25 3.25 0 0 1-6.5 0M6.375 11.75a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5M3.125 13a3.25 3.25 0 1 1 6.5 0 3.25 3.25 0 0 1-6.5 0" />
-                          <path d="M7.625 13a1 1 0 0 1 1-1h6.75a1 1 0 1 1 0 2h-6.75a1 1 0 0 1-1-1" />
-                          <path d="M2.5 2v10h1.625a1 1 0 1 1 0 2H2.25A1.75 1.75 0 0 1 .5 12.25V1.75A1.75 1.75 0 0 1 2.25 0H16.5a1 1 0 0 1 1 1v10.051a1 1 0 1 1-2 0V2z" />
-                          <path d="M15.5 6.25a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v6A1.75 1.75 0 0 1 21.75 14h-1.875a1 1 0 1 1 0-2H21.5V7.25h-4v3.801a1 1 0 1 1-2 0z" />
-                        </g>
-                      </svg>
-                    </span>
-                    <span className="delivery-time__text text-mobile-paragraph-s-regular text-desktop-paragraph-xs-regular">
-                      Lieferzeit: 5-7 Werktage
-                    </span>
+              {/* Flavor selectors - each product has its own */}
+              <div className="combo-options">
+                {COMBO_ITEMS.map(item => (
+                  <div key={item.key} className="combo-option-group">
+                    <label className="combo-option__label">{item.name}</label>
+                    <ProductFlavorSelector
+                      item={item}
+                      selected={selections[item.key]}
+                      onSelect={f => handleSelect(item.key, f)}
+                    />
                   </div>
-                </div>
+                ))}
+              </div>
 
-                {/* Accordion */}
-                <div className="product-info-overlay">
-                  <div className="product-info-overlay__accordion">
-                    <AccordionSection title="Beschreibung">
-                      <div className="combo-description">
-                        <p className="combo-desc-intro">
-                          Das <strong>ESN Elite Leistung Combo</strong> ist das ultimative Paket für ambitionierte Athleten.
-                          8 Premium-Produkte, perfekt aufeinander abgestimmt, um dich beim Muskelaufbau,
-                          der Regeneration und der täglichen Vitalität zu unterstützen.
-                        </p>
+              {/* Add to cart */}
+              <button
+                className={`combo-atc ${addedToCart ? "combo-atc--success" : ""}`}
+                type="button"
+                onClick={handleAddToCart}
+              >
+                <span className="combo-atc__desktop">
+                  {addedToCart ? "✓ Hinzugefügt" : "In den Warenkorb"}
+                </span>
+                <span className="combo-atc__mobile">
+                  {addedToCart ? "✓" : "Warenkorb"}
+                </span>
+              </button>
 
-                        <h3 className="combo-desc-heading">Inhalt des Combos</h3>
+              {/* Delivery */}
+              <div className="combo-delivery">
+                <svg className="combo-delivery__icon" viewBox="0 0 24 17" fill="#1C6C3C">
+                  <path d="M15.5 2.5a1 1 0 011-1h3.992a1.75 1.75 0 011.625 1.1l-.928.371.928-.37 1.311 3.278A1 1 0 0122.5 7.25h-6a1 1 0 01-1-1zm2 1v1.75h3.523l-.7-1.75zM.5 8.5a1 1 0 011-1h15a1 1 0 110 2h-15a1 1 0 01-1-1M17.625 11.75a1.25 1.25 0 100 2.5 1.25 1.25 0 000-2.5M14.375 13a3.25 3.25 0 116.5 0 3.25 3.25 0 01-6.5 0M6.375 11.75a1.25 1.25 0 100 2.5 1.25 1.25 0 000-2.5M3.125 13a3.25 3.25 0 116.5 0 3.25 3.25 0 01-6.5 0" />
+                  <path d="M7.625 13a1 1 0 011-1h6.75a1 1 0 110 2h-6.75a1 1 0 01-1-1" />
+                  <path d="M2.5 2v10h1.625a1 1 0 110 2H2.25A1.75 1.75 0 01.5 12.25V1.75A1.75 1.75 0 012.25 0H16.5a1 1 0 011 1v10.051a1 1 0 11-2 0V2z" />
+                  <path d="M15.5 6.25a1 1 0 011-1h6a1 1 0 011 1v6A1.75 1.75 0 0121.75 14h-1.875a1 1 0 110-2H21.5V7.25h-4v3.801a1 1 0 11-2 0z" />
+                </svg>
+                <span>Lieferzeit: 5-7 Werktage</span>
+              </div>
 
-                        {COMBO_ITEMS.map((item, i) => (
-                          <div key={item.key} className="combo-product-row">
-                            <div className="combo-product-thumb">
-                              <img src={item.image} alt={item.name} />
-                            </div>
-                            <div className="combo-product-details">
-                              <div className="combo-product-number">{i + 1}</div>
-                              <div>
-                                <div className="combo-product-name">{item.name}</div>
-                                <div className="combo-product-size">{item.subtitle}</div>
-                                <div className="combo-product-flavors">
-                                  {item.flavors.length > 1
-                                    ? `Geschmack wählbar: ${item.flavors.join(", ")}`
-                                    : item.flavors[0] !== "Standard"
-                                    ? `Geschmack: ${item.flavors[0]}`
-                                    : "Standardvariante"}
-                                </div>
-                              </div>
-                            </div>
+              {/* Accordion */}
+              <div className="combo-accordion">
+                <AccordionSection title="Beschreibung">
+                  <p>
+                    Das <strong>ESN Elite Leistung Combo</strong> ist das ultimative Paket für ambitionierte Athleten.
+                    8 Premium-Produkte, perfekt aufeinander abgestimmt.
+                  </p>
+                  <h3>Inhalt des Combos</h3>
+                  {COMBO_ITEMS.map((item, i) => (
+                    <div key={item.key} className="combo-row">
+                      <div className="combo-row__thumb">
+                        <img src={item.image} alt={item.name} />
+                      </div>
+                      <div className="combo-row__info">
+                        <span className="combo-row__num">{i + 1}</span>
+                        <div>
+                          <div className="combo-row__name">{item.name}</div>
+                          <div className="combo-row__size">{item.subtitle}</div>
+                          <div className="combo-row__flavors">
+                            {item.flavors.length > 1
+                              ? `Geschmack: ${item.flavors.join(", ")}`
+                              : item.flavors[0] !== "Standard"
+                              ? `Geschmack: ${item.flavors[0]}`
+                              : "Standardvariante"}
                           </div>
-                        ))}
-
-                        <div className="combo-highlight-box">
-                          <strong>Dein Vorteil:</strong> Spare über {DISCOUNT_PCT}% gegenüber dem Einzelkauf –
-                          alle Produkte laborgeprüft und Made in Germany.
                         </div>
                       </div>
-                    </AccordionSection>
-                    <AccordionSection title="Nährwerte">
-                      <div className="nutrition-info">
-                        <table className="nutrition-table">
-                          <thead>
-                            <tr>
-                              <th>Produkt</th>
-                              <th>Portion</th>
-                              <th>Protein</th>
-                              <th>Portionen</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr><td>Designer Whey</td><td>33g</td><td>25g</td><td>27</td></tr>
-                            <tr><td>Isoclear</td><td>30g</td><td>23g</td><td>30</td></tr>
-                            <tr><td>Crank</td><td>9,5g</td><td>–</td><td>40</td></tr>
-                            <tr><td>Designer Bar</td><td>45g</td><td>18g</td><td>12</td></tr>
-                            <tr><td>ESN Daily</td><td>1 Sachet</td><td>–</td><td>30</td></tr>
-                            <tr><td>Kreatin</td><td>5g</td><td>–</td><td>100</td></tr>
-                            <tr><td>Ashwa+</td><td>3 Kaps.</td><td>–</td><td>30</td></tr>
-                            <tr><td>Magnesium</td><td>4 Kaps.</td><td>–</td><td>30</td></tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </AccordionSection>
+                    </div>
+                  ))}
+                  <div className="combo-highlight">
+                    <strong>Dein Vorteil:</strong> Spare über {DISCOUNT_PCT}% gegenüber dem Einzelkauf –
+                    alle Produkte laborgeprüft und Made in Germany.
                   </div>
-                </div>
+                </AccordionSection>
+                <AccordionSection title="Nährwerte">
+                  <table className="combo-nutrition">
+                    <thead>
+                      <tr><th>Produkt</th><th>Portion</th><th>Protein</th><th>Portionen</th></tr>
+                    </thead>
+                    <tbody>
+                      <tr><td>Designer Whey</td><td>33g</td><td>25g</td><td>27</td></tr>
+                      <tr><td>Isoclear</td><td>30g</td><td>23g</td><td>30</td></tr>
+                      <tr><td>Crank</td><td>9,5g</td><td>–</td><td>40</td></tr>
+                      <tr><td>Designer Bar</td><td>45g</td><td>18g</td><td>12</td></tr>
+                      <tr><td>ESN Daily</td><td>1 Sachet</td><td>–</td><td>30</td></tr>
+                      <tr><td>Kreatin</td><td>5g</td><td>–</td><td>100</td></tr>
+                      <tr><td>Ashwa+</td><td>3 Kaps.</td><td>–</td><td>30</td></tr>
+                      <tr><td>Magnesium</td><td>4 Kaps.</td><td>–</td><td>30</td></tr>
+                    </tbody>
+                  </table>
+                </AccordionSection>
               </div>
             </div>
           </div>
@@ -627,21 +526,21 @@ export default function ComboProduct() {
       </section>
 
       {/* ── What's inside ── */}
-      <section className="whats-inside">
-        <div className="max-width-container">
-          <h2 className="whats-inside__title">Was im Bundle enthalten ist</h2>
-          <div className="whats-inside__grid">
+      <section className="combo-whats">
+        <div className="combo-wrapper">
+          <h2 className="combo-whats__title">Was im Bundle enthalten ist</h2>
+          <div className="combo-whats__grid">
             {COMBO_ITEMS.map(item => (
               <div
                 key={item.key}
-                className="whats-inside__card"
+                className="combo-whats__card"
                 onClick={() => navigate(`/products/${item.slug}`)}
               >
-                <div className="whats-inside__img">
+                <div className="combo-whats__img">
                   <img src={item.image} alt={item.name} />
                 </div>
-                <div className="whats-inside__name">{item.name}</div>
-                <div className="whats-inside__sub">{item.subtitle}</div>
+                <div className="combo-whats__name">{item.name}</div>
+                <div className="combo-whats__sub">{item.subtitle}</div>
               </div>
             ))}
           </div>
@@ -650,596 +549,459 @@ export default function ComboProduct() {
 
       <FooterESN />
 
-      {/* ── ESN-matching CSS ── */}
       <style>{`
-        /* ── ESN Design Tokens ── */
-        :root {
-          --color-primary-black: #000;
-          --color-primary-white: #fff;
-          --color-grey-2: #edf1f2;
-          --color-grey-3: #dedede;
-          --color-grey-4: #b3b3b3;
-          --color-grey-5: #333;
-          --color-grey-8: #757575;
-          --color-background: #fff;
-          --color-background-product-usps: #000;
-          --color-text-product-usps: #fff;
-          --color-conversion-primary-cta: #4ec3e0;
-          --color-background-custom: #4ec3e0;
-          --color-text-custom: #fff;
-          --color-secondary-isoclear: #4ec3e0;
-          --color-auxiliary-success-0: #1c6c3c;
-          --color-auxiliary-success-1: #2db463;
-          --color-auxiliary-success-2: #e8f5ee;
-          --color-auxiliary-success-3: #e8f5ee;
-          --color-arrow-background: #000;
-          --color-arrow-icon: #fff;
-          --color-skeleton-background: #edf1f2;
-          --spacing-3xs: 0.25rem;
-          --spacing-2xs: 0.375rem;
-          --spacing-xs: 0.5rem;
-          --spacing-s: 0.75rem;
-          --spacing-m: 1rem;
-          --spacing-l: 1.5rem;
-          --spacing-xl: 2rem;
-          --spacing-2xl: 3rem;
-          --spacing-3xl: 4rem;
-          --spacing-7xl: 8rem;
-          --icon-2xs: 1rem;
-          --icon-xs: 1.25rem;
-          --icon-m: 1.5rem;
-          --icon-l: 2rem;
-          --icon-xl: 3rem;
-          --font-size-xs: 0.75rem;
-          --font-size-s: 0.875rem;
-          --font-size-m: 1rem;
-          --font-size-l: 1.125rem;
-          --font-size-xl: 1.25rem;
-          --font-weight-regular: 400;
-          --font-weight-bold: 700;
-          --font-weight-extrabold: 800;
-          --timing-normal: 0.2s;
-          --timing-quick: 0.15s;
-          --easing-normal: ease;
-          --layer-raised: 10;
-          --layer-heightened: 20;
-          --layout-margin: 1rem;
-          --layout-gutter: 1rem;
-          --layout-desktop-column: 12;
-          --max-content-width-l: 1440px;
-          --header-visible-height: 80px;
-          --font-family-text: 'Wix Madefor Text', Helvetica, Arial, sans-serif;
-          --font-family-display: 'Wix Madefor Display', Helvetica, Arial, sans-serif;
-        }
+        /* ── Reset ── */
+        *, *::before, *::after { box-sizing: border-box; }
 
-        /* ── Typography ── */
-        .title-mobile-m-bold {
-          font-family: var(--font-family-text);
-          font-size: 1.5rem;
-          font-weight: 700;
-          line-height: 120%;
-          letter-spacing: -0.02rem;
-          margin: 0;
-        }
-        .title-desktop-m-bold {
-          font-family: var(--font-family-text);
-          font-size: 1.5rem;
-          font-weight: 700;
-          line-height: 120%;
-          letter-spacing: -0.02rem;
-        }
-        .text-mobile-paragraph-xs-regular,
-        .text-desktop-paragraph-xs-regular {
-          font-family: var(--font-family-text);
-          font-size: 0.75rem;
-          font-weight: 400;
-          line-height: 133.333%;
-          color: var(--color-grey-8);
-        }
-        .text-mobile-paragraph-s-regular,
-        .text-desktop-paragraph-xs-regular {
-          font-family: var(--font-family-text);
-          font-size: 0.8125rem;
-          font-weight: 400;
-          line-height: 130%;
-        }
-        .text-mobile-paragraph-m-bold,
-        .text-desktop-paragraph-m-bold {
-          font-family: var(--font-family-text);
-          font-size: 1rem;
-          font-weight: 700;
-          line-height: 130%;
-        }
-        .text-desktop-paragraph-s-bold {
-          font-size: 0.875rem;
-          font-weight: 700;
-        }
-        .text-mobile-paragraph-m-semibold,
-        .text-desktop-paragraph-m-semibold {
-          font-size: 0.875rem;
-          font-weight: 600;
-          line-height: 130%;
-          margin: 0;
-        }
-        .text-button-semimedium {
-          font-family: var(--font-family-text);
-          font-size: 0.9375rem;
-          font-weight: 800;
-          line-height: 130%;
-          text-transform: uppercase;
-        }
-        .text-button-medium-textlink {
-          font-size: var(--font-size-m);
-          font-weight: 700;
-          text-transform: uppercase;
-          line-height: 130%;
-        }
-        .text-body-s-regular { font-size: 0.875rem; }
-        .text-body-m-regular-desktop { font-size: 0.875rem; }
-
-        @media (min-width: 64em) {
-          .title-desktop-m-bold { font-size: 1.75rem; }
-          .text-desktop-paragraph-xs-regular { font-size: 0.8125rem; }
-          .text-desktop-paragraph-m-bold { font-size: 1rem; }
-          .text-desktop-paragraph-s-bold { font-size: 0.875rem; }
-          .text-desktop-paragraph-m-semibold { font-size: 1rem; }
-          .text-body-m-regular-desktop { font-size: 1rem; }
-        }
-
-        /* ── Page ── */
-        .esn-page {
+        /* ── Base ── */
+        .combo-page {
           min-height: 100vh;
-          background: var(--color-background);
-          color: var(--color-primary-black);
-          font-family: var(--font-family-text);
+          background: #fff;
+          color: #000;
+          font-family: 'Wix Madefor Text', Helvetica, Arial, sans-serif;
+          -webkit-text-size-adjust: 100%;
+          -webkit-font-smoothing: antialiased;
         }
-        .announcement-bar {
+        .combo-wrapper {
+          max-width: 1440px;
+          margin: 0 auto;
+          padding: 0 16px;
+        }
+
+        /* ── Announcement ── */
+        .combo-announcement {
           background: #b70832;
           color: #fff;
-          padding: 10px 16px;
+          padding: 10px 12px;
           text-align: center;
-          font-size: 12px;
+          font-size: 11px;
           font-weight: 700;
-          letter-spacing: 0.5px;
+          letter-spacing: 0.3px;
+          line-height: 1.4;
         }
 
-        /* ── USP Bar ── */
-        .product-usps {
+        /* ── Main layout ── */
+        .combo-main {
+          padding: 32px 0 48px;
+        }
+        .combo-layout {
           display: flex;
-          justify-content: center;
-          gap: var(--spacing-2xl);
-          padding: var(--spacing-l) var(--spacing-m);
-          background-color: #000;
-          color: #fff;
-          flex-wrap: wrap;
+          flex-direction: column;
+          gap: 32px;
         }
-        .product-usps__item {
-          display: flex;
-          align-items: center;
-          gap: var(--spacing-s);
-        }
-        .product-usps__icon {
-          width: 48px;
-          height: 48px;
-          flex-shrink: 0;
-        }
-        .product-usps__title {
-          font-size: var(--font-size-s);
-          font-weight: 700;
-          line-height: 130%;
-        }
-        @media (max-width: 63.99em) {
-          .product-usps {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: var(--spacing-m);
+        @media (min-width: 1024px) {
+          .combo-main { padding: 48px 0 80px; }
+          .combo-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 58%) minmax(0, 42%);
+            gap: 48px;
           }
         }
 
-        /* ── Main product ── */
-        .main-product__section {
-          background-color: var(--color-background);
-        }
-        .main-product {
-          background-color: var(--color-background);
-          margin-inline: auto;
-          padding-block-start: var(--spacing-2xl);
-          padding-block-end: var(--spacing-2xl);
-          padding-inline-end: var(--layout-margin);
-          padding-inline-start: var(--layout-margin);
-          width: 100%;
-        }
-        @media (min-width: 64em) {
-          .main-product { max-width: var(--max-content-width-l); }
-          .main-product > .grid { padding-block-end: var(--spacing-2xl); }
-        }
-
-        .grid { display: flex; flex-wrap: wrap; margin: 0 calc(var(--layout-gutter) * -0.5); }
-        .col { padding: 0 calc(var(--layout-gutter) * 0.5); }
-        .xs-span { width: 100%; }
-        @media (min-width: 64em) {
-          .l7 { width: calc(7 / 12 * 100%); }
-          .l6 { width: calc(6 / 12 * 100%); }
-          .l5 { width: calc(5 / 12 * 100%); }
-          .l1 { width: calc(1 / 12 * 100%); }
-        }
-
         /* ── Gallery ── */
-        .product-gallery-wrapper { position: relative; }
-        .product-gallery {
-          position: sticky;
-          top: calc(var(--header-visible-height) + var(--layout-margin));
+        .combo-gallery {
+          position: relative;
         }
-        .product-gallery.product-gallery--tabs.product-gallery--vertical-desktop {
-          display: grid;
-          gap: var(--layout-gutter);
-          grid-template-columns: 70px auto;
-        }
-        .product-gallery__thumbnails-container {
-          display: flex;
-          flex-direction: column;
-        }
-        .product-gallery-carousel {
+        .combo-gallery__main {
           position: relative;
           width: 100%;
-        }
-        .product-gallery__thumbnails-carousel {
-          display: flex;
-          flex-direction: column;
-          gap: var(--spacing-l);
-        }
-        .gallery-thumb {
-          width: 60px;
-          height: 60px;
-          border: 1px solid transparent;
-          border-radius: var(--spacing-m);
-          cursor: pointer;
-          opacity: 0.5;
-          transition: border-color var(--timing-quick) var(--easing-normal), opacity var(--timing-quick) var(--easing-normal);
-          padding: 0;
           overflow: hidden;
-          background: var(--color-grey-2);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
+          border-radius: 12px;
+          background: #f5f5f5;
         }
-        .gallery-thumb img { width: 100%; height: 100%; object-fit: contain; }
-        .gallery-thumb.is-active { opacity: 1; border-color: var(--color-primary-black); }
-
-        .product-gallery__main-container { padding-block-start: 0; position: relative; }
-        .product-gallery-carousel__media-container {
+        .combo-gallery__ratio {
           position: relative;
-          background: var(--color-background);
-          border-radius: var(--spacing-m);
-          overflow: hidden;
-        }
-        .preload-image { display: block; position: relative; }
-        .preload-image img {
           width: 100%;
-          height: 100%;
-          object-fit: contain;
+          padding-bottom: 100%;
+        }
+        .combo-gallery__img {
           position: absolute;
           top: 0;
           left: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          display: block;
         }
-        .product-gallery__zoom {
+        .combo-gallery__arrow {
           position: absolute;
-          top: var(--spacing-s);
-          right: var(--spacing-s);
-          z-index: var(--layer-raised);
-          background: rgba(0,0,0,0.5);
+          top: 50%;
+          transform: translateY(-50%);
+          z-index: 10;
+          background: rgba(0, 0, 0, 0.6);
+          color: #fff;
           border: none;
           border-radius: 50%;
           width: 36px;
           height: 36px;
+          cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
-          cursor: pointer;
-          color: #fff;
+          transition: background 0.2s;
+          padding: 0;
         }
-        .product-gallery__zoom .icon { width: 18px; height: 18px; }
+        .combo-gallery__arrow:hover { background: rgba(0, 0, 0, 0.85); }
+        .combo-gallery__arrow--prev { left: 8px; }
+        .combo-gallery__arrow--next { right: 8px; }
 
-        .splide__arrows {
-          display: flex;
-          justify-content: space-between;
-          padding: 0 var(--spacing-l);
-          pointer-events: none;
-          position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-          width: 100%;
-          z-index: var(--layer-raised);
+        .combo-gallery__thumbs-side {
+          display: none;
         }
-        .splide__arrow {
-          align-items: center;
-          appearance: none;
-          background-color: var(--color-arrow-background);
-          border: 0;
-          border-radius: 2px;
-          color: var(--color-arrow-icon);
+        .combo-gallery__thumbs-mobile {
+          display: flex;
+          gap: 8px;
+          margin-top: 10px;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          padding-bottom: 4px;
+          scroll-snap-type: x mandatory;
+        }
+        .combo-gallery__thumbs-mobile::-webkit-scrollbar { display: none; }
+
+        @media (min-width: 1024px) {
+          .combo-gallery {
+            display: grid;
+            grid-template-columns: 70px 1fr;
+            gap: 16px;
+            align-items: start;
+          }
+          .combo-gallery__main { grid-column: 2; border-radius: 16px; }
+          .combo-gallery__thumbs-side {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            grid-column: 1;
+            grid-row: 1;
+            align-self: start;
+            max-height: 500px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            padding-right: 4px;
+          }
+          .combo-gallery__thumbs-mobile { display: none; }
+          .combo-gallery__arrow { width: 40px; height: 40px; }
+          .combo-gallery__arrow--prev { left: 12px; }
+          .combo-gallery__arrow--next { right: 12px; }
+        }
+
+        .combo-gallery__thumb {
+          width: 56px;
+          height: 56px;
+          min-width: 56px;
+          border: 2px solid transparent;
+          border-radius: 8px;
           cursor: pointer;
-          padding: var(--spacing-m);
-          pointer-events: auto;
+          opacity: 0.5;
+          transition: all 0.15s;
+          padding: 0;
+          overflow: hidden;
+          background: #f5f5f5;
           display: flex;
+          align-items: center;
+          justify-content: center;
+          scroll-snap-align: start;
         }
-        .splide__arrow svg { height: var(--icon-2xs); width: var(--icon-2xs); }
+        .combo-gallery__thumb img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+        }
+        .combo-gallery__thumb.is-active {
+          opacity: 1;
+          border-color: #000;
+        }
 
         /* ── Buy box ── */
-        .main-product__buy-box {
-          background-color: var(--color-primary-white);
-          border-radius: 1rem;
-          padding: var(--spacing-l);
-          position: relative;
+        .combo-buybox {
+          background: #fff;
+          width: 100%;
         }
-        @media (min-width: 64em) {
-          .main-product__buy-box { padding: var(--spacing-xl); }
-        }
-
-        .main-product__details {
-          display: grid;
-          gap: var(--spacing-s);
-          margin-block-end: var(--spacing-m);
-        }
-        @media (min-width: 64em) {
-          .main-product__details { margin-block-end: var(--spacing-l); }
-        }
-        .main-product__title {
-          padding-inline-end: var(--spacing-xl);
+        @media (min-width: 1024px) {
+          .combo-buybox {
+            position: sticky;
+            top: 100px;
+          }
         }
 
-        /* Star rating */
-        .star-rating__stars { display: flex; gap: 2px; }
-        .star-rating__stars .icon__star-filled { width: 16px; height: 16px; fill: #f59e0b; }
-        .main-product__reviews { text-decoration: none; color: inherit; display: inline-block; margin-block-start: var(--spacing-xs); }
-        .main-product__reviews:hover { opacity: 0.8; }
+        .combo-title {
+          font-size: 22px;
+          font-weight: 700;
+          line-height: 1.2;
+          margin: 0 0 8px;
+          letter-spacing: -0.01em;
+        }
+        @media (min-width: 768px) {
+          .combo-title { font-size: 24px; }
+        }
+        @media (min-width: 1024px) {
+          .combo-title { font-size: 28px; }
+        }
 
-        /* USP */
-        .main-product__usp {
+        .combo-stars { text-decoration: none; color: inherit; display: inline-block; margin-bottom: 14px; }
+        .combo-stars__row { display: flex; gap: 2px; }
+        .combo-stars__star { width: 14px; height: 14px; }
+        @media (min-width: 768px) {
+          .combo-stars__star { width: 16px; height: 16px; }
+        }
+
+        .combo-usp-list {
           list-style: none;
           padding: 0;
-          margin: var(--spacing-m) 0 0;
+          margin: 0 0 20px;
           display: flex;
           flex-direction: column;
-          gap: var(--spacing-2xs);
+          gap: 6px;
         }
-        .main-product__usp li {
+        .combo-usp-list li {
           display: flex;
           align-items: flex-start;
-          align-self: stretch;
-          gap: var(--spacing-xs);
+          gap: 8px;
+          font-size: 13px;
+          line-height: 1.3;
         }
-        .main-product__usp li .icon__check-outline {
-          width: var(--icon-2xs);
-          height: var(--icon-2xs);
-          margin-block-start: var(--spacing-3xs);
+        .combo-usp__check {
+          width: 15px;
+          height: 15px;
           flex-shrink: 0;
+          margin-top: 1px;
+          color: #000;
         }
-        .main-product__usp li .icon__check-outline path { fill: var(--color-primary-black); }
-        .main-product__usp li span {
-          font-size: var(--font-size-m);
-          font-style: normal;
-          font-weight: 400;
-          letter-spacing: -0.02rem;
-          line-height: 130%;
-        }
-
-        /* ── Product form ── */
-        .product-form { padding-block-end: var(--spacing-l); }
-        .product-form__form {
-          display: grid;
-          gap: var(--spacing-s);
-        }
-        @media (min-width: 64em) {
-          .main-product__form { gap: var(--spacing-m); }
+        @media (min-width: 768px) {
+          .combo-usp-list { gap: 8px; margin-bottom: 24px; }
+          .combo-usp-list li { font-size: 14px; }
+          .combo-usp__check { width: 16px; height: 16px; }
         }
 
         /* Price */
-        .product-prices {
+        .combo-price {
           display: flex;
           flex-wrap: wrap;
           align-items: baseline;
-          gap: var(--spacing-xs);
-          margin: 0;
-          padding: 0;
+          gap: 10px;
+          margin-bottom: 20px;
         }
-        .product-prices__price { font-weight: 700; color: var(--color-primary-black); }
-        .product-prices__compare-at-price {
-          color: var(--color-grey-4);
+        .combo-price__current {
+          font-size: 22px;
+          font-weight: 700;
+          color: #000;
+        }
+        .combo-price__original {
+          color: #b3b3b3;
           text-decoration: line-through;
-          font-size: var(--font-size-m);
-          font-weight: 400;
+          font-size: 14px;
         }
-        .product-prices__unit-price {
-          color: var(--color-grey-8);
-          font-size: 0.75rem;
+        .combo-price__note {
           width: 100%;
+          font-size: 11px;
+          color: #757575;
+        }
+        @media (min-width: 768px) {
+          .combo-price { margin-bottom: 24px; }
+          .combo-price__current { font-size: 24px; }
+          .combo-price__original { font-size: 16px; }
+          .combo-price__note { font-size: 12px; }
         }
 
-        /* ── Product options (ESN style) ── */
-        .product-options { display: flex; flex-direction: column; gap: var(--spacing-s); }
-        .product-options__option { display: flex; flex-direction: column; gap: var(--spacing-xs); }
-        .product-options__dropdown { width: 100%; }
-
-        /* Single flavor (1 option) */
-        .flavor-single {
-          padding: var(--spacing-s) var(--spacing-m);
-          border: 1.5px solid var(--color-grey-2);
-          border-radius: var(--spacing-s);
-          background: var(--color-grey-2);
-          font-size: var(--font-size-s);
-          color: var(--color-grey-8);
-          font-weight: 500;
+        /* Options */
+        .combo-options {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          margin-bottom: 20px;
+        }
+        .combo-option-group { display: flex; flex-direction: column; gap: 6px; }
+        .combo-option__label {
+          font-size: 12px;
+          font-weight: 700;
+          color: #000;
+        }
+        @media (min-width: 768px) {
+          .combo-options { gap: 20px; margin-bottom: 24px; }
+          .combo-option-group { gap: 8px; }
+          .combo-option__label { font-size: 13px; }
         }
 
-        /* Selection tiles (ESN selection-tab) */
-        .product-options__values { display: flex; flex-wrap: wrap; gap: var(--spacing-xs); }
-        .product-options__grid-2 {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: var(--spacing-xs);
-        }
-        .selection-tab {
-          border: 1.5px solid var(--color-grey-3);
-          border-radius: var(--spacing-s);
-          background: var(--color-primary-white);
-          cursor: pointer;
-          transition: border-color var(--timing-normal) var(--easing-normal), background var(--timing-normal);
-          position: relative;
-        }
-        .selection-tab:hover { border-color: var(--color-primary-black); }
-        .selection-tab--active {
-          border-color: var(--color-primary-black);
-          background: var(--color-grey-2);
-        }
-        .selection-tab__input { position: absolute; opacity: 0; pointer-events: none; }
-        .selection-tab__label {
-          display: block;
-          padding: var(--spacing-s) var(--spacing-m);
-          cursor: pointer;
-          text-align: center;
-          min-width: 0;
-        }
-
-        /* Custom select dropdown */
-        .product-custom-select { position: relative; }
-        .product-custom-select__trigger {
+        /* ── Flavor dropdown ── */
+        .flavor-dropdown { position: relative; }
+        .flavor-dropdown__trigger {
           width: 100%;
           display: flex;
           align-items: center;
-          gap: var(--spacing-s);
-          padding: var(--spacing-s) var(--spacing-m);
-          border: 1.5px solid var(--color-grey-3);
-          border-radius: var(--spacing-s);
-          background: var(--color-primary-white);
+          justify-content: space-between;
+          padding: 8px 12px;
+          border: 1.5px solid #dedede;
+          border-radius: 8px;
+          background: #fff;
           cursor: pointer;
-          font-size: var(--font-size-s);
+          font-size: 13px;
           font-weight: 600;
-          transition: border-color var(--timing-normal);
-          color: var(--color-primary-black);
-          appearance: none;
+          transition: border-color 0.2s;
+          color: #000;
+          font-family: 'Wix Madefor Text', Helvetica, Arial, sans-serif;
           text-align: left;
+          -webkit-tap-highlight-color: transparent;
         }
-        .product-custom-select__trigger:hover { border-color: var(--color-primary-black); }
-        .product-custom-select__image-wrapper { width: 40px; height: 40px; flex-shrink: 0; }
-        .product-custom-select__content { display: flex; flex-direction: column; gap: 2px; text-align: left; flex: 1; }
-        .product-custom-select__title-row { font-weight: 600; }
-        .product-custom-select__option-count { font-size: 0.6875rem; color: var(--color-grey-8); font-weight: 400; }
-        .product-custom-select__dropdown {
+        .flavor-dropdown__trigger:hover { border-color: #000; }
+        .flavor-dropdown__trigger:active { border-color: #000; background: #f8f9fa; }
+        .flavor-dropdown__trigger-content {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          min-width: 0;
+        }
+        .flavor-dropdown__trigger-img {
+          width: 28px;
+          height: 28px;
+          min-width: 28px;
+          object-fit: contain;
+          border-radius: 4px;
+        }
+        .flavor-dropdown__chevron { transition: transform 0.2s; color: #757575; flex-shrink: 0; margin-left: 8px; }
+        .flavor-dropdown__chevron.open { transform: rotate(180deg); }
+        .flavor-dropdown__list {
           position: absolute;
           top: calc(100% + 4px);
           left: 0;
           right: 0;
-          background: var(--color-primary-white);
-          border: 1.5px solid var(--color-grey-3);
-          border-radius: var(--spacing-s);
+          background: #fff;
+          border: 1.5px solid #dedede;
+          border-radius: 8px;
           box-shadow: 0 8px 32px rgba(0,0,0,0.12);
           z-index: 50;
           overflow: hidden;
           max-height: 240px;
           overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
         }
-        .product-custom-select__option {
+        .flavor-dropdown__option {
           width: 100%;
-          padding: var(--spacing-s) var(--spacing-m);
-          background: var(--color-primary-white);
+          padding: 8px 12px;
+          background: #fff;
           border: none;
-          border-bottom: 1px solid var(--color-grey-2);
+          border-bottom: 1px solid #edf1f2;
           cursor: pointer;
           display: flex;
           align-items: center;
-          justify-content: space-between;
-          font-size: var(--font-size-s);
+          gap: 10px;
+          font-size: 13px;
           font-weight: 500;
-          color: var(--color-primary-black);
-          transition: background var(--timing-quick);
+          color: #000;
+          transition: background 0.15s;
+          font-family: 'Wix Madefor Text', Helvetica, Arial, sans-serif;
+          -webkit-tap-highlight-color: transparent;
         }
-        .product-custom-select__option:hover { background: var(--color-grey-2); }
-        .product-custom-select__option.active { background: var(--color-grey-2); font-weight: 700; }
+        .flavor-dropdown__option-img {
+          width: 32px;
+          height: 32px;
+          min-width: 32px;
+          object-fit: contain;
+          border-radius: 4px;
+        }
+        .flavor-dropdown__option-name {
+          flex: 1;
+          min-width: 0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .flavor-dropdown__option:hover { background: #edf1f2; }
+        .flavor-dropdown__option:active { background: #e0e4e5; }
+        .flavor-dropdown__option.active { background: #edf1f2; font-weight: 700; }
 
-        /* ── Add to cart button ── */
-        .product-form__add-to-cart-container {
-          display: flex;
-          gap: var(--spacing-m);
-          min-height: 3.8125rem;
+        .flavor-static {
+          padding: 8px 12px;
+          border: 1.5px solid #edf1f2;
+          border-radius: 8px;
+          background: #edf1f2;
+          font-size: 13px;
+          color: #757575;
+          font-weight: 500;
         }
-        .button {
-          appearance: none;
-          border: 0;
-          border-radius: var(--spacing-s);
+        .flavor-static__inner {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .flavor-static__img {
+          width: 28px;
+          height: 28px;
+          min-width: 28px;
+          object-fit: contain;
+          border-radius: 4px;
+        }
+
+        /* Add to cart */
+        .combo-atc {
+          width: 100%;
+          padding: 14px 24px;
+          border: none;
+          border-radius: 50px;
+          background: #4ec3e0;
+          color: #000;
+          font-size: 14px;
+          font-weight: 800;
+          text-transform: uppercase;
           cursor: pointer;
-          display: inline-flex;
+          box-shadow: 0 4px 16px rgba(78,195,224,0.3);
+          transition: all 0.2s;
+          display: flex;
           align-items: center;
           justify-content: center;
-          gap: var(--spacing-xs);
-          font: inherit;
-          text-decoration: none;
-          transition: opacity var(--timing-normal) var(--easing-normal), background-color var(--timing-normal) var(--easing-normal);
+          min-height: 52px;
+          margin-bottom: 12px;
+          letter-spacing: 0.5px;
+          -webkit-tap-highlight-color: transparent;
+          font-family: 'Wix Madefor Text', Helvetica, Arial, sans-serif;
         }
-        .button--semimedium {
-          padding: var(--spacing-m) var(--spacing-l);
-          font-size: 0.9375rem;
-          min-height: 3.125rem;
-          border-radius: 50px;
+        .combo-atc:hover { opacity: 0.9; }
+        .combo-atc:active { transform: scale(0.98); }
+        .combo-atc--success {
+          background: #2db463;
+          box-shadow: 0 4px 16px rgba(45,180,99,0.3);
+          color: #fff;
         }
-        .button--custom {
-          background-color: var(--color-background-custom);
-          color: var(--color-text-custom);
-          font-weight: var(--font-weight-extrabold);
-          text-transform: uppercase;
-          width: 100%;
-          box-shadow: 0 6px 24px rgba(78,195,224,0.35);
+        .combo-atc__mobile { display: none; }
+        @media (max-width: 767px) {
+          .combo-atc { min-height: 54px; font-size: 13px; }
+          .combo-atc__desktop { display: none; }
+          .combo-atc__mobile { display: inline; font-weight: 700; font-size: 14px; }
         }
-        .button--custom:hover { opacity: 0.9; }
-        .button--custom.button--success {
-          background-color: var(--color-auxiliary-success-1);
-          box-shadow: 0 6px 24px rgba(45,180,99,0.35);
-        }
-        .button--center { justify-content: center; }
-        .product-form__add-to-cart {
-          background-color: var(--color-background-custom);
-          color: var(--color-text-custom);
-          font-weight: var(--font-weight-extrabold);
-          text-transform: uppercase;
-          width: 100%;
-          box-shadow: 0 6px 24px rgba(78,195,224,0.35);
-        }
-        .product-form__add-to-cart:hover { opacity: 0.9; }
-        .product-form__add-to-cart.button--success {
-          background-color: var(--color-auxiliary-success-1);
-          box-shadow: 0 6px 24px rgba(45,180,99,0.35);
+        @media (min-width: 768px) {
+          .combo-atc { min-height: 56px; font-size: 15px; padding: 16px 24px; }
         }
 
-        /* ── Delivery time ── */
-        .delivery-time {
+        /* Delivery */
+        .combo-delivery {
+          display: flex;
           align-items: center;
-          color: var(--color-primary-black);
-          display: flex;
-          gap: var(--spacing-xs);
-          margin-block-start: var(--spacing-xs);
-          padding: var(--spacing-s) var(--spacing-m);
-          background: var(--color-auxiliary-success-3);
-          border-radius: var(--spacing-s);
+          gap: 8px;
+          padding: 10px 14px;
+          background: #e8f5ee;
+          border-radius: 8px;
+          font-size: 12px;
+          margin-bottom: 20px;
         }
-        .delivery-time .icon { height: var(--icon-m); min-width: var(--icon-m); width: var(--icon-m); }
-        .delivery-time__text { line-height: 130%; font-size: 0.8125rem; }
+        .combo-delivery__icon {
+          width: 20px;
+          height: 20px;
+          flex-shrink: 0;
+        }
+        @media (min-width: 768px) {
+          .combo-delivery { font-size: 13px; margin-bottom: 24px; }
+          .combo-delivery__icon { width: 24px; height: 24px; }
+        }
 
-        /* ── Accordion ── */
-        .product-info-overlay { margin-block-start: var(--spacing-l); }
-        .product-info-overlay__accordion {
-          display: flex;
-          flex-direction: column;
-          border-top: 2px solid var(--color-grey-3);
+        /* Accordion */
+        .combo-accordion {
+          border-top: 2px solid #dedede;
         }
-        .product-info-overlay__item {
-          border-bottom: 2px solid var(--color-grey-3);
-        }
-        .product-info-overlay__accordion-item {
+        .overlay-item { border-bottom: 2px solid #dedede; }
+        .overlay-btn {
           appearance: none;
           background: transparent;
           border: none;
-          box-shadow: none;
           color: inherit;
           cursor: pointer;
           font: inherit;
@@ -1249,195 +1011,228 @@ export default function ComboProduct() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding-block: var(--spacing-s);
+          padding: 14px 0;
+          -webkit-tap-highlight-color: transparent;
         }
-        .product-info-overlay__accordion-item .button__label {
+        .overlay-btn:active { opacity: 0.7; }
+        .overlay-btn__label {
           text-align: left;
-        }
-        .product-info-overlay__accordion-item .button__icon { order: 1; }
-        .product-info-overlay__accordion-item .button__default-icon .icon {
-          height: var(--icon-2xs);
-          width: var(--icon-2xs);
-          color: var(--color-grey-8);
-        }
-        .product-info-overlay__content-wrapper {
-          transition: max-height 0.35s ease, opacity 0.25s ease;
-        }
-        .product-info-overlay__content {
-          padding: var(--spacing-m) 0 var(--spacing-l);
-          font-size: var(--font-size-s);
-          line-height: 1.6;
-          color: var(--color-grey-5);
-        }
-        .product-info-overlay__content p { margin: 0 0 var(--spacing-s); }
-        .product-info-overlay__content strong { color: var(--color-primary-black); }
-        .product-info-overlay__content h3 {
-          margin: var(--spacing-m) 0 var(--spacing-s);
-          font-size: 0.9375rem;
+          font-size: 13px;
           font-weight: 700;
           text-transform: uppercase;
-          color: var(--color-primary-black);
+          letter-spacing: 0.5px;
+        }
+        .overlay-btn__icon { order: 1; color: #757575; flex-shrink: 0; }
+        .overlay-btn__icon svg { height: 18px; width: 18px; }
+        .overlay-content {
+          padding: 0 0 20px;
+          font-size: 13px;
+          line-height: 1.6;
+          color: #333;
+        }
+        .overlay-content p { margin: 0 0 10px; }
+        .overlay-content strong { color: #000; }
+        .overlay-content h3 {
+          margin: 14px 0 10px;
+          font-size: 13px;
+          font-weight: 700;
+          text-transform: uppercase;
+          color: #000;
+        }
+        @media (min-width: 768px) {
+          .overlay-btn { padding: 16px 0; }
+          .overlay-btn__label { font-size: 14px; }
+          .overlay-btn__icon svg { height: 20px; width: 20px; }
+          .overlay-content { padding: 0 0 24px; font-size: 14px; }
         }
 
-        /* ── Combo Description ── */
-        .combo-desc-intro {
-          font-size: 0.9375rem;
-          line-height: 1.6;
-          margin-bottom: var(--spacing-m);
-        }
-        .combo-desc-heading {
-          font-size: 0.9375rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          margin: var(--spacing-m) 0 var(--spacing-s);
-          color: var(--color-primary-black);
-        }
-        .combo-product-row {
+        /* Combo rows */
+        .combo-row {
           display: flex;
           align-items: center;
-          gap: var(--spacing-s);
-          padding: var(--spacing-s) 0;
-          border-bottom: 1px solid var(--color-grey-2);
+          gap: 10px;
+          padding: 10px 0;
+          border-bottom: 1px solid #edf1f2;
         }
-        .combo-product-row:last-of-type { border-bottom: none; }
-        .combo-product-thumb {
-          width: 48px;
-          height: 48px;
-          background: var(--color-grey-2);
-          border-radius: var(--spacing-s);
+        .combo-row:last-of-type { border-bottom: none; }
+        .combo-row__thumb {
+          width: 40px;
+          height: 40px;
+          min-width: 40px;
+          background: #f5f5f5;
+          border-radius: 6px;
           display: flex;
           align-items: center;
           justify-content: center;
-          flex-shrink: 0;
           overflow: hidden;
         }
-        .combo-product-thumb img { width: 100%; height: 100%; object-fit: contain; }
-        .combo-product-details {
+        .combo-row__thumb img { width: 100%; height: 100%; object-fit: contain; }
+        .combo-row__info {
           display: flex;
           align-items: flex-start;
-          gap: var(--spacing-s);
+          gap: 10px;
           flex: 1;
           min-width: 0;
         }
-        .combo-product-number {
-          width: 24px;
-          height: 24px;
-          background: var(--color-primary-black);
-          color: var(--color-primary-white);
+        .combo-row__num {
+          width: 20px;
+          height: 20px;
+          min-width: 20px;
+          background: #000;
+          color: #fff;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 0.6875rem;
+          font-size: 10px;
           font-weight: 800;
-          flex-shrink: 0;
-          margin-top: 2px;
-        }
-        .combo-product-name {
-          font-size: 0.8125rem;
-          font-weight: 700;
-          color: var(--color-primary-black);
-          line-height: 1.3;
-        }
-        .combo-product-size {
-          font-size: 0.6875rem;
-          color: var(--color-grey-8);
           margin-top: 1px;
         }
-        .combo-product-flavors {
-          font-size: 0.6875rem;
-          color: var(--color-grey-8);
-          margin-top: 2px;
+        .combo-row__name {
+          font-size: 12px;
+          font-weight: 700;
+          color: #000;
+          line-height: 1.3;
+        }
+        .combo-row__size {
+          font-size: 10px;
+          color: #757575;
+          margin-top: 1px;
+        }
+        .combo-row__flavors {
+          font-size: 10px;
+          color: #757575;
+          margin-top: 1px;
           line-height: 1.4;
         }
-        .combo-highlight-box {
-          margin-top: var(--spacing-m);
-          padding: var(--spacing-m);
-          background: var(--color-auxiliary-success-3);
-          border-radius: var(--spacing-s);
-          font-size: 0.8125rem;
+        .combo-highlight {
+          margin-top: 12px;
+          padding: 12px;
+          background: #e8f5ee;
+          border-radius: 8px;
+          font-size: 12px;
           line-height: 1.5;
-          color: var(--color-primary-black);
         }
-        .combo-highlight-box strong { color: var(--color-auxiliary-success-1); }
+        .combo-highlight strong { color: #2db463; }
+        @media (min-width: 768px) {
+          .combo-row { gap: 12px; padding: 12px 0; }
+          .combo-row__thumb { width: 48px; height: 48px; min-width: 48px; border-radius: 8px; }
+          .combo-row__num { width: 22px; height: 22px; min-width: 22px; font-size: 11px; }
+          .combo-row__name { font-size: 13px; }
+          .combo-row__size, .combo-row__flavors { font-size: 11px; }
+          .combo-highlight { padding: 16px; font-size: 13px; margin-top: 16px; }
+        }
 
-        /* ── Nutrition Table ── */
-        .nutrition-table {
+        /* Nutrition table */
+        .combo-nutrition {
           width: 100%;
           border-collapse: collapse;
-          font-size: 0.75rem;
+          font-size: 12px;
+          display: block;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
         }
-        .nutrition-table th {
+        .combo-nutrition thead,
+        .combo-nutrition tbody { display: table; width: 100%; }
+        .combo-nutrition th {
           text-align: left;
           font-weight: 700;
           text-transform: uppercase;
-          font-size: 0.6875rem;
-          padding: var(--spacing-xs) var(--spacing-s);
-          border-bottom: 2px solid var(--color-primary-black);
-          color: var(--color-primary-black);
+          font-size: 10px;
+          padding: 6px 8px;
+          border-bottom: 2px solid #000;
+          color: #000;
+          white-space: nowrap;
         }
-        .nutrition-table td {
-          padding: var(--spacing-xs) var(--spacing-s);
-          border-bottom: 1px solid var(--color-grey-2);
-          color: var(--color-grey-5);
+        .combo-nutrition td {
+          padding: 6px 8px;
+          border-bottom: 1px solid #edf1f2;
+          color: #333;
+          white-space: nowrap;
         }
-        .nutrition-table tr:last-child td { border-bottom: none; }
+        @media (min-width: 768px) {
+          .combo-nutrition { font-size: 13px; }
+          .combo-nutrition th { font-size: 11px; padding: 8px 12px; }
+          .combo-nutrition td { padding: 8px 12px; }
+        }
 
         /* ── What's inside ── */
-        .whats-inside {
-          margin-block-start: var(--spacing-7xl);
-          padding-block-start: var(--spacing-2xl);
-          border-top: 1px solid var(--color-grey-2);
-          background: var(--color-background);
+        .combo-whats {
+          margin-top: 48px;
+          padding: 40px 0 48px;
+          border-top: 1px solid #edf1f2;
+          background: #fff;
         }
-        .max-width-container {
-          max-width: var(--max-content-width-l);
-          margin: 0 auto;
-          padding-inline: var(--layout-margin);
-        }
-        .whats-inside__title {
-          font-size: 1.375rem;
+        .combo-whats__title {
+          font-size: 18px;
           font-weight: 800;
           text-transform: uppercase;
           text-align: center;
-          margin: 0 0 var(--spacing-2xl);
-          letter-spacing: 0.5px;
+          margin: 0 0 24px;
+          letter-spacing: 0.3px;
+          padding: 0 16px;
+          line-height: 1.3;
         }
-        .whats-inside__grid {
+        .combo-whats__grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-          gap: var(--spacing-m);
+          grid-template-columns: repeat(2, 1fr);
+          gap: 10px;
         }
-        .whats-inside__card {
-          background: var(--color-primary-white);
-          border-radius: var(--spacing-m);
-          padding: var(--spacing-m);
+        .combo-whats__card {
+          background: #fff;
+          border-radius: 8px;
+          padding: 10px 6px;
           text-align: center;
-          border: 1.5px solid var(--color-grey-2);
+          border: 1.5px solid #edf1f2;
           cursor: pointer;
-          transition: all var(--timing-normal);
+          transition: all 0.2s;
+          -webkit-tap-highlight-color: transparent;
         }
-        .whats-inside__card:hover {
-          border-color: var(--color-primary-black);
-          transform: translateY(-3px);
+        .combo-whats__card:hover {
+          border-color: #000;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
-        .whats-inside__img {
-          width: 80px;
-          height: 80px;
-          margin: 0 auto var(--spacing-s);
+        .combo-whats__card:active {
+          transform: scale(0.97);
+          border-color: #000;
+        }
+        .combo-whats__img {
+          width: 52px;
+          height: 52px;
+          margin: 0 auto 6px;
           display: flex;
           align-items: center;
           justify-content: center;
         }
-        .whats-inside__img img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .whats-inside__name {
-          font-size: 0.75rem;
+        .combo-whats__img img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .combo-whats__name {
+          font-size: 9px;
           font-weight: 800;
           text-transform: uppercase;
           line-height: 1.3;
-          margin-bottom: 4px;
+          margin-bottom: 3px;
+          color: #000;
         }
-        .whats-inside__sub { font-size: 0.6875rem; color: var(--color-grey-8); }
+        .combo-whats__sub { font-size: 9px; color: #757575; }
+        @media (min-width: 480px) {
+          .combo-whats__title { font-size: 20px; margin-bottom: 28px; }
+          .combo-whats__grid { gap: 12px; }
+          .combo-whats__card { padding: 12px 8px; }
+          .combo-whats__img { width: 60px; height: 60px; }
+          .combo-whats__name { font-size: 10px; }
+          .combo-whats__sub { font-size: 10px; }
+        }
+        @media (min-width: 768px) {
+          .combo-whats { margin-top: 64px; padding: 48px 0 64px; }
+          .combo-whats__title { font-size: 22px; margin-bottom: 32px; }
+          .combo-whats__grid { grid-template-columns: repeat(4, 1fr); gap: 12px; }
+          .combo-whats__card { padding: 14px 10px; }
+          .combo-whats__img { width: 64px; height: 64px; margin-bottom: 8px; }
+        }
+        @media (min-width: 1024px) {
+          .combo-whats__grid { grid-template-columns: repeat(8, 1fr); }
+        }
 
         /* ── Visually hidden ── */
         .visually-hidden {
@@ -1452,15 +1247,12 @@ export default function ComboProduct() {
           border: 0;
         }
 
-        /* ── Responsive ── */
-        @media (max-width: 63.99em) {
-          .product-gallery.product-gallery--tabs.product-gallery--vertical-desktop {
-            grid-template-columns: 1fr;
-          }
-          .product-gallery__thumbnails-container { display: none; }
-          .gallery-thumb { width: 60px; height: 60px; }
-          .product-gallery { position: static; }
-          .product-options__grid-2 { grid-template-columns: 1fr; }
+        /* ── Mobile text ── */
+        .text-mobile { display: inline; }
+        .text-desktop { display: none; }
+        @media (min-width: 1024px) {
+          .text-mobile { display: none; }
+          .text-desktop { display: inline; }
         }
       `}</style>
     </div>

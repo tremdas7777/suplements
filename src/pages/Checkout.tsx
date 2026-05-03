@@ -1,21 +1,20 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, Lock, ShoppingBag, Check, CreditCard } from "lucide-react";
+import { ChevronLeft, Lock, ShoppingBag, CreditCard } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import FooterESN from "../components/FooterESN";
 import HeaderESN from "../components/HeaderESN";
 
-type Step = "info" | "shipping" | "payment" | "done";
+type Step = "info" | "shipping" | "payment";
 
 interface FormData {
   firstName: string; lastName: string; email: string; phone: string;
   address: string; zip: string; city: string; country: string;
-  cardNumber: string; cardName: string; cardExpiry: string; cardCvv: string;
 }
 
 const EMPTY: FormData = {
   firstName: "", lastName: "", email: "", phone: "",
   address: "", zip: "", city: "", country: "Deutschland",
-  cardNumber: "", cardName: "", cardExpiry: "", cardCvv: "",
 };
 
 const SHIPPING_OPTIONS = [
@@ -62,7 +61,7 @@ export default function Checkout() {
   const [form, setForm] = useState<FormData>(EMPTY);
   const [shipping, setShipping] = useState("standard");
   const [processing, setProcessing] = useState(false);
-  const [orderId, setOrderId] = useState("");
+  const [error, setError] = useState("");
 
   const up = (k: keyof FormData, v: string) => setForm(p => ({ ...p, [k]: v }));
 
@@ -71,35 +70,93 @@ export default function Checkout() {
   const orderTotal = Math.round((total + shippingCost) * 100) / 100;
 
   const canInfo = !!(form.firstName && form.email && form.address && form.zip && form.city);
-  const canPay  = !!(form.cardName && form.cardNumber.replace(/\s/g, "").length >= 15 && form.cardExpiry && form.cardCvv);
 
-  const handlePlaceOrder = async () => {
+  const handleStripeCheckout = useCallback(async () => {
     setProcessing(true);
-    await new Promise(r => setTimeout(r, 1600));
-    const id = saveOrder({
-      customer: {
-        firstName: form.firstName, lastName: form.lastName,
-        email: form.email, phone: form.phone,
-        address: form.address, zip: form.zip,
-        city: form.city, country: form.country,
-      },
-      items: [...items],
-      subtotal: total,
-      shippingCost,
-      total: orderTotal,
-      shippingMethod: selectedShipping.label,
-      paymentMethod: "Kreditkarte",
-    });
-    setOrderId(id);
-    clearCart();
-    setStep("done");
-    setProcessing(false);
-  };
+    setError("");
 
-  const STEPS = ["info", "shipping", "payment"] as Step[];
-  const LABELS = ["Kontaktdaten", "Versand", "Zahlung"];
+    try {
+      // Facebook Pixel - Initiate Checkout
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        (window as any).fbq('track', 'InitiateCheckout', {
+          content_ids: items.map(i => i.id),
+          content_type: 'product',
+          value: orderTotal,
+          currency: 'EUR',
+        });
+      }
 
-  if (items.length === 0 && step !== "done") {
+      // Google Analytics - begin_checkout
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'begin_checkout', {
+          currency: 'EUR',
+          value: orderTotal,
+          items: items.map(i => ({
+            item_id: i.id,
+            item_name: i.title,
+            price: i.price,
+            quantity: i.quantity,
+          })),
+        });
+      }
+
+      const res = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: items.map(i => ({
+            id: i.id,
+            title: i.title,
+            price: i.price,
+            quantity: i.quantity,
+            image: i.image,
+            variant: i.variant || i.flavor || '',
+          })),
+          customer: {
+            firstName: form.firstName,
+            lastName: form.lastName,
+            email: form.email,
+            phone: form.phone,
+          },
+          shippingCost,
+          shippingMethod: selectedShipping.label,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: "Erro ao criar sessão de pagamento" }));
+        throw new Error(err.error);
+      }
+
+      const { url } = await res.json();
+
+      // Save order locally as pending before redirect
+      saveOrder({
+        customer: {
+          firstName: form.firstName, lastName: form.lastName,
+          email: form.email, phone: form.phone,
+          address: form.address, zip: form.zip,
+          city: form.city, country: form.country,
+        },
+        items: [...items],
+        subtotal: total,
+        shippingCost,
+        total: orderTotal,
+        shippingMethod: selectedShipping.label,
+        paymentMethod: "Kreditkarte",
+      });
+
+      clearCart();
+
+      // Redirect to Stripe Checkout
+      window.location.href = url;
+    } catch (err: any) {
+      setError(err.message || "Erro ao processar pagamento");
+      setProcessing(false);
+    }
+  }, [items, form, shippingCost, orderTotal, selectedShipping, total, clearCart, saveOrder]);
+
+  if (items.length === 0) {
     return (
       <div style={{ minHeight: "100vh", fontFamily: "'Wix Madefor Text', Helvetica, Arial, sans-serif" }}>
         <HeaderESN />
@@ -110,54 +167,7 @@ export default function Checkout() {
             Weiter einkaufen
           </button>
         </div>
-      </div>
-    );
-  }
-
-  if (step === "done") {
-    return (
-      <div style={{ minHeight: "100vh", fontFamily: "'Wix Madefor Text', Helvetica, Arial, sans-serif", background: "#fff" }}>
-        <HeaderESN />
-        <div style={{ maxWidth: 560, margin: "60px auto", padding: "0 24px", textAlign: "center" }}>
-          <div style={{ width: 80, height: 80, background: "#16a34a", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 28px" }}>
-            <Check size={36} color="#fff" strokeWidth={3} />
-          </div>
-          <h1 style={{ fontSize: 26, fontWeight: 900, marginBottom: 8 }}>Bestellung erfolgreich! 🎉</h1>
-          <p style={{ color: "#6b7280", fontSize: 15, lineHeight: 1.7, marginBottom: 8 }}>
-            Danke, <strong>{form.firstName}</strong>! Deine Bestellung <strong>{orderId}</strong> wurde aufgegeben.
-          </p>
-          <p style={{ color: "#6b7280", fontSize: 13, marginBottom: 32 }}>
-            Bestätigung wird an <strong>{form.email}</strong> gesendet.
-          </p>
-
-          <div style={{ background: "#f8f9fa", borderRadius: 16, padding: 24, border: "1.5px solid #edf1f2", textAlign: "left", marginBottom: 32 }}>
-            <div style={{ fontWeight: 700, marginBottom: 16 }}>Bestellübersicht · {orderId}</div>
-            {items.map(item => (
-              <div key={item.id} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 8 }}>
-                <span>{item.title} × {item.quantity}</span>
-                <span style={{ fontWeight: 700 }}>{F(item.price * item.quantity)}</span>
-              </div>
-            ))}
-            <div style={{ borderTop: "1px solid #edf1f2", marginTop: 12, paddingTop: 12 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "#6b7280", marginBottom: 6 }}>
-                <span>Versand ({selectedShipping.label})</span>
-                <span>{shippingCost === 0 ? "Kostenlos" : F(shippingCost)}</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 900, fontSize: 18 }}>
-                <span>Gesamt</span><span>{F(orderTotal)}</span>
-              </div>
-            </div>
-          </div>
-
-          <div style={{ display: "flex", gap: 12, flexDirection: "column" }}>
-            <button onClick={() => navigate("/")} style={{ padding: "16px", background: "#4ec3e0", color: "#fff", border: "none", borderRadius: 50, fontWeight: 800, fontSize: 15, cursor: "pointer" }}>
-              Weiter einkaufen
-            </button>
-            <button onClick={() => navigate("/admin")} style={{ padding: "16px", background: "transparent", color: "#232323", border: "1.5px solid #e5e7eb", borderRadius: 50, fontWeight: 700, fontSize: 14, cursor: "pointer" }}>
-              Bestellung im Admin-Panel ansehen →
-            </button>
-          </div>
-        </div>
+        <FooterESN />
       </div>
     );
   }
@@ -172,16 +182,18 @@ export default function Checkout() {
         <div>
           {/* Steps */}
           <div style={{ background: "#fff", borderRadius: 16, padding: "16px 24px", border: "1.5px solid #edf1f2", marginBottom: 24, display: "flex", alignItems: "center" }}>
-            {STEPS.map((s, i) => {
-              const done = STEPS.indexOf(step) > i;
+            {(["info", "shipping", "payment"] as Step[]).map((s, i) => {
+              const done = ["info", "shipping", "payment"].indexOf(step) > i;
               const active = step === s;
               return (
                 <div key={s} style={{ display: "flex", alignItems: "center", flex: 1 }}>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
                     <div style={{ width: 30, height: 30, borderRadius: "50%", background: done ? "#16a34a" : active ? "#232323" : "#e5e7eb", color: done || active ? "#fff" : "#6b7280", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, transition: "all .3s" }}>
-                      {done ? <Check size={13} strokeWidth={3} /> : i + 1}
+                      {done ? "✓" : i + 1}
                     </div>
-                    <span style={{ fontSize: 10, fontWeight: 600, color: active ? "#232323" : "#9ca3af", whiteSpace: "nowrap" }}>{LABELS[i]}</span>
+                    <span style={{ fontSize: 10, fontWeight: 600, color: active ? "#232323" : "#9ca3af", whiteSpace: "nowrap" }}>
+                      {["Kontaktdaten", "Versand", "Zahlung"][i]}
+                    </span>
                   </div>
                   {i < 2 && <div style={{ flex: 1, height: 2, background: done ? "#16a34a" : "#e5e7eb", margin: "0 6px", marginBottom: 18, transition: "all .3s" }} />}
                 </div>
@@ -209,9 +221,7 @@ export default function Checkout() {
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                     <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".4px", color: "#374151" }}>Land</label>
-                    <select value={form.country} onChange={e => up("country", e.target.value)}
-                      style={{ ...inp, cursor: "pointer" }}
-                    >
+                    <select value={form.country} onChange={e => up("country", e.target.value)} style={{ ...inp, cursor: "pointer" }}>
                       {["Deutschland","Österreich","Schweiz","Niederlande","Belgien","Frankreich","Spanien","Italien"].map(c => <option key={c}>{c}</option>)}
                     </select>
                   </div>
@@ -249,7 +259,7 @@ export default function Checkout() {
               </>
             )}
 
-            {/* STEP 3: Payment */}
+            {/* STEP 3: Payment - Stripe */}
             {step === "payment" && (
               <>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 24 }}>
@@ -259,7 +269,7 @@ export default function Checkout() {
 
                 <div style={{ background: "#f0fdf4", border: "1.5px solid #bbf7d0", borderRadius: 10, padding: "12px 16px", marginBottom: 20, display: "flex", gap: 10 }}>
                   <Lock size={16} style={{ color: "#16a34a", flexShrink: 0, marginTop: 2 }} />
-                  <span style={{ fontSize: 12, color: "#15803d", fontWeight: 600 }}>256-bit SSL-Verschlüsselung · Sichere Zahlung</span>
+                  <span style={{ fontSize: 12, color: "#15803d", fontWeight: 600 }}>256-bit SSL-Verschlüsselung · Sichere Zahlung via Stripe</span>
                 </div>
 
                 <div style={{ background: "#f8f9fa", borderRadius: 12, padding: 16, marginBottom: 20, display: "flex", alignItems: "center", gap: 12 }}>
@@ -270,66 +280,27 @@ export default function Checkout() {
                   </div>
                 </div>
 
-                <div style={{ display: "grid", gap: 14, marginBottom: 24 }}>
-                  <Field label="Karteninhaber *" name="cardName" value={form.cardName} onChange={up} placeholder="Max Mustermann" />
-                  <div>
-                    <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".4px", color: "#374151", display: "block", marginBottom: 6 }}>Kartennummer *</label>
-                    <input
-                      value={form.cardNumber}
-                      placeholder="1234 5678 9012 3456"
-                      maxLength={19}
-                      onChange={e => {
-                        const v = e.target.value.replace(/\D/g, "").replace(/(.{4})/g, "$1 ").trim();
-                        up("cardNumber", v);
-                      }}
-                      style={inp}
-                      onFocus={e => (e.target.style.borderColor = "#232323")}
-                      onBlur={e => (e.target.style.borderColor = "#e5e7eb")}
-                    />
+                {error && (
+                  <div style={{ background: "#fef2f2", border: "1.5px solid #fecaca", borderRadius: 10, padding: "12px 16px", marginBottom: 20, fontSize: 13, color: "#991b1b", fontWeight: 600 }}>
+                    {error}
                   </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-                    <div>
-                      <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".4px", color: "#374151", display: "block", marginBottom: 6 }}>Ablaufdatum *</label>
-                      <input
-                        value={form.cardExpiry}
-                        placeholder="MM/JJ"
-                        maxLength={5}
-                        onChange={e => {
-                          let v = e.target.value.replace(/\D/g, "");
-                          if (v.length >= 3) v = v.slice(0,2) + "/" + v.slice(2,4);
-                          up("cardExpiry", v);
-                        }}
-                        style={inp}
-                        onFocus={e => (e.target.style.borderColor = "#232323")}
-                        onBlur={e => (e.target.style.borderColor = "#e5e7eb")}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".4px", color: "#374151", display: "block", marginBottom: 6 }}>CVV *</label>
-                      <input
-                        value={form.cardCvv}
-                        placeholder="123"
-                        maxLength={4}
-                        onChange={e => up("cardCvv", e.target.value.replace(/\D/g, ""))}
-                        style={inp}
-                        onFocus={e => (e.target.style.borderColor = "#232323")}
-                        onBlur={e => (e.target.style.borderColor = "#e5e7eb")}
-                      />
-                    </div>
-                  </div>
-                </div>
+                )}
 
                 <button
-                  onClick={handlePlaceOrder}
-                  disabled={processing || !canPay}
-                  style={{ width: "100%", padding: "18px", background: (processing || !canPay) ? "#d1d5db" : "#b70832", color: "#fff", border: "none", borderRadius: 50, fontSize: 16, fontWeight: 900, cursor: (processing || !canPay) ? "not-allowed" : "pointer", textTransform: "uppercase", letterSpacing: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, transition: "all .2s" }}
+                  onClick={handleStripeCheckout}
+                  disabled={processing}
+                  style={{ width: "100%", padding: "18px", background: processing ? "#d1d5db" : "#b70832", color: "#fff", border: "none", borderRadius: 50, fontSize: 16, fontWeight: 900, cursor: processing ? "not-allowed" : "pointer", textTransform: "uppercase", letterSpacing: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, transition: "all .2s" }}
                 >
                   {processing ? (
-                    <><div style={{ width: 18, height: 18, border: "2px solid rgba(255,255,255,.4)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin .8s linear infinite" }} /> Wird verarbeitet...</>
+                    <><div style={{ width: 18, height: 18, border: "2px solid rgba(255,255,255,.4)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin .8s linear infinite" }} /> Weiterleitung zu Stripe...</>
                   ) : (
                     <><Lock size={16} /> Jetzt kaufen · {F(orderTotal)}</>
                   )}
                 </button>
+
+                <p style={{ textAlign: "center", fontSize: 11, color: "#6b7280", marginTop: 12 }}>
+                  Du wirst zur sicheren Bezahlung auf Stripe weitergeleitet.
+                </p>
               </>
             )}
           </div>
@@ -377,6 +348,8 @@ export default function Checkout() {
           </div>
         </div>
       </div>
+
+      <FooterESN />
 
       <style>{`
         @media (min-width:860px) { .checkout-grid { grid-template-columns: 1fr 380px !important; } }

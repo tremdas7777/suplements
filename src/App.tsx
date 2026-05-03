@@ -8,8 +8,9 @@ import CartDrawer from "./components/CartDrawer";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ComboProduct from "./pages/ComboProduct.tsx";
-
 import Checkout from "./pages/Checkout.tsx";
+import CheckoutSuccess from "./pages/CheckoutSuccess.tsx";
+import CheckoutCancel from "./pages/CheckoutCancel.tsx";
 
 const queryClient = new QueryClient();
 
@@ -23,8 +24,9 @@ const App = () => (
           <CartDrawer />
           <Routes>
             <Route path="/" element={<Index />} />
-
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/checkout/success" element={<CheckoutSuccess />} />
+            <Route path="/checkout/cancel" element={<CheckoutCancel />} />
             <Route path="/products/esn-elite-leistung-combo" element={<ComboProduct />} />
             <Route path="/products/:slug" element={<Index />} />
             <Route path="/:slug" element={<Index />} />
