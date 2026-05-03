@@ -62,6 +62,8 @@ const Index = () => {
         quantity: Number(item.quantity) || 1,
         image: item.image,
         variant: item.variant,
+        isCombo: !!item.isCombo,
+        comboSelections: item.comboSelections,
       });
       return;
     }

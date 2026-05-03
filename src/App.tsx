@@ -27,7 +27,6 @@ const App = () => (
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/checkout/success" element={<CheckoutSuccess />} />
             <Route path="/checkout/cancel" element={<CheckoutCancel />} />
-            <Route path="/products/esn-elite-leistung-combo" element={<ComboProduct />} />
             <Route path="/products/:slug" element={<Index />} />
             <Route path="/:slug" element={<Index />} />
             <Route path="/collections/:slug" element={<Index />} />

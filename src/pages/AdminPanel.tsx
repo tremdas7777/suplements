@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 export default function AdminPanel() {
   const { getOrders } = useCart();
   const [orders, setOrders] = useState<any[]>([]);
+  const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     setOrders(getOrders());
@@ -54,22 +55,77 @@ export default function AdminPanel() {
                 </thead>
                 <tbody>
                   {orders.map(order => (
-                    <tr key={order.id} style={{ borderBottom: "1px solid #edf1f2" }}>
-                      <td style={{ padding: "10px 16px", fontWeight: 700, fontFamily: "monospace" }}>{order.id}</td>
-                      <td style={{ padding: "10px 16px" }}>{order.customer?.firstName} {order.customer?.lastName}</td>
-                      <td style={{ padding: "10px 16px" }}>{order.customer?.email}</td>
-                      <td style={{ padding: "10px 16px", fontWeight: 800 }}>€{(order.total || 0).toFixed(2).replace(".", ",")}</td>
-                      <td style={{ padding: "10px 16px" }}>
-                        <span style={{
-                          display: "inline-block", padding: "2px 10px", borderRadius: 20, fontSize: 11, fontWeight: 700,
-                          background: order.status === "pending" ? "#fef3c7" : order.status === "paid" ? "#d1fae5" : "#fee2e2",
-                          color: order.status === "pending" ? "#92400e" : order.status === "paid" ? "#065f46" : "#991b1b",
-                        }}>
-                          {order.status === "pending" ? "Pendente" : order.status === "paid" ? "Pago" : order.status === "shipped" ? "Enviado" : "Cancelado"}
-                        </span>
-                      </td>
-                      <td style={{ padding: "10px 16px", fontSize: 12, color: "#6b7280" }}>{new Date(order.createdAt).toLocaleDateString("de-DE")}</td>
-                    </tr>
+                    <>
+                      <tr 
+                        key={order.id} 
+                        style={{ borderBottom: "1px solid #edf1f2", cursor: "pointer", transition: "background 0.2s" }}
+                        onClick={() => setExpandedOrderId(expandedOrderId === order.id ? null : order.id)}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = "#fcfcfc")}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                      >
+                        <td style={{ padding: "12px 16px", fontWeight: 700, fontFamily: "monospace", color: "#111" }}>{order.id}</td>
+                        <td style={{ padding: "12px 16px" }}>{order.customer?.firstName} {order.customer?.lastName}</td>
+                        <td style={{ padding: "12px 16px" }}>{order.customer?.email}</td>
+                        <td style={{ padding: "12px 16px", fontWeight: 800 }}>€{(order.total || 0).toFixed(2).replace(".", ",")}</td>
+                        <td style={{ padding: "12px 16px" }}>
+                          <span style={{
+                            display: "inline-block", padding: "2px 10px", borderRadius: 20, fontSize: 11, fontWeight: 700,
+                            background: order.status === "pending" ? "#fef3c7" : order.status === "paid" ? "#d1fae5" : "#fee2e2",
+                            color: order.status === "pending" ? "#92400e" : order.status === "paid" ? "#065f46" : "#991b1b",
+                          }}>
+                            {order.status === "pending" ? "Pendente" : order.status === "paid" ? "Pago" : order.status === "shipped" ? "Enviado" : "Cancelado"}
+                          </span>
+                        </td>
+                        <td style={{ padding: "12px 16px", fontSize: 12, color: "#6b7280" }}>{new Date(order.createdAt).toLocaleDateString("de-DE")}</td>
+                      </tr>
+                      {expandedOrderId === order.id && (
+                        <tr>
+                          <td colSpan={6} style={{ padding: "0 24px 24px", background: "#fcfcfc" }}>
+                            <div style={{ padding: 20, background: "#fff", borderRadius: 12, border: "1.5px solid #edf1f2", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}>
+                              <h4 style={{ margin: "0 0 16px", fontSize: 13, fontWeight: 800, textTransform: "uppercase", letterSpacing: 0.5 }}>Itens do Pedido</h4>
+                              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                                {order.items?.map((item: any, idx: number) => (
+                                  <div key={idx} style={{ display: "flex", gap: 16, alignItems: "center", paddingBottom: idx === order.items.length - 1 ? 0 : 12, borderBottom: idx === order.items.length - 1 ? "none" : "1px solid #edf1f2" }}>
+                                    {item.image && <img src={item.image} alt="" style={{ width: 48, height: 48, objectFit: "contain", background: "#f8f9fa", borderRadius: 8 }} />}
+                                    <div style={{ flex: 1 }}>
+                                      <div style={{ fontWeight: 700, fontSize: 14 }}>{item.title}</div>
+                                      <div style={{ fontSize: 12, color: "#6b7280" }}>Qtd: {item.quantity} · Preço: €{item.price?.toFixed(2).replace(".", ",")}</div>
+                                      
+                                      {item.isCombo && item.comboSelections && (
+                                        <div style={{ marginTop: 10, padding: 12, background: "#f8f9fa", borderRadius: 8, border: "1px solid #e5e7eb" }}>
+                                          <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", marginBottom: 6, color: "#111" }}>Seleções do Combo:</div>
+                                          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "8px 16px" }}>
+                                            {Object.entries(item.comboSelections).map(([key, val]: [string, any]) => (
+                                              <div key={key} style={{ fontSize: 12 }}>
+                                                <span style={{ fontWeight: 600, color: "#6b7280" }}>{key.replace(/_/g, ' ')}:</span> <span style={{ fontWeight: 700 }}>{val}</span>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+                                      
+                                      {item.variant && !item.isCombo && (
+                                        <div style={{ fontSize: 12, marginTop: 4 }}>
+                                          <span style={{ fontWeight: 600, color: "#6b7280" }}>Sabor:</span> <strong>{item.variant}</strong>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                              
+                              <div style={{ marginTop: 20, paddingTop: 16, borderTop: "2px solid #edf1f2" }}>
+                                <div style={{ fontSize: 13, fontWeight: 700 }}>Endereço de Entrega:</div>
+                                <div style={{ fontSize: 13, color: "#4b5563", marginTop: 4 }}>
+                                  {order.customer?.address}, {order.customer?.zip} {order.customer?.city}<br />
+                                  {order.customer?.country}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </>
                   ))}
                 </tbody>
               </table>
