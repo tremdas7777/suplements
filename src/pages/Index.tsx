@@ -7,7 +7,6 @@ const Index = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const path = location.pathname;
-  const [isIframe404, setIsIframe404] = useState(false);
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
@@ -164,50 +163,16 @@ const Index = () => {
             const iframe = e.target as HTMLIFrameElement;
             const doc = iframe.contentDocument || iframe.contentWindow?.document;
             if (!doc) return;
+
             const script = doc.createElement('script');
             script.textContent = `
               (function() {
-                if (window.__sys_script_running) return;
-                window.__sys_script_running = true;
+                if (window.__sys_script_running_v2) return;
+                window.__sys_script_running_v2 = true;
 
-                // DATA PATCHING ENGINE - THE SOURCE OF TRUTH
-                function patchData() {
-                    // Patch PDP data
-                    if (window.cnvs && window.cnvs.product && !window.cnvs.product.__sys_patched) {
-                        window.cnvs.product.variants.forEach(v => {
-                            if (!v.__sys_patched) {
-                                v.price = String(Math.round(parseFloat(v.price) * 0.6));
-                                v.__sys_patched = true;
-                            }
-                        });
-                        window.cnvs.product.__sys_patched = true;
-                    }
-
-                    // Patch meta products (Collection pages)
-                    if (window.meta && window.meta.products && !window.meta.__sys_patched) {
-                        window.meta.products.forEach(p => {
-                            p.variants.forEach(v => {
-                                if (!v.__sys_patched) {
-                                    v.price = Math.round(parseFloat(v.price) * 0.6);
-                                    v.__sys_patched = true;
-                                }
-                            });
-                        });
-                        window.meta.__sys_patched = true;
-                    }
-
-                    // Patch Shopify global objects if they exist
-                    if (window.Shopify && window.Shopify.currency && !window.Shopify.__sys_patched) {
-                        // This might affect how prices are formatted, but usually it's the product data above
-                        window.Shopify.__sys_patched = true;
-                    }
-                }
-
-                // Run patchData frequently to catch objects as they are defined by store scripts
-                const patchInterval = setInterval(patchData, 50);
-                setTimeout(() => clearInterval(patchInterval), 10000); // Stop after 10s
-
-                // CSS INJECTION
+                // VISUAL LAYER FIXES (Badge, Strikethrough)
+                // Since data is already patched in HTML files, we just need to ensure the UI looks good.
+                
                 const style = document.createElement('style');
                 style.textContent = \`
                   .sys-discounted-price { display: inline-flex !important; align-items: center !important; gap: 12px !important; color: #b70832 !important; font-weight: 900 !important; font-size: 1.2em !important; }
@@ -218,40 +183,23 @@ const Index = () => {
                 \`;
                 document.head.appendChild(style);
 
-                document.addEventListener('click', (e) => {
-                  const target = e.target.closest('a, [data-href]');
-                  if (!target) return;
-                  let urlStr = target.getAttribute('href') || target.getAttribute('data-href');
-                  if (!urlStr || urlStr.startsWith('javascript:') || urlStr.includes('#')) return;
-                  try {
-                    const url = new URL(urlStr, window.location.origin);
-                    if (url.origin === window.location.origin) { e.preventDefault(); window.parent.postMessage({ t: 'sys-click', u: url.pathname + url.search }, '*'); }
-                  } catch (err) {
-                    if (urlStr.startsWith('/') || urlStr.startsWith('./') || urlStr.startsWith('../')) { e.preventDefault(); window.parent.postMessage({ t: 'sys-click', u: urlStr }, '*'); }
-                  }
-                }, true);
-
-                window.addEventListener('popstate', () => { window.parent.postMessage({ t: 'sys-nav', u: window.location.pathname + window.location.search }, '*'); });
-
-                function applyDiscount(priceStr) {
-                    if (priceStr.includes('sys-discounted-price')) return null;
-                    const match = priceStr.match(/(\\d+)[,.](\\d+)/);
-                    if (!match) return null;
-                    const val = parseInt(match[1]) + parseInt(match[2])/100;
-                    return { original: val.toFixed(2).replace('.', ','), discounted: (val * 0.6).toFixed(2).replace('.', ',') };
-                }
-
                 function fixPrices() {
                     const selectors = ['.product-prices__price', '.price__regular', '.product-card__price', '.price-item--regular', '.price'];
                     document.querySelectorAll(selectors.join(',')).forEach(el => {
                         if (el.querySelector('.sys-discounted-price')) return;
+                        
+                        // Parse price from element
                         const text = el.innerText.trim();
-                        if (text && (text.includes('€') || text.includes('EUR'))) {
-                            const res = applyDiscount(text);
-                            if (res) {
-                                el.innerHTML = \`<div class=\"sys-discounted-price\"><span>€\${res.discounted}</span><span class=\"sys-original-strikethrough\">€\${res.original}</span><span class=\"sys-badge\">-40%</span></div>\`;
-                                el.setAttribute('data-sys-processed', 'true');
-                            }
+                        const match = text.match(/(\\d+)[,.](\\d+)/);
+                        if (match) {
+                            const val = parseInt(match[1]) + parseInt(match[2])/100;
+                            // Since DATA is patched, 'val' IS the discounted price.
+                            // We need to calculate the OLD price for the strikethrough.
+                            const original = (val / 0.6).toFixed(2).replace('.', ',');
+                            const discounted = val.toFixed(2).replace('.', ',');
+                            
+                            el.innerHTML = \`<div class=\"sys-discounted-price\"><span>€\${discounted}</span><span class=\"sys-original-strikethrough\">€\${original}</span><span class=\"sys-badge\">-40%</span></div>\`;
+                            el.setAttribute('data-sys-processed', 'true');
                         }
                     });
                 }
@@ -300,7 +248,7 @@ const Index = () => {
                   render();
                 }
 
-                function run() { patchData(); fixPrices(); fixVariants(); }
+                function run() { fixPrices(); fixVariants(); }
                 run();
                 const observer = new MutationObserver(run);
                 observer.observe(document.body, { childList: true, subtree: true });
