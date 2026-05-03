@@ -2,7 +2,7 @@ import HeaderESN from "../components/HeaderESN";
 import FooterESN from "../components/FooterESN";
 import AdminCards from "../components/AdminCards";
 import { useCart } from "../context/CartContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 
 export default function AdminPanel() {
   const { getOrders } = useCart();
@@ -55,9 +55,8 @@ export default function AdminPanel() {
                 </thead>
                 <tbody>
                   {orders.map(order => (
-                    <>
+                    <Fragment key={order.id}>
                       <tr 
-                        key={order.id} 
                         style={{ borderBottom: "1px solid #edf1f2", cursor: "pointer", transition: "background 0.2s" }}
                         onClick={() => setExpandedOrderId(expandedOrderId === order.id ? null : order.id)}
                         onMouseEnter={(e) => (e.currentTarget.style.background = "#fcfcfc")}
@@ -125,7 +124,7 @@ export default function AdminPanel() {
                           </td>
                         </tr>
                       )}
-                    </>
+                    </Fragment>
                   ))}
                 </tbody>
               </table>
