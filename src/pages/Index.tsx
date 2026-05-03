@@ -105,7 +105,7 @@ const Index = () => {
       setShowLoader(true);
       const mappedPath = getMappedPathStatic(location.pathname);
       setIframeSrc(`/store/${mappedPath}.html${location.search}`);
-      const timer = setTimeout(() => setShowLoader(false), 5000);
+      const timer = setTimeout(() => setShowLoader(false), 2000);
       return () => clearTimeout(timer);
     };
     window.addEventListener("popstate", handlePopState);
