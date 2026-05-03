@@ -75,8 +75,14 @@ const Index = () => {
         // Iframe URL changed (e.g. variant selected) → replace, do NOT push history
         const targetPath = normalizeStorePath(e.data.u);
         const currentPath = (location.pathname + location.search).replace(/\/$/, "");
-        lastIframeUrl.current = e.data.u;
-        if (targetPath !== currentPath) navigate(targetPath, { replace: true });
+
+        // Only navigate if pathnames differ (ignore query params to prevent flicker loops)
+        const targetPathname = targetPath.split("?")[0];
+        const currentPathname = currentPath.split("?")[0];
+        if (targetPathname !== currentPathname) {
+          lastIframeUrl.current = e.data.u;
+          navigate(targetPath, { replace: true });
+        }
         return;
       }
     };
