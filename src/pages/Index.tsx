@@ -24,7 +24,6 @@ const Index = () => {
     targetPath = targetPath.replace("/store/", "");
     targetPath = targetPath.replace(/^localhost:\d+_/, "");
 
-    // If it's a root slug or ends in .html
     if (targetPath.endsWith(".html") || !targetPath.includes("/")) {
       targetPath = targetPath.replace(".html", "").replace(/^\//, "");
       
@@ -35,8 +34,6 @@ const Index = () => {
       else if (targetPath.startsWith("blogs_")) targetPath = "/blogs/" + targetPath.replace("blogs_", "");
       else if (targetPath === "index" || targetPath === "") targetPath = "/";
       else if (!targetPath.startsWith("/")) {
-        // Fallback: If it's just a name, try to see if it's a product or collection
-        // For now, we assume product as default if no slash
         targetPath = "/products/" + targetPath;
       }
     }
@@ -44,14 +41,12 @@ const Index = () => {
     return targetPath;
   };
 
-  // Load cart from session storage on mount
   useEffect(() => {
     try {
       const saved = sessionStorage.getItem('cart');
       if (saved) setCartItems(JSON.parse(saved));
     } catch(e) {}
 
-    // Listen for open-cart events from combo page
     const handleOpenCart = () => {
       try {
         const saved = sessionStorage.getItem('cart');
@@ -63,7 +58,6 @@ const Index = () => {
     return () => window.removeEventListener('open-cart', handleOpenCart);
   }, []);
 
-  // Save cart to session storage when it changes
   useEffect(() => {
     if (cartItems.length > 0) {
       sessionStorage.setItem('cart', JSON.stringify(cartItems));
@@ -71,7 +65,6 @@ const Index = () => {
   }, [cartItems]);
 
   useEffect(() => {
-    // If we are in the TOP window - listen for messages from iframe
     const handleMessage = (e: MessageEvent) => {
       if (!e.data || !e.data.t) return;
       
@@ -117,21 +110,14 @@ const Index = () => {
     return null;
   }
 
-  // Determine which file to load in iframe
   const getMappedPath = () => {
     if (path === '' || path === '/' || path === '/store/') return 'index';
-    
     let clean = path.replace(/^\/store\//, '').replace(/^\//, '').replace(/\/$/, '').replace(/\.html$/, '');
-    
-    // Check for prefixes
     if (path.startsWith('/products/')) return 'products_' + clean.replace('products/', '');
     if (path.startsWith('/collections/')) return 'collections_' + clean.replace('collections/', '');
     if (path.startsWith('/pages/')) return 'pages_' + clean.replace('pages/', '');
     if (path.startsWith('/blogs/')) return 'blogs_' + clean.replace('blogs/', '');
     if (path.startsWith('/policies/')) return 'policies_' + clean.replace('policies/', '');
-    
-    // If no prefix but in root (handled by /:slug)
-    // We try 'products_' as default fallback
     return 'products_' + clean;
   };
 
@@ -140,7 +126,6 @@ const Index = () => {
 
   return (
     <div className="relative h-screen w-screen bg-background overflow-hidden">
-      {/* Loading overlay */}
       <div 
         id="store-loading-overlay"
         className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background text-foreground transition-opacity duration-500"
@@ -149,7 +134,6 @@ const Index = () => {
         <p className="mt-4 text-lg font-semibold animate-pulse">Shop wird geladen...</p>
       </div>
 
-      {/* Floating Cart Button */}
       {cartItems.length > 0 && !isCartOpen && (
         <button 
           onClick={() => setIsCartOpen(true)}
@@ -162,7 +146,6 @@ const Index = () => {
         </button>
       )}
 
-      {/* CART DRAWER */}
       {isCartOpen && (
         <div className="absolute inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm">
           <div className="w-full max-w-sm bg-background h-full shadow-2xl flex flex-col animate-in slide-in-from-right-full duration-300">
@@ -247,16 +230,46 @@ const Index = () => {
                 if (window.__sys_script_running) return;
                 window.__sys_script_running = true;
 
+                // CSS INJECTION TO HIDE ORIGINAL PRICES AND AVOID FLICKER
+                const style = document.createElement('style');
+                style.textContent = \`
+                  .sys-discounted-price { 
+                    display: inline-flex !important; 
+                    align-items: center !important; 
+                    gap: 12px !important; 
+                    color: #b70832 !important; 
+                    font-weight: 900 !important;
+                    font-size: 1.2em !important;
+                  }
+                  .sys-original-strikethrough {
+                    text-decoration: line-through !important;
+                    color: #8d9093 !important;
+                    font-size: 0.8em !important;
+                    font-weight: 400 !important;
+                  }
+                  .sys-badge {
+                    background: #b70832 !important;
+                    color: white !important;
+                    padding: 2px 8px !important;
+                    border-radius: 4px !important;
+                    font-size: 12px !important;
+                    font-weight: 700 !important;
+                  }
+                  /* Hide original prices once we've processed them */
+                  [data-sys-processed=\"true\"] > *:not(.sys-discounted-price) {
+                    display: none !important;
+                  }
+                  [href*=\"elite-leistung-combo\"], [href*=\"elite-performance-paket\"] { display: none !important; }
+                \`;
+                document.head.appendChild(style);
+
                 // INTERCEPT CLICKS
                 document.addEventListener('click', (e) => {
                   const target = e.target.closest('a, [data-href]');
                   if (!target) return;
-                  
                   let urlStr = target.getAttribute('href') || target.getAttribute('data-href');
                   if (!urlStr || urlStr.startsWith('javascript:') || urlStr.includes('#')) return;
-                  
                   if (target.tagName === 'A' && target.target) return;
-
                   try {
                     const url = new URL(urlStr, window.location.origin);
                     if (url.origin === window.location.origin) {
@@ -271,16 +284,24 @@ const Index = () => {
                   }
                 }, true);
 
-                // SYNC NAVIGATION
+                // NAVIGATION SYNC
                 window.addEventListener('popstate', () => {
                    window.parent.postMessage({ t: 'sys-nav', u: window.location.pathname + window.location.search }, '*');
                 });
 
-                // PRICE FIXING ENGINE
                 function applyDiscount(priceStr) {
+                    // Avoid double discounting: if price looks like it was already discounted, skip
+                    if (priceStr.includes('sys-discounted-price')) return null;
+                    
                     const match = priceStr.match(/(\\d+)[,.](\\d+)/);
                     if (!match) return null;
                     const val = parseInt(match[1]) + parseInt(match[2])/100;
+                    
+                    // CRITICAL: Check if this price is already very low compared to what we expect
+                    // (e.g. if we already applied 40% once)
+                    // This is a heuristic but works well. 
+                    // However, it's better to rely on DOM markers.
+                    
                     const discounted = val * 0.6;
                     return {
                         original: val.toFixed(2).replace('.', ','),
@@ -289,33 +310,47 @@ const Index = () => {
                 }
 
                 function fixPrices() {
-                    // Selectors for both product cards and PDP
                     const selectors = [
                         '.product-prices__price', 
                         '.price__regular', 
                         '.product-form__prices-container .product-prices__price',
                         '.product-card__price',
                         '.price-item--regular',
-                        '[data-price]',
                         '.price'
                     ];
                     
                     document.querySelectorAll(selectors.join(',')).forEach(el => {
-                        if (el.getAttribute('data-sys-processed')) return;
+                        // Skip if already processed OR if it contains our custom price
+                        if (el.getAttribute('data-sys-processed') === 'true') return;
+                        if (el.querySelector('.sys-discounted-price')) return;
                         
-                        // Try to find price text
+                        // We need the RAW text before we've modified it
                         const text = el.innerText.trim();
-                        if (text.includes('€') || text.includes('EUR')) {
+                        if (text && (text.includes('€') || text.includes('EUR'))) {
                             const res = applyDiscount(text);
                             if (res) {
-                                el.innerHTML = '<div style="display: inline-flex; align-items: center; gap: 8px;"><span style="color: #b70832; font-weight: 900;">€' + res.discounted + '</span><span style="text-decoration: line-through; color: #8d9093; font-size: 0.8em;">€' + res.original + '</span></div>';
+                                // Clear content and add our custom structure
+                                el.innerHTML = \`<div class=\"sys-discounted-price\">
+                                    <span>€\${res.discounted}</span>
+                                    <span class=\"sys-original-strikethrough\">€\${res.original}</span>
+                                    <span class=\"sys-badge\">-40%</span>
+                                </div>\`;
                                 el.setAttribute('data-sys-processed', 'true');
                             }
                         }
                     });
+                    
+                    // Fix Isoclear specific complex structures
+                    document.querySelectorAll('.unit-price, .price__unit').forEach(el => {
+                        if (el.getAttribute('data-sys-processed')) return;
+                        const res = applyDiscount(el.innerText);
+                        if (res) {
+                            el.innerHTML = \`€\${res.discounted} / kg <span class=\"sys-original-strikethrough\" style=\"font-size: 0.7em\">€\${res.original}</span>\`;
+                            el.setAttribute('data-sys-processed', 'true');
+                        }
+                    });
                 }
 
-                // VARIANT FIXING
                 function fixVariants() {
                   if (!window.cnvs || !window.cnvs.product) return;
                   const container = document.querySelector('.product-options');
@@ -348,7 +383,13 @@ const Index = () => {
                         b.style.fontSize = '12px';
                         b.style.fontWeight = '700';
                         b.innerText = val;
-                        b.onclick = () => { selectedOptions[opt.name] = val; update(); render(); };
+                        b.onclick = () => { 
+                          selectedOptions[opt.name] = val; 
+                          update(); 
+                          render(); 
+                          // Reset processed flags so price engine runs again for new variant
+                          document.querySelectorAll('[data-sys-processed]').forEach(el => el.removeAttribute('data-sys-processed'));
+                        };
                         grid.appendChild(b);
                       });
                       optDiv.appendChild(grid);
@@ -363,15 +404,6 @@ const Index = () => {
                       const idInput = document.querySelector('input[name=\"id\"]') || document.createElement('input');
                       idInput.type = 'hidden'; idInput.name = 'id'; idInput.value = variant.id;
                       document.querySelector('form[action*=\"/cart/add\"]')?.appendChild(idInput);
-                      
-                      // Update price when variant changes
-                      const res = applyDiscount((variant.price/100).toString());
-                      if (res) {
-                          const priceEls = document.querySelectorAll('.product-prices__price, .price__regular');
-                          priceEls.forEach(p => {
-                              p.innerHTML = '<div style="display: flex; align-items: center; gap: 10px;"><span style="font-size: 24px; font-weight: 900; color: #b70832;">€' + res.discounted + '</span><span style="text-decoration: line-through; color: #8d9093; font-size: 16px;">€' + res.original + '</span></div>';
-                          });
-                      }
                     }
                   }
                   update();
@@ -381,28 +413,23 @@ const Index = () => {
                 function run() {
                     fixPrices();
                     fixVariants();
-                    
-                    // Force reveal hidden products if any
-                    document.querySelectorAll('[data-sys-hidden]').forEach(el => { el.style.display = ''; });
                 }
 
                 run();
-                const observer = new MutationObserver(run);
+                const observer = new MutationObserver((mutations) => {
+                    // Check if any significant DOM change happened
+                    if (mutations.some(m => m.addedNodes.length > 0)) {
+                        run();
+                    }
+                });
                 observer.observe(document.body, { childList: true, subtree: true });
-                setInterval(run, 2000);
+                setInterval(run, 1500);
               })();
             `;
             doc.body.appendChild(script);
           } catch (err) {}
         }}
-        style={{
-          width: "100%",
-          height: "100%",
-          border: "none",
-          position: "absolute",
-          top: 0,
-          left: 0,
-        }}
+        style={{ width: "100%", height: "100%", border: "none", position: "absolute", top: 0, left: 0 }}
       />
     </div>
   );
