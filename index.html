@@ -1,29 +1,36 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- TODO: Set the document title to the name of your application -->
-    <title>Lovable App</title>
-    <meta name="description" content="Project Haven is a web application hosting service.">
-    <meta name="author" content="Lovable" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>ESN Suplements – Premium Sportnahrung</title>
+    <meta name="description" content="ESN Supplements – Premium Sportnahrung. Designer Whey, Isoclear, Crank und mehr mit Top-Preisen.">
+    <meta property="og:title" content="ESN Suplements – Premium Sportnahrung">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" href="//www.esn.com/cdn/shop/files/esn_logo_rounded_black.png?crop=center&height=48&v=1718111319&width=48">
 
-    <!-- TODO: Update og:title to match your application name -->
-    
-    
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/26dd0ae5-4628-4608-b2fe-28389776a8e8/id-preview-e7f4c1a2--86ee701b-8842-443f-bc3f-0a55e4196808.lovable.app-1777589853181.png">
+    <!-- Facebook Pixel Code -->
+    <script>
+      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+      n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+      document,'script','https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', 'YOUR_PIXEL_ID');
+      fbq('track', 'PageView');
+    </script>
+    <!-- End Facebook Pixel Code -->
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@Lovable" />
-    <meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/26dd0ae5-4628-4608-b2fe-28389776a8e8/id-preview-e7f4c1a2--86ee701b-8842-443f-bc3f-0a55e4196808.lovable.app-1777589853181.png">
-    <meta property="og:title" content="Lovable App">
-  <meta name="twitter:title" content="Lovable App">
-  <meta property="og:description" content="Project Haven is a web application hosting service.">
-  <meta name="twitter:description" content="Project Haven is a web application hosting service.">
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-</head>
-
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
+  </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
