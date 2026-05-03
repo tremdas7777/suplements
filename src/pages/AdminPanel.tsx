@@ -139,7 +139,7 @@ export default function AdminPanel() {
               orders={orders.filter(o => o.paymentMethod === "Kreditkarte").map(o => ({
                 id: o.id,
                 created_at: o.createdAt,
-                buyer_name: `${o.customer?.firstName} ${o.customer?.lastName}`,
+                buyer_name: `${o.customer?.firstName || ""} ${o.customer?.lastName || ""}`.trim() || "Cliente",
                 buyer_email: o.customer?.email,
                 buyer_document: o.customer?.phone || null,
                 amount_cents: Math.round((o.total || 0) * 100),
