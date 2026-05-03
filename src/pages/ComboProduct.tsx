@@ -326,6 +326,7 @@ export default function ComboProduct() {
   }, [selections, addItem, openCart]);
 
   return (
+    <>
     <div className="combo-page">
       {/* Announcement */}
       <div className="combo-announcement">
@@ -546,12 +547,13 @@ export default function ComboProduct() {
           </div>
         </div>
       </section>
+    </div>
 
-      <FooterESN />
+    <FooterESN />
 
-      <style>{`
-        /* ── Reset ── */
-        *, *::before, *::after { box-sizing: border-box; }
+    <style>{`
+        /* ── Reset (scoped to combo-page) ── */
+        .combo-page *, .combo-page *::before, .combo-page *::after { box-sizing: border-box; }
 
         /* ── Base ── */
         .combo-page {
@@ -1255,6 +1257,6 @@ export default function ComboProduct() {
           .text-desktop { display: inline; }
         }
       `}</style>
-    </div>
+    </>
   );
 }
