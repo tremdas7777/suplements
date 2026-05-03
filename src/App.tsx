@@ -7,7 +7,7 @@ import { CartProvider } from "./context/CartContext";
 import CartDrawer from "./components/CartDrawer";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
-import ComboProduct from "./pages/ComboProduct.tsx";
+
 import Checkout from "./pages/Checkout.tsx";
 
 const queryClient = new QueryClient();
@@ -22,7 +22,7 @@ const App = () => (
           <CartDrawer />
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/products/esn-elite-leistung-combo" element={<ComboProduct />} />
+
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/products/:slug" element={<Index />} />
             <Route path="/:slug" element={<Index />} />
