@@ -24,15 +24,21 @@ const Index = () => {
     targetPath = targetPath.replace("/store/", "");
     targetPath = targetPath.replace(/^localhost:\d+_/, "");
 
+    // If it's a root slug or ends in .html
     if (targetPath.endsWith(".html") || !targetPath.includes("/")) {
-      targetPath = targetPath.replace(".html", "");
+      targetPath = targetPath.replace(".html", "").replace(/^\//, "");
+      
       if (targetPath.startsWith("products_")) targetPath = "/products/" + targetPath.replace("products_", "");
       else if (targetPath.startsWith("collections_")) targetPath = "/collections/" + targetPath.replace("collections_", "");
       else if (targetPath.startsWith("pages_")) targetPath = "/pages/" + targetPath.replace("pages_", "");
       else if (targetPath.startsWith("policies_")) targetPath = "/policies/" + targetPath.replace("policies_", "");
       else if (targetPath.startsWith("blogs_")) targetPath = "/blogs/" + targetPath.replace("blogs_", "");
-      else if (targetPath === "index") targetPath = "/";
-      else if (!targetPath.startsWith("/")) targetPath = "/" + targetPath;
+      else if (targetPath === "index" || targetPath === "") targetPath = "/";
+      else if (!targetPath.startsWith("/")) {
+        // Fallback: If it's just a name, try to see if it's a product or collection
+        // For now, we assume product as default if no slash
+        targetPath = "/products/" + targetPath;
+      }
     }
 
     return targetPath;
@@ -65,29 +71,7 @@ const Index = () => {
   }, [cartItems]);
 
   useEffect(() => {
-    // If we are inside an iframe
-    if (window !== window.top) {
-      if (path.startsWith("/store/")) {
-        const isBrokenPath = path.includes("localhost:") || !path.endsWith(".html");
-        
-        if (isBrokenPath) {
-          let cleaned = path.replace("/store/", "").replace(".html", "").replace(/^localhost:\d+_/, "");
-          let intendedPath = "/";
-          
-          if (cleaned.startsWith("products_")) intendedPath = "/products/" + cleaned.replace("products_", "");
-          else if (cleaned.startsWith("collections_")) intendedPath = "/collections/" + cleaned.replace("collections_", "");
-          else if (cleaned.startsWith("pages_")) intendedPath = "/pages/" + cleaned.replace("pages_", "");
-          else if (cleaned.startsWith("blogs_")) intendedPath = "/blogs/" + cleaned.replace("blogs_", "");
-          
-          const cleanSearch = location.search.replace(".html", "");
-          window.top.location.href = intendedPath + cleanSearch;
-          return;
-        }
-      }
-      return;
-    }
-
-    // We are in the TOP window - listen for sys-click from iframe
+    // If we are in the TOP window - listen for messages from iframe
     const handleMessage = (e: MessageEvent) => {
       if (!e.data || !e.data.t) return;
       
@@ -130,18 +114,33 @@ const Index = () => {
   }, [path, location.search, navigate]);
 
   if (window !== window.top) {
-    if (isIframe404) return <NotFound />;
-    return null; // Do not render anything in iframe while redirecting top window
+    return null;
   }
 
-  const mappedPath = (path === '' || path === '/' || path === '/store/') 
-    ? 'index' 
-    : path.replace(/^\/store\//, '').replace(/^\//, '').replace(/\/$/, '').replace(/\.html$/, '').replace(/\//g, '_');
+  // Determine which file to load in iframe
+  const getMappedPath = () => {
+    if (path === '' || path === '/' || path === '/store/') return 'index';
+    
+    let clean = path.replace(/^\/store\//, '').replace(/^\//, '').replace(/\/$/, '').replace(/\.html$/, '');
+    
+    // Check for prefixes
+    if (path.startsWith('/products/')) return 'products_' + clean.replace('products/', '');
+    if (path.startsWith('/collections/')) return 'collections_' + clean.replace('collections/', '');
+    if (path.startsWith('/pages/')) return 'pages_' + clean.replace('pages/', '');
+    if (path.startsWith('/blogs/')) return 'blogs_' + clean.replace('blogs/', '');
+    if (path.startsWith('/policies/')) return 'policies_' + clean.replace('policies/', '');
+    
+    // If no prefix but in root (handled by /:slug)
+    // We try 'products_' as default fallback
+    return 'products_' + clean;
+  };
+
+  const mappedPath = getMappedPath();
   const iframeSrc = `/store/${mappedPath}.html${location.search}`;
 
   return (
     <div className="relative h-screen w-screen bg-background overflow-hidden">
-      {/* Loading overlay that shows until iframe loads */}
+      {/* Loading overlay */}
       <div 
         id="store-loading-overlay"
         className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background text-foreground transition-opacity duration-500"
@@ -151,7 +150,7 @@ const Index = () => {
       </div>
 
       {/* Floating Cart Button */}
-      {cartItems.length > 0 && (
+      {cartItems.length > 0 && !isCartOpen && (
         <button 
           onClick={() => setIsCartOpen(true)}
           className="absolute bottom-6 right-6 z-20 bg-primary text-primary-foreground p-4 rounded-full shadow-2xl flex items-center justify-center hover:scale-105 transition-transform"
@@ -177,70 +176,30 @@ const Index = () => {
             </div>
             
             <div className="flex-1 overflow-y-auto p-6">
-            {cartItems.length > 0 && (
-              <div className="mb-8 p-4 bg-gray-50 rounded-2xl">
-                <div className="flex justify-between text-sm font-bold mb-2">
-                  <span>Versandkostenfrei ab 75€</span>
-                  <span>{Math.max(0, 75 - cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)).toFixed(2).replace('.', ',')}€ verbleibend</span>
-                </div>
-                <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-[#b70832] transition-all duration-500"
-                    style={{ width: `${Math.min(100, (cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0) / 75) * 100)}%` }}
-                  />
-                </div>
-                {cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0) >= 75 && (
-                  <p className="text-xs text-green-600 font-bold mt-2">🎉 Du hast kostenlosen Versand erhalten!</p>
-                )}
-              </div>
-            )}
-            {cartItems.length === 0 ? (
+              {cartItems.length === 0 ? (
                 <div className="text-center text-muted-foreground mt-20 flex flex-col items-center gap-4">
                   <ShoppingBag size={48} className="opacity-20" />
                   <p>Der Warenkorb ist leer</p>
                 </div>
               ) : (
                 cartItems.map((item, i) => (
-                  <div key={i} className="flex gap-4 border-b border-border pb-6 last:border-0">
-                    {item.image ? (
-                      <img src={item.image} alt={item.title} className="w-24 h-24 object-cover rounded-xl shadow-sm border border-border/50" />
-                    ) : (
-                      <div className="w-24 h-24 bg-muted rounded-xl flex items-center justify-center border border-border/50">
-                        <ShoppingBag className="text-muted-foreground" size={32} />
-                      </div>
+                  <div key={i} className="flex gap-4 border-b border-border pb-6 last:border-0 mb-4">
+                    {item.image && (
+                      <img src={item.image} alt={item.title} className="w-20 h-20 object-cover rounded-lg border border-border" />
                     )}
-                    <div className="flex-1 flex flex-col justify-center">
-                      <h3 className="font-bold text-sm leading-tight text-foreground">{item.title}</h3>
-                      {item.isCombo && item.comboSelections && (
-                        <div className="mt-1 space-y-0.5">
-                          {Object.entries(item.comboSelections).map(([key, val]) => (
-                            <div key={key} className="text-[10px] text-muted-foreground">
-                              <span className="font-semibold">{key.replace(/_/g, ' ')}:</span> {val as string}
-                            </div>
-                          ))}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-sm truncate">{item.title}</h3>
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center gap-2 bg-muted rounded px-2 py-1">
+                          <button onClick={() => {
+                            setCartItems(prev => prev.map(it => it.id === item.id ? { ...it, quantity: Math.max(0, it.quantity - 1) } : it).filter(it => it.quantity > 0));
+                          }}><Minus size={12}/></button>
+                          <span className="text-xs font-bold w-4 text-center">{item.quantity}</span>
+                          <button onClick={() => {
+                            setCartItems(prev => prev.map(it => it.id === item.id ? { ...it, quantity: it.quantity + 1 } : it));
+                          }}><Plus size={12}/></button>
                         </div>
-                      )}
-                      <div className="flex items-center justify-between mt-3">
-                        <div className="flex items-center gap-3 bg-muted rounded-lg p-1">
-                          <button 
-                            onClick={() => {
-                              setCartItems(prev => prev.map(i => i.id === item.id ? { ...i, quantity: Math.max(0, i.quantity - 1) } : i).filter(i => i.quantity > 0));
-                            }}
-                            className="p-1 hover:bg-background rounded-md transition-colors"
-                          >
-                            <Minus size={14} />
-                          </button>
-                          <span className="text-sm font-black w-4 text-center">{item.quantity}</span>
-                          <button 
-                            onClick={() => {
-                              setCartItems(prev => prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i));
-                            }}
-                            className="p-1 hover:bg-background rounded-md transition-colors"
-                          >
-                            <Plus size={14} />
-                          </button>
-                        </div>
-                        <p className="font-black text-lg">€ {(item.price * item.quantity).toFixed(2)}</p>
+                        <p className="font-bold text-sm">€{(item.price * item.quantity).toFixed(2).replace('.', ',')}</p>
                       </div>
                     </div>
                   </div>
@@ -248,83 +207,22 @@ const Index = () => {
               )}
             </div>
             
-              <div className="mb-6">
-                <div className="flex gap-2">
-                  <input 
-                    type="text" 
-                    placeholder="Rabattcode" 
-                    className="flex-1 px-4 py-3 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
-                  />
-                  <button className="px-6 py-3 bg-black text-white font-bold rounded-xl text-sm hover:bg-black/80 transition-colors">
-                    ANWENDEN
-                  </button>
+            {cartItems.length > 0 && (
+              <div className="p-6 border-t border-border bg-muted/30">
+                <div className="flex justify-between mb-4 font-bold text-lg">
+                  <span>Total</span>
+                  <span>{cartItems.reduce((acc, it) => acc + it.price * it.quantity, 0).toFixed(2).replace('.', ',')}€</span>
                 </div>
+                <button 
+                  onClick={() => navigate('/checkout')}
+                  className="w-full py-4 bg-[#b70832] text-white font-bold rounded-xl hover:bg-[#8d0628] transition-colors uppercase tracking-wider"
+                >
+                  Zur Kasse
+                </button>
               </div>
-
-              <div className="flex justify-between mb-4 font-black text-2xl text-foreground">
-                <span>Total</span>
-                <span>
-                  {cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0).toFixed(2).replace('.', ',')}€
-                </span>
-              </div>
-
-              {/* Recommendations in Cart */}
-              <div className="mb-6 p-4 bg-gray-50 rounded-2xl">
-                <h4 className="text-xs font-black uppercase mb-4 text-gray-500 tracking-widest">Oft zusammen gekauft</h4>
-                <div className="space-y-3">
-                  {[
-                    { title: 'Designer Whey', price: 19.14, image: 'https://www.esn.com/cdn/shop/files/DesignerWhey_ChocolateFudge_750g_800x.png?v=1713358043' },
-                    { title: 'Isoclear Whey', price: 16.14, image: 'https://www.esn.com/cdn/shop/files/Isoclear_GreenApple_600g_800x.png?v=1713358043' }
-                  ].map((rec, i) => (
-                    <div key={i} className="flex items-center gap-3 bg-white p-2 rounded-xl border border-gray-100 shadow-sm">
-                      <img src={rec.image} className="w-12 h-12 object-contain" />
-                      <div className="flex-1 min-w-0">
-                        <div className="text-[11px] font-bold truncate">{rec.title}</div>
-                        <div className="text-[11px] font-black">{rec.price.toFixed(2).replace('.', ',')}€</div>
-                      </div>
-                      <button 
-                        onClick={() => {
-                          const item = {
-                            id: 'rec-' + i,
-                            title: rec.title,
-                            price: rec.price,
-                            quantity: 1,
-                            image: rec.image
-                          };
-                          setCartItems(prev => {
-                            const existing = prev.find(i => i.id === item.id);
-                            if (existing) return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
-                            return [...prev, item];
-                          });
-                        }}
-                        className="bg-black text-white text-[10px] font-bold px-3 py-2 rounded-lg hover:bg-black/80"
-                      >
-                        HINZUFÜGEN
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <button 
-                disabled={cartItems.length === 0}
-                onClick={() => {
-                  sessionStorage.setItem('cart', JSON.stringify(cartItems));
-                  navigate('/checkout');
-                }}
-                className="w-full py-5 bg-[#b70832] hover:bg-[#8d0628] text-white font-black text-xl rounded-2xl disabled:opacity-50 shadow-xl shadow-[#b70832]/20 transition-all hover:scale-[1.02] uppercase tracking-wider"
-              >
-                JETZT SICHER KAUFEN
-              </button>
-              
-              <div className="mt-6 flex justify-center items-center gap-4 opacity-50 grayscale">
-                <img src="https://cdn.shopify.com/s/files/1/0550/2032/2995/files/dhl_logo.png?v=1620300000" alt="DHL" className="h-4" />
-                <img src="https://cdn.shopify.com/s/files/1/0550/2032/2995/files/visa_logo.png?v=1620300000" alt="Visa" className="h-4" />
-                <img src="https://cdn.shopify.com/s/files/1/0550/2032/2995/files/mastercard_logo.png?v=1620300000" alt="Mastercard" className="h-4" />
-                <img src="https://cdn.shopify.com/s/files/1/0550/2032/2995/files/paypal_logo.png?v=1620300000" alt="Paypal" className="h-4" />
-              </div>
-            </div>
+            )}
           </div>
+        </div>
       )}
 
       <iframe
@@ -349,7 +247,7 @@ const Index = () => {
                 if (window.__sys_script_running) return;
                 window.__sys_script_running = true;
 
-                // Sync iframe navigation with parent
+                // INTERCEPT CLICKS
                 document.addEventListener('click', (e) => {
                   const target = e.target.closest('a, [data-href]');
                   if (!target) return;
@@ -357,7 +255,6 @@ const Index = () => {
                   let urlStr = target.getAttribute('href') || target.getAttribute('data-href');
                   if (!urlStr || urlStr.startsWith('javascript:') || urlStr.includes('#')) return;
                   
-                  // For a tags, only intercept if they don't have a target
                   if (target.tagName === 'A' && target.target) return;
 
                   try {
@@ -367,7 +264,6 @@ const Index = () => {
                       window.parent.postMessage({ t: 'sys-click', u: url.pathname + url.search }, '*');
                     }
                   } catch (err) {
-                    // Fallback for relative paths
                     if (urlStr.startsWith('/') || urlStr.startsWith('./') || urlStr.startsWith('../')) {
                       e.preventDefault();
                       window.parent.postMessage({ t: 'sys-click', u: urlStr }, '*');
@@ -375,17 +271,59 @@ const Index = () => {
                   }
                 }, true);
 
+                // SYNC NAVIGATION
+                window.addEventListener('popstate', () => {
+                   window.parent.postMessage({ t: 'sys-nav', u: window.location.pathname + window.location.search }, '*');
+                });
+
+                // PRICE FIXING ENGINE
+                function applyDiscount(priceStr) {
+                    const match = priceStr.match(/(\\d+)[,.](\\d+)/);
+                    if (!match) return null;
+                    const val = parseInt(match[1]) + parseInt(match[2])/100;
+                    const discounted = val * 0.6;
+                    return {
+                        original: val.toFixed(2).replace('.', ','),
+                        discounted: discounted.toFixed(2).replace('.', ',')
+                    };
+                }
+
+                function fixPrices() {
+                    // Selectors for both product cards and PDP
+                    const selectors = [
+                        '.product-prices__price', 
+                        '.price__regular', 
+                        '.product-form__prices-container .product-prices__price',
+                        '.product-card__price',
+                        '.price-item--regular',
+                        '[data-price]',
+                        '.price'
+                    ];
+                    
+                    document.querySelectorAll(selectors.join(',')).forEach(el => {
+                        if (el.getAttribute('data-sys-processed')) return;
+                        
+                        // Try to find price text
+                        const text = el.innerText.trim();
+                        if (text.includes('€') || text.includes('EUR')) {
+                            const res = applyDiscount(text);
+                            if (res) {
+                                el.innerHTML = '<div style="display: inline-flex; align-items: center; gap: 8px;"><span style="color: #b70832; font-weight: 900;">€' + res.discounted + '</span><span style="text-decoration: line-through; color: #8d9093; font-size: 0.8em;">€' + res.original + '</span></div>';
+                                el.setAttribute('data-sys-processed', 'true');
+                            }
+                        }
+                    });
+                }
+
+                // VARIANT FIXING
                 function fixVariants() {
                   if (!window.cnvs || !window.cnvs.product) return;
+                  const container = document.querySelector('.product-options');
+                  if (!container || container.getAttribute('data-sys-initialized')) return;
+                  
                   const product = window.cnvs.product;
                   const options = product.options;
                   const variants = product.variants;
-                  const container = document.querySelector('.product-options');
-                  if (!container) return;
-                  
-                  if (container.getAttribute('data-sys-initialized')) return;
-                  if (!container.innerText.includes('Wird geladen') && container.children.length > 5) return;
-
                   const selectedOptions = {};
                   options.forEach(opt => { selectedOptions[opt.name] = opt.values[0]; });
 
@@ -393,39 +331,25 @@ const Index = () => {
                     container.innerHTML = '';
                     options.forEach(opt => {
                       const optDiv = document.createElement('div');
-                      optDiv.className = 'product-options__option';
                       optDiv.style.marginBottom = '20px';
-                      optDiv.innerHTML = '<h4 style="margin-bottom: 12px; font-weight: 800; text-transform: uppercase; font-size: 14px;">' + opt.name + ': <span style="color: #6b7280; font-weight: 400;">' + selectedOptions[opt.name] + '</span></h4>';
-                      
+                      optDiv.innerHTML = '<h4 style="margin-bottom: 8px; font-weight: 800; font-size: 13px; text-transform: uppercase;">' + opt.name + ': <span style="font-weight: 400; color: #6b7280;">' + selectedOptions[opt.name] + '</span></h4>';
                       const grid = document.createElement('div');
                       grid.style.display = 'grid';
                       grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
-                      grid.style.gap = '10px';
-
+                      grid.style.gap = '8px';
                       opt.values.forEach(val => {
                         const isSelected = selectedOptions[opt.name] === val;
-                        const btn = document.createElement('div');
-                        btn.style.padding = '12px 8px';
-                        btn.style.border = isSelected ? '2px solid #000' : '1px solid #e5e7eb';
-                        btn.style.borderRadius = '12px';
-                        btn.style.background = isSelected ? '#f9fafb' : '#fff';
-                        btn.style.cursor = 'pointer';
-                        btn.style.fontSize = '12px';
-                        btn.style.fontWeight = '700';
-                        btn.style.textAlign = 'center';
-                        btn.style.transition = 'all 0.2s';
-                        btn.style.display = 'flex';
-                        btn.style.alignItems = 'center';
-                        btn.style.justifyContent = 'center';
-                        btn.style.minHeight = '50px';
-                        btn.innerText = val;
-                        if (isSelected) btn.style.boxShadow = '0 0 0 1px #000';
-                        btn.onclick = () => { 
-                          selectedOptions[opt.name] = val; 
-                          update(); 
-                          render(); 
-                        };
-                        grid.appendChild(btn);
+                        const b = document.createElement('div');
+                        b.style.padding = '10px';
+                        b.style.border = isSelected ? '2px solid #000' : '1px solid #e5e7eb';
+                        b.style.borderRadius = '10px';
+                        b.style.textAlign = 'center';
+                        b.style.cursor = 'pointer';
+                        b.style.fontSize = '12px';
+                        b.style.fontWeight = '700';
+                        b.innerText = val;
+                        b.onclick = () => { selectedOptions[opt.name] = val; update(); render(); };
+                        grid.appendChild(b);
                       });
                       optDiv.appendChild(grid);
                       container.appendChild(optDiv);
@@ -436,27 +360,17 @@ const Index = () => {
                   function update() {
                     const variant = variants.find(v => v.selectedOptions.every(so => selectedOptions[so.name] === so.value));
                     if (variant) {
-                      let idInput = document.querySelector('input[name="id"]');
-                      if (!idInput) {
-                        idInput = document.createElement('input');
-                        idInput.type = 'hidden';
-                        idInput.name = 'id';
-                        document.querySelector('form[action*="/cart/add"]')?.appendChild(idInput);
-                      }
-                      idInput.value = variant.id;
-
-                      const priceEls = document.querySelectorAll('.product-prices__price, .price__regular, .product-form__prices-container .product-prices__price');
-                      priceEls.forEach(priceEl => {
-                        const priceNum = parseFloat(variant.price) / 100;
-                        const discountedPrice = (priceNum * 0.6).toFixed(2).replace('.', ',');
-                        const originalPrice = priceNum.toFixed(2).replace('.', ',');
-                        priceEl.innerHTML = '<div style="display: flex; flex-direction: column; gap: 4px;"><div style="display: flex; align-items: center; gap: 10px;"><span style="font-size: 24px; font-weight: 900; color: #b70832;">€' + discountedPrice + '</span><span style="text-decoration: line-through; color: #8d9093; font-size: 16px;">€' + originalPrice + '</span><span style="background: #b70832; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 700;">-40%</span></div><span style="font-size: 12px; color: #6b7280;">inkl. MwSt. zzgl. Versand</span></div>';
-                        priceEl.setAttribute('data-sys-processed', 'true');
-                      });
-
-                      if (variant.imageUrl) {
-                        const img = document.querySelector('.product-media__image') || document.querySelector('.product-media img');
-                        if (img) img.src = variant.imageUrl;
+                      const idInput = document.querySelector('input[name=\"id\"]') || document.createElement('input');
+                      idInput.type = 'hidden'; idInput.name = 'id'; idInput.value = variant.id;
+                      document.querySelector('form[action*=\"/cart/add\"]')?.appendChild(idInput);
+                      
+                      // Update price when variant changes
+                      const res = applyDiscount((variant.price/100).toString());
+                      if (res) {
+                          const priceEls = document.querySelectorAll('.product-prices__price, .price__regular');
+                          priceEls.forEach(p => {
+                              p.innerHTML = '<div style="display: flex; align-items: center; gap: 10px;"><span style="font-size: 24px; font-weight: 900; color: #b70832;">€' + res.discounted + '</span><span style="text-decoration: line-through; color: #8d9093; font-size: 16px;">€' + res.original + '</span></div>';
+                          });
                       }
                     }
                   }
@@ -464,163 +378,22 @@ const Index = () => {
                   render();
                 }
 
-                function fixPDPInitialPrice() {
-                  const priceEls = document.querySelectorAll('.product-prices__price, .price__regular, .product-form__prices-container .product-prices__price');
-                  priceEls.forEach(priceEl => {
-                     if (priceEl.getAttribute('data-sys-processed')) return;
-                     const text = priceEl.innerText.trim();
-                     const match = text.match(/(\\d+)[,.](\\d+)/);
-                     if (match) {
-                        const currentPrice = parseInt(match[1]) + (parseInt(match[2]) / 100);
-                        const discountedPrice = (currentPrice * 0.6).toFixed(2).replace('.', ',');
-                        const originalPrice = currentPrice.toFixed(2).replace('.', ',');
-                        priceEl.innerHTML = '<div style="display: flex; flex-direction: column; gap: 4px;"><div style="display: flex; align-items: center; gap: 10px;"><span style="font-size: 24px; font-weight: 900; color: #b70832;">€' + discountedPrice + '</span><span style="text-decoration: line-through; color: #8d9093; font-size: 16px;">€' + originalPrice + '</span><span style="background: #b70832; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 700;">-40%</span></div><span style="font-size: 12px; color: #6b7280;">inkl. MwSt. zzgl. Versand</span></div>';
-                        priceEl.setAttribute('data-sys-processed', 'true');
-                     }
-                  });
+                function run() {
+                    fixPrices();
+                    fixVariants();
+                    
+                    // Force reveal hidden products if any
+                    document.querySelectorAll('[data-sys-hidden]').forEach(el => { el.style.display = ''; });
                 }
 
-                function renderUpsells() {
-                  if (!window.cnvs || !window.cnvs.product || !window.cnvs.product.quickUpsell) return;
-                  const upsells = window.cnvs.product.quickUpsell.slice(0, 3);
-                  const target = document.querySelector('.product-form');
-                  if (!target || document.getElementById('sys-upsells')) return;
-
-                  let itemsHtml = '';
-                  upsells.forEach(item => {
-                    const price = (parseFloat(item.price) / 100 * 0.6).toFixed(2).replace('.', ',');
-                    itemsHtml += '<div style="display: flex; align-items: center; gap: 12px; background: white; padding: 12px; border-radius: 12px; border: 1px solid #e5e7eb;"><img src="' + item.imageUrl + '" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;"><div style="flex: 1;"><div style="font-weight: 700; font-size: 13px;">' + item.title + '</div><div style="color: #b70832; font-weight: 900; font-size: 14px;">€' + price + '</div></div><button style="background: #000; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer;">HINZUFÜGEN</button></div>';
-                  });
-
-                  const div = document.createElement('div');
-                  div.id = 'sys-upsells';
-                  div.style.marginTop = '40px';
-                  div.style.padding = '20px';
-                  div.style.background = '#f9fafb';
-                  div.style.borderRadius = '16px';
-                  div.innerHTML = '<h3 style="font-size: 18px; font-weight: 900; margin-bottom: 20px; text-transform: uppercase;">Oft zusammen gekauft</h3><div style="display: flex; flex-direction: column; gap: 16px;">' + itemsHtml + '</div>';
-                  target.after(div);
-                }
-
-                function renderTrustShield() {
-                  const target = document.querySelector('.product-prices');
-                  if (!target || document.getElementById('sys-trust-shield')) return;
-                  const div = document.createElement('div');
-                  div.id = 'sys-trust-shield';
-                  div.style.display = 'grid';
-                  div.style.gridTemplateColumns = 'repeat(3, 1fr)';
-                  div.style.gap = '10px';
-                  div.style.marginTop = '20px';
-                  div.style.marginBottom = '20px';
-                  const items = [{ icon: 'https://www.esn.com/cdn/shop/files/Star_1.svg', text: 'Top Qualität' }, { icon: 'https://www.esn.com/cdn/shop/files/TestTube.svg', text: 'Laborgeprüft' }, { icon: 'https://www.esn.com/cdn/shop/files/Cherries_1.svg', text: 'Bester Geschmack' }];
-                  div.innerHTML = items.map(i => '<div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px;"><img src="' + i.icon + '" style="width: 24px; height: 24px;"><span style="font-size: 10px; font-weight: 700; text-transform: uppercase;">' + i.text + '</span></div>').join('');
-                  target.after(div);
-                }
-
-                function renderReviews() {
-                  if (!window.cnvs || !window.cnvs.product || !window.cnvs.product.reviews) return;
-                  const reviews = window.cnvs.product.reviews;
-                  const target = document.querySelector('.main-product');
-                  if (!target || document.getElementById('sys-reviews')) return;
-                  const div = document.createElement('div');
-                  div.id = 'sys-reviews';
-                  div.style.padding = '40px 20px';
-                  div.style.borderTop = '1px solid #e5e7eb';
-                  div.style.marginTop = '40px';
-                  div.innerHTML = '<div style="max-width: 1200px; margin: 0 auto;"><h2 style="font-size: 24px; font-weight: 900; margin-bottom: 30px; text-transform: uppercase;">Bewertungen</h2><div style="display: flex; gap: 40px; margin-bottom: 40px; flex-wrap: wrap;"><div style="text-align: center; background: #f9fafb; padding: 30px; border-radius: 20px; min-width: 200px;"><div style="font-size: 48px; font-weight: 900; color: #b70832;">' + reviews.rating + '</div><div style="color: #fbbf24; font-size: 24px;">★★★★★</div><div style="font-size: 14px; color: #6b7280; margin-top: 8px;">' + reviews.count.toLocaleString() + ' Bewertungen</div></div><div style="flex: 1; display: flex; flex-direction: column; gap: 12px; justify-content: center;">' + [5,4,3,2,1].map(s => '<div style="display: flex; align-items: center; gap: 10px;"><span style="font-size: 12px; font-weight: 700; width: 20px;">' + s + '</span><div style="flex: 1; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;"><div style="width: ' + (s === 5 ? '85' : s === 4 ? '10' : '2') + '%; height: 100%; background: #b70832;"></div></div></div>').join('') + '</div></div><div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;"><div style="border: 1px solid #e5e7eb; padding: 20px; border-radius: 16px;"><div style="color: #fbbf24; margin-bottom: 10px;">★★★★★</div><p style="font-weight: 700; margin-bottom: 8px;">Top Produkt!</p><p style="font-size: 14px; color: #4b5563; line-height: 1.6;">Ich bin absolut begeistert von dem Geschmack und der Löslichkeit. ESN ist einfach die beste Marke.</p><p style="font-size: 12px; color: #9ca3af; margin-top: 12px;">– Verified Buyer</p></div></div></div>';
-                  target.after(div);
-                }
-
-                function fixCollectionPrices() {
-                  const cards = document.querySelectorAll('.product-card, .product-card-sample, [data-component="product-card"]');
-                  cards.forEach(card => {
-                    if (card.getAttribute('data-sys-processed')) return;
-                    const priceEl = card.querySelector('.product-prices__price, .product-card__prices, .price__regular');
-                    if (!priceEl) return;
-                    const text = priceEl.innerText.trim();
-                    const match = text.match(/(\\d+)[,.](\\d+)/);
-                    if (match) {
-                      card.setAttribute('data-sys-processed', 'true');
-                      const currentPrice = parseInt(match[1]) + (parseInt(match[2]) / 100);
-                      const discountedPrice = currentPrice * 0.6; 
-                      const oldPriceStr = currentPrice.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                      const newPriceStr = discountedPrice.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                      priceEl.innerHTML = '<span style="color: #b70832; font-weight: 900; font-size: 1.1em;">€' + newPriceStr + '</span><span style="text-decoration: line-through; color: #9ca3af; font-size: 0.85em; margin-left: 8px;">€' + oldPriceStr + '</span><div style="position: absolute; top: 12px; left: 12px; background: #b70832; color: white; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 900; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.2); pointer-events: none;">SPARE 40%</div>';
-                      card.style.position = 'relative';
-                    }
-                  });
-                }
-
-
-                function renderFooterUSPs() {
-                  const target = document.querySelector('footer');
-                  if (!target || document.getElementById('sys-footer-usp')) return;
-                  const div = document.createElement('div');
-                  div.id = 'sys-footer-usp';
-                  div.style.padding = '40px 20px';
-                  div.style.background = '#000';
-                  div.style.color = '#fff';
-                  div.style.textAlign = 'center';
-                  div.style.marginTop = '40px';
-                  div.innerHTML = '<div style="max-width: 1200px; margin: 0 auto;"><div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-bottom: 30px; font-weight: 700; font-size: 14px; text-transform: uppercase;"><div style="display: flex; align-items: center; gap: 8px;"><span style="color: #b70832; font-size: 20px;">✓</span> Kostenloser Versand ab 75€</div><div style="display: flex; align-items: center; gap: 8px;"><span style="color: #b70832; font-size: 20px;">✓</span> Schnelle Lieferung (24h)</div><div style="display: flex; align-items: center; gap: 8px;"><span style="color: #b70832; font-size: 20px;">✓</span> Premium Qualität</div></div><div style="opacity: 0.5; display: flex; justify-content: center; gap: 30px; align-items: center; border-top: 1px solid #333; margin-top: 20px; padding-top: 20px;"><img src="https://cdn.shopify.com/s/files/1/0550/2032/2995/files/dhl_logo.png" style="height: 12px; filter: invert(1);"><img src="https://cdn.shopify.com/s/files/1/0550/2032/2995/files/paypal_logo.png" style="height: 12px; filter: invert(1);"><img src="https://cdn.shopify.com/s/files/1/0550/2032/2995/files/visa_logo.png" style="height: 12px; filter: invert(1);"><img src="https://cdn.shopify.com/s/files/1/0550/2032/2995/files/mastercard_logo.png" style="height: 12px; filter: invert(1);"></div></div>';
-                  target.prepend(div);
-                }
-
-                function renderAnnouncementBar() {
-                  const target = document.body;
-                  if (!target || document.getElementById('sys-announcement')) return;
-                  const div = document.createElement('div');
-                  div.id = 'sys-announcement';
-                  div.style.background = '#b70832';
-                  div.style.color = '#fff';
-                  div.style.padding = '8px';
-                  div.style.textAlign = 'center';
-                  div.fontSize = '11px';
-                  div.style.fontWeight = '900';
-                  div.style.textTransform = 'uppercase';
-                  div.style.letterSpacing = '0.5px';
-                  div.style.zIndex = '1000';
-                  div.style.position = 'relative';
-                  div.innerHTML = '🔥 CODE: ESN - JETZT 40% RABATT AUF ALLES SICHERN! 🔥';
-                  target.prepend(div);
-                }
-
-                const style = document.createElement('style');
-                style.textContent = '[href*="elite-leistung-combo"], [href*="elite-performance-paket"], [data-track*="Elite Leistungs-Paket"], img[src*="Elite_Leistungs-Paket"] { display: none !important; }';
-                document.head.appendChild(style);
-
-                var __obs = null;
-                function runAll() {
-                  if (window.__sys_running) return;
-                  window.__sys_running = true;
-                  
-                  if (__obs) __obs.disconnect();
-                  
-                  renderAnnouncementBar(); 
-                  fixVariants(); 
-                  fixPDPInitialPrice(); 
-                  renderUpsells(); 
-                  renderTrustShield(); 
-                  renderReviews(); 
-                  fixCollectionPrices(); 
-                  renderFooterUSPs();
-                  
-                  if (__obs) __obs.observe(document.body, { childList: true, subtree: true });
-                  window.__sys_running = false;
-                }
-
-                runAll();
-                __obs = new MutationObserver(() => { runAll(); });
-                __obs.observe(document.body, { childList: true, subtree: true });
-                
-                // Backup interval for cases where MutationObserver misses something
-                setInterval(runAll, 3000);
+                run();
+                const observer = new MutationObserver(run);
+                observer.observe(document.body, { childList: true, subtree: true });
+                setInterval(run, 2000);
               })();
             `;
             doc.body.appendChild(script);
-          } catch (err) {
-            console.error("Failed to inject variant fixer:", err);
-          }
+          } catch (err) {}
         }}
         style={{
           width: "100%",
