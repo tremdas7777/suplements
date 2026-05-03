@@ -100,7 +100,6 @@ const Index = () => {
   // Handle back/forward buttons — only time we reload iframe
   useEffect(() => {
     const handlePopState = () => {
-      isNavigatingRef.current = false;
       setShowLoader(true);
       const mappedPath = getMappedPathStatic(location.pathname);
       setIframeSrc(`/store/${mappedPath}.html${location.search}`);
@@ -111,13 +110,8 @@ const Index = () => {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
-  // Detect if route change came from outside iframe (e.g. URL bar, links from other sites)
+  // React to ALL route changes — update iframe src
   useEffect(() => {
-    if (isNavigatingRef.current) {
-      isNavigatingRef.current = false;
-      return;
-    }
-    // External navigation — update iframe src
     setShowLoader(true);
     const mappedPath = getMappedPathStatic(location.pathname);
     setIframeSrc(`/store/${mappedPath}.html${location.search}`);
