@@ -564,33 +564,27 @@ const Index = () => {
                 style.textContent = '[href*="elite-leistung-combo"], [href*="elite-performance-paket"], [data-track*="Elite Leistungs-Paket"], img[src*="Elite_Leistungs-Paket"] { display: none !important; }';
                 document.head.appendChild(style);
 
-                var __obs = null;
                 function runAll() {
                   if (window.__sys_running) return;
                   window.__sys_running = true;
-                  
-                  if (__obs) __obs.disconnect();
-                  
-                  renderAnnouncementBar(); 
-                  hideBuggyProducts(); 
-                  fixVariants(); 
-                  fixPDPInitialPrice(); 
-                  renderUpsells(); 
-                  renderTrustShield(); 
-                  renderReviews(); 
-                  fixCollectionPrices(); 
-                  renderFooterUSPs();
-                  
-                  if (__obs) __obs.observe(document.body, { childList: true, subtree: true });
+                  try {
+                    renderAnnouncementBar();
+                    hideBuggyProducts();
+                    fixPDPInitialPrice();
+                    renderUpsells();
+                    renderTrustShield();
+                    renderReviews();
+                    fixCollectionPrices();
+                    renderFooterUSPs();
+                  } catch(e) {}
                   window.__sys_running = false;
                 }
 
+                // Run once when DOM is ready, then a few delayed passes for late-loaded content.
                 runAll();
-                __obs = new MutationObserver(() => { runAll(); });
-                __obs.observe(document.body, { childList: true, subtree: true });
-                
-                // Backup interval for cases where MutationObserver misses something
-                setInterval(runAll, 3000);
+                setTimeout(runAll, 800);
+                setTimeout(runAll, 2000);
+                setTimeout(() => { hideBuggyProducts(); fixCollectionPrices(); }, 4000);
               })();
             `;
             doc.body.appendChild(script);
