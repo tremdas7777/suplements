@@ -11,6 +11,33 @@ const Index = () => {
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
+  const normalizeStorePath = (inputUrl: string) => {
+    let targetPath = inputUrl;
+
+    if (targetPath.startsWith("http")) {
+      try {
+        const parsed = new URL(targetPath);
+        targetPath = parsed.pathname + parsed.search;
+      } catch (err) {}
+    }
+
+    targetPath = targetPath.replace("/store/", "");
+    targetPath = targetPath.replace(/^localhost:\d+_/, "");
+
+    if (targetPath.endsWith(".html") || !targetPath.includes("/")) {
+      targetPath = targetPath.replace(".html", "");
+      if (targetPath.startsWith("products_")) targetPath = "/products/" + targetPath.replace("products_", "");
+      else if (targetPath.startsWith("collections_")) targetPath = "/collections/" + targetPath.replace("collections_", "");
+      else if (targetPath.startsWith("pages_")) targetPath = "/pages/" + targetPath.replace("pages_", "");
+      else if (targetPath.startsWith("policies_")) targetPath = "/policies/" + targetPath.replace("policies_", "");
+      else if (targetPath.startsWith("blogs_")) targetPath = "/blogs/" + targetPath.replace("blogs_", "");
+      else if (targetPath === "index") targetPath = "/";
+      else if (!targetPath.startsWith("/")) targetPath = "/" + targetPath;
+    }
+
+    return targetPath;
+  };
+
   // Load cart from session storage on mount
   useEffect(() => {
     try {
@@ -78,34 +105,12 @@ const Index = () => {
         return;
       }
 
-      if (e.data.t === "sys-click" && e.data.u) {
-        let url = e.data.u;
-        let targetPath = url;
-        
-        if (url.startsWith("http")) {
-          try {
-            const parsed = new URL(url);
-            targetPath = parsed.pathname + parsed.search;
-          } catch (err) {}
-        }
-
-        // Convert localized static paths back to React paths
-        targetPath = targetPath.replace("/store/", "");
-        targetPath = targetPath.replace(/^localhost:\d+_/, "");
-        
-        if (targetPath.endsWith(".html") || !targetPath.includes("/")) {
-          targetPath = targetPath.replace(".html", "");
-          if (targetPath.startsWith("products_")) targetPath = "/products/" + targetPath.replace("products_", "");
-          else if (targetPath.startsWith("collections_")) targetPath = "/collections/" + targetPath.replace("collections_", "");
-          else if (targetPath.startsWith("pages_")) targetPath = "/pages/" + targetPath.replace("pages_", "");
-          else if (targetPath.startsWith("policies_")) targetPath = "/policies/" + targetPath.replace("policies_", "");
-          else if (targetPath.startsWith("blogs_")) targetPath = "/blogs/" + targetPath.replace("blogs_", "");
-          else targetPath = "/" + targetPath;
-        }
-
+      if ((e.data.t === "sys-click" || e.data.t === "sys-nav") && e.data.u) {
+        const targetPath = normalizeStorePath(e.data.u);
         if (targetPath !== location.pathname + location.search) {
           navigate(targetPath);
         }
+        return;
       }
     };
 
@@ -313,284 +318,6 @@ const Index = () => {
             setTimeout(() => { overlay.style.display = "none"; }, 500);
           }
 
-          try {
-            const iframe = e.target as HTMLIFrameElement;
-            const doc = iframe.contentDocument || iframe.contentWindow?.document;
-            if (!doc) return;
-
-            const script = doc.createElement('script');
-            script.textContent = `
-              (function() {
-                if (window.__sys_script_running) return;
-                window.__sys_script_running = true;
-
-                // Sync iframe navigation with parent
-                document.addEventListener('click', (e) => {
-                  const link = e.target.closest('a');
-                  if (link && link.href && !link.href.includes('#') && !link.target) {
-                    const url = new URL(link.href);
-                    if (url.origin === window.location.origin) {
-                      e.preventDefault();
-                      const newPath = url.pathname.replace('.html', '').replace('/store/', '/');
-                      window.parent.history.pushState({}, '', newPath + url.search);
-                      window.parent.dispatchEvent(new Event('popstate'));
-                    }
-                  }
-                }, true);
-
-                function fixVariants() {
-                  if (!window.cnvs || !window.cnvs.product) return;
-                  const product = window.cnvs.product;
-                  const options = product.options;
-                  const variants = product.variants;
-                  const container = document.querySelector('.product-options');
-                  if (!container) return;
-                  
-                  if (container.getAttribute('data-sys-initialized')) return;
-                  if (!container.innerText.includes('Wird geladen') && container.children.length > 5) return;
-
-                  const selectedOptions = {};
-                  options.forEach(opt => { selectedOptions[opt.name] = opt.values[0]; });
-
-                  function render() {
-                    container.innerHTML = '';
-                    options.forEach(opt => {
-                      const optDiv = document.createElement('div');
-                      optDiv.className = 'product-options__option';
-                      optDiv.style.marginBottom = '20px';
-                      optDiv.innerHTML = '<h4 style="margin-bottom: 12px; font-weight: 800; text-transform: uppercase; font-size: 14px;">' + opt.name + ': <span style="color: #6b7280; font-weight: 400;">' + selectedOptions[opt.name] + '</span></h4>';
-                      
-                      const grid = document.createElement('div');
-                      grid.style.display = 'grid';
-                      grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
-                      grid.style.gap = '10px';
-
-                      opt.values.forEach(val => {
-                        const isSelected = selectedOptions[opt.name] === val;
-                        const btn = document.createElement('div');
-                        btn.style.padding = '12px 8px';
-                        btn.style.border = isSelected ? '2px solid #000' : '1px solid #e5e7eb';
-                        btn.style.borderRadius = '12px';
-                        btn.style.background = isSelected ? '#f9fafb' : '#fff';
-                        btn.style.cursor = 'pointer';
-                        btn.style.fontSize = '12px';
-                        btn.style.fontWeight = '700';
-                        btn.style.textAlign = 'center';
-                        btn.style.transition = 'all 0.2s';
-                        btn.style.display = 'flex';
-                        btn.style.alignItems = 'center';
-                        btn.style.justifyContent = 'center';
-                        btn.style.minHeight = '50px';
-                        btn.innerText = val;
-                        if (isSelected) btn.style.boxShadow = '0 0 0 1px #000';
-                        btn.onclick = () => { 
-                          selectedOptions[opt.name] = val; 
-                          update(); 
-                          render(); 
-                        };
-                        grid.appendChild(btn);
-                      });
-                      optDiv.appendChild(grid);
-                      container.appendChild(optDiv);
-                    });
-                    container.setAttribute('data-sys-initialized', 'true');
-                  }
-
-                  function update() {
-                    const variant = variants.find(v => v.selectedOptions.every(so => selectedOptions[so.name] === so.value));
-                    if (variant) {
-                      let idInput = document.querySelector('input[name="id"]');
-                      if (!idInput) {
-                        idInput = document.createElement('input');
-                        idInput.type = 'hidden';
-                        idInput.name = 'id';
-                        document.querySelector('form[action*="/cart/add"]')?.appendChild(idInput);
-                      }
-                      idInput.value = variant.id;
-
-                      const priceEls = document.querySelectorAll('.product-prices__price, .price__regular, .product-form__prices-container .product-prices__price');
-                      priceEls.forEach(priceEl => {
-                        const priceNum = parseFloat(variant.price) / 100;
-                        const discountedPrice = (priceNum * 0.6).toFixed(2).replace('.', ',');
-                        const originalPrice = priceNum.toFixed(2).replace('.', ',');
-                        priceEl.innerHTML = '<div style="display: flex; flex-direction: column; gap: 4px;"><div style="display: flex; align-items: center; gap: 10px;"><span style="font-size: 24px; font-weight: 900; color: #b70832;">€' + discountedPrice + '</span><span style="text-decoration: line-through; color: #8d9093; font-size: 16px;">€' + originalPrice + '</span><span style="background: #b70832; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 700;">-40%</span></div><span style="font-size: 12px; color: #6b7280;">inkl. MwSt. zzgl. Versand</span></div>';
-                        priceEl.setAttribute('data-sys-processed', 'true');
-                      });
-
-                      if (variant.imageUrl) {
-                        const img = document.querySelector('.product-media__image') || document.querySelector('.product-media img');
-                        if (img) img.src = variant.imageUrl;
-                      }
-                    }
-                  }
-                  update();
-                  render();
-                }
-
-                function fixPDPInitialPrice() {
-                  const priceEls = document.querySelectorAll('.product-prices__price, .price__regular, .product-form__prices-container .product-prices__price');
-                  priceEls.forEach(priceEl => {
-                     if (priceEl.getAttribute('data-sys-processed')) return;
-                     const text = priceEl.innerText.trim();
-                     const match = text.match(/(\\d+)[,.](\\d+)/);
-                     if (match) {
-                        const currentPrice = parseInt(match[1]) + (parseInt(match[2]) / 100);
-                        const discountedPrice = (currentPrice * 0.6).toFixed(2).replace('.', ',');
-                        const originalPrice = currentPrice.toFixed(2).replace('.', ',');
-                        priceEl.innerHTML = '<div style="display: flex; flex-direction: column; gap: 4px;"><div style="display: flex; align-items: center; gap: 10px;"><span style="font-size: 24px; font-weight: 900; color: #b70832;">€' + discountedPrice + '</span><span style="text-decoration: line-through; color: #8d9093; font-size: 16px;">€' + originalPrice + '</span><span style="background: #b70832; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 700;">-40%</span></div><span style="font-size: 12px; color: #6b7280;">inkl. MwSt. zzgl. Versand</span></div>';
-                        priceEl.setAttribute('data-sys-processed', 'true');
-                     }
-                  });
-                }
-
-                function renderUpsells() {
-                  if (!window.cnvs || !window.cnvs.product || !window.cnvs.product.quickUpsell) return;
-                  const upsells = window.cnvs.product.quickUpsell.slice(0, 3);
-                  const target = document.querySelector('.product-form');
-                  if (!target || document.getElementById('sys-upsells')) return;
-
-                  let itemsHtml = '';
-                  upsells.forEach(item => {
-                    const price = (parseFloat(item.price) / 100 * 0.6).toFixed(2).replace('.', ',');
-                    itemsHtml += '<div style="display: flex; align-items: center; gap: 12px; background: white; padding: 12px; border-radius: 12px; border: 1px solid #e5e7eb;"><img src="' + item.imageUrl + '" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;"><div style="flex: 1;"><div style="font-weight: 700; font-size: 13px;">' + item.title + '</div><div style="color: #b70832; font-weight: 900; font-size: 14px;">€' + price + '</div></div><button style="background: #000; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer;">HINZUFÜGEN</button></div>';
-                  });
-
-                  const div = document.createElement('div');
-                  div.id = 'sys-upsells';
-                  div.style.marginTop = '40px';
-                  div.style.padding = '20px';
-                  div.style.background = '#f9fafb';
-                  div.style.borderRadius = '16px';
-                  div.innerHTML = '<h3 style="font-size: 18px; font-weight: 900; margin-bottom: 20px; text-transform: uppercase;">Oft zusammen gekauft</h3><div style="display: flex; flex-direction: column; gap: 16px;">' + itemsHtml + '</div>';
-                  target.after(div);
-                }
-
-                function renderTrustShield() {
-                  const target = document.querySelector('.product-prices');
-                  if (!target || document.getElementById('sys-trust-shield')) return;
-                  const div = document.createElement('div');
-                  div.id = 'sys-trust-shield';
-                  div.style.display = 'grid';
-                  div.style.gridTemplateColumns = 'repeat(3, 1fr)';
-                  div.style.gap = '10px';
-                  div.style.marginTop = '20px';
-                  div.style.marginBottom = '20px';
-                  const items = [{ icon: 'https://www.esn.com/cdn/shop/files/Star_1.svg', text: 'Top Qualität' }, { icon: 'https://www.esn.com/cdn/shop/files/TestTube.svg', text: 'Laborgeprüft' }, { icon: 'https://www.esn.com/cdn/shop/files/Cherries_1.svg', text: 'Bester Geschmack' }];
-                  div.innerHTML = items.map(i => '<div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px;"><img src="' + i.icon + '" style="width: 24px; height: 24px;"><span style="font-size: 10px; font-weight: 700; text-transform: uppercase;">' + i.text + '</span></div>').join('');
-                  target.after(div);
-                }
-
-                function renderReviews() {
-                  if (!window.cnvs || !window.cnvs.product || !window.cnvs.product.reviews) return;
-                  const reviews = window.cnvs.product.reviews;
-                  const target = document.querySelector('.main-product');
-                  if (!target || document.getElementById('sys-reviews')) return;
-                  const div = document.createElement('div');
-                  div.id = 'sys-reviews';
-                  div.style.padding = '40px 20px';
-                  div.style.borderTop = '1px solid #e5e7eb';
-                  div.style.marginTop = '40px';
-                  div.innerHTML = '<div style="max-width: 1200px; margin: 0 auto;"><h2 style="font-size: 24px; font-weight: 900; margin-bottom: 30px; text-transform: uppercase;">Bewertungen</h2><div style="display: flex; gap: 40px; margin-bottom: 40px; flex-wrap: wrap;"><div style="text-align: center; background: #f9fafb; padding: 30px; border-radius: 20px; min-width: 200px;"><div style="font-size: 48px; font-weight: 900; color: #b70832;">' + reviews.rating + '</div><div style="color: #fbbf24; font-size: 24px;">★★★★★</div><div style="font-size: 14px; color: #6b7280; margin-top: 8px;">' + reviews.count.toLocaleString() + ' Bewertungen</div></div><div style="flex: 1; display: flex; flex-direction: column; gap: 12px; justify-content: center;">' + [5,4,3,2,1].map(s => '<div style="display: flex; align-items: center; gap: 10px;"><span style="font-size: 12px; font-weight: 700; width: 20px;">' + s + '</span><div style="flex: 1; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;"><div style="width: ' + (s === 5 ? '85' : s === 4 ? '10' : '2') + '%; height: 100%; background: #b70832;"></div></div></div>').join('') + '</div></div><div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;"><div style="border: 1px solid #e5e7eb; padding: 20px; border-radius: 16px;"><div style="color: #fbbf24; margin-bottom: 10px;">★★★★★</div><p style="font-weight: 700; margin-bottom: 8px;">Top Produkt!</p><p style="font-size: 14px; color: #4b5563; line-height: 1.6;">Ich bin absolut begeistert von dem Geschmack und der Löslichkeit. ESN ist einfach die beste Marke.</p><p style="font-size: 12px; color: #9ca3af; margin-top: 12px;">– Verified Buyer</p></div></div></div>';
-                  target.after(div);
-                }
-
-                function fixCollectionPrices() {
-                  const cards = document.querySelectorAll('.product-card, .product-card-sample, [data-component="product-card"]');
-                  cards.forEach(card => {
-                    if (card.getAttribute('data-sys-processed')) return;
-                    const priceEl = card.querySelector('.product-prices__price, .product-card__prices, .price__regular');
-                    if (!priceEl) return;
-                    const text = priceEl.innerText.trim();
-                    const match = text.match(/(\\d+)[,.](\\d+)/);
-                    if (match) {
-                      card.setAttribute('data-sys-processed', 'true');
-                      const currentPrice = parseInt(match[1]) + (parseInt(match[2]) / 100);
-                      const discountedPrice = currentPrice * 0.6; 
-                      const oldPriceStr = currentPrice.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                      const newPriceStr = discountedPrice.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                      priceEl.innerHTML = '<span style="color: #b70832; font-weight: 900; font-size: 1.1em;">€' + newPriceStr + '</span><span style="text-decoration: line-through; color: #9ca3af; font-size: 0.85em; margin-left: 8px;">€' + oldPriceStr + '</span><div style="position: absolute; top: 12px; left: 12px; background: #b70832; color: white; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 900; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.2); pointer-events: none;">SPARE 40%</div>';
-                      card.style.position = 'relative';
-                    }
-                  });
-                }
-
-                function hideBuggyProducts() {
-                  const cards = document.querySelectorAll('.product-card, .product-card-sample, [data-component="product-card"], a[href*="elite-leistung-combo"], a[href*="elite-performance-paket"]');
-                  cards.forEach(card => {
-                    const text = card.innerText || "";
-                    if (text.includes('Elite Leistungs-Paket') || text.includes('Elite Performance Pack') || (card.querySelector && card.querySelector('img[src*="Elite_Leistungs-Paket"]')) || (card.href && (card.href.includes('elite-leistung-combo') || card.href.includes('elite-performance-paket')))) {
-                      card.style.display = 'none';
-                      card.setAttribute('data-sys-hidden', 'true');
-                    }
-                  });
-                  const titles = document.querySelectorAll('.product-card__title, .product-card__subtitle');
-                  titles.forEach(t => { if (t.innerText.includes('Elite Leistungs-Paket')) { t.closest('.product-card')?.style.setProperty('display', 'none', 'important'); } });
-                }
-
-                function renderFooterUSPs() {
-                  const target = document.querySelector('footer');
-                  if (!target || document.getElementById('sys-footer-usp')) return;
-                  const div = document.createElement('div');
-                  div.id = 'sys-footer-usp';
-                  div.style.padding = '40px 20px';
-                  div.style.background = '#000';
-                  div.style.color = '#fff';
-                  div.style.textAlign = 'center';
-                  div.style.marginTop = '40px';
-                  div.innerHTML = '<div style="max-width: 1200px; margin: 0 auto;"><div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-bottom: 30px; font-weight: 700; font-size: 14px; text-transform: uppercase;"><div style="display: flex; align-items: center; gap: 8px;"><span style="color: #b70832; font-size: 20px;">✓</span> Kostenloser Versand ab 75€</div><div style="display: flex; align-items: center; gap: 8px;"><span style="color: #b70832; font-size: 20px;">✓</span> Schnelle Lieferung (24h)</div><div style="display: flex; align-items: center; gap: 8px;"><span style="color: #b70832; font-size: 20px;">✓</span> Premium Qualität</div></div><div style="opacity: 0.5; display: flex; justify-content: center; gap: 30px; align-items: center; border-top: 1px solid #333; margin-top: 20px; padding-top: 20px;"><img src="https://cdn.shopify.com/s/files/1/0550/2032/2995/files/dhl_logo.png" style="height: 12px; filter: invert(1);"><img src="https://cdn.shopify.com/s/files/1/0550/2032/2995/files/paypal_logo.png" style="height: 12px; filter: invert(1);"><img src="https://cdn.shopify.com/s/files/1/0550/2032/2995/files/visa_logo.png" style="height: 12px; filter: invert(1);"><img src="https://cdn.shopify.com/s/files/1/0550/2032/2995/files/mastercard_logo.png" style="height: 12px; filter: invert(1);"></div></div>';
-                  target.prepend(div);
-                }
-
-                function renderAnnouncementBar() {
-                  const target = document.body;
-                  if (!target || document.getElementById('sys-announcement')) return;
-                  const div = document.createElement('div');
-                  div.id = 'sys-announcement';
-                  div.style.background = '#b70832';
-                  div.style.color = '#fff';
-                  div.style.padding = '8px';
-                  div.style.textAlign = 'center';
-                  div.style.fontSize = '11px';
-                  div.style.fontWeight = '900';
-                  div.style.textTransform = 'uppercase';
-                  div.style.letterSpacing = '0.5px';
-                  div.style.zIndex = '1000';
-                  div.style.position = 'relative';
-                  div.innerHTML = '🔥 CODE: ESN - JETZT 40% RABATT AUF ALLES SICHERN! 🔥';
-                  target.prepend(div);
-                }
-
-                const style = document.createElement('style');
-                style.textContent = '[href*="elite-leistung-combo"], [href*="elite-performance-paket"], [data-track*="Elite Leistungs-Paket"], img[src*="Elite_Leistungs-Paket"] { display: none !important; }';
-                document.head.appendChild(style);
-
-                function runAll() {
-                  if (window.__sys_running) return;
-                  window.__sys_running = true;
-                  try {
-                    renderAnnouncementBar();
-                    hideBuggyProducts();
-                    fixPDPInitialPrice();
-                    renderUpsells();
-                    renderTrustShield();
-                    renderReviews();
-                    fixCollectionPrices();
-                    renderFooterUSPs();
-                  } catch(e) {}
-                  window.__sys_running = false;
-                }
-
-                // Run once when DOM is ready, then a few delayed passes for late-loaded content.
-                runAll();
-                setTimeout(runAll, 800);
-                setTimeout(runAll, 2000);
-                setTimeout(() => { hideBuggyProducts(); fixCollectionPrices(); }, 4000);
-              })();
-            `;
-            doc.body.appendChild(script);
-          } catch (err) {
-            console.error("Failed to inject variant fixer:", err);
-          }
         }}
         style={{
           width: "100%",
