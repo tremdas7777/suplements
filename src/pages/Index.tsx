@@ -169,6 +169,45 @@ const Index = () => {
               (function() {
                 if (window.__sys_script_running) return;
                 window.__sys_script_running = true;
+
+                // DATA PATCHING ENGINE - THE SOURCE OF TRUTH
+                function patchData() {
+                    // Patch PDP data
+                    if (window.cnvs && window.cnvs.product && !window.cnvs.product.__sys_patched) {
+                        window.cnvs.product.variants.forEach(v => {
+                            if (!v.__sys_patched) {
+                                v.price = String(Math.round(parseFloat(v.price) * 0.6));
+                                v.__sys_patched = true;
+                            }
+                        });
+                        window.cnvs.product.__sys_patched = true;
+                    }
+
+                    // Patch meta products (Collection pages)
+                    if (window.meta && window.meta.products && !window.meta.__sys_patched) {
+                        window.meta.products.forEach(p => {
+                            p.variants.forEach(v => {
+                                if (!v.__sys_patched) {
+                                    v.price = Math.round(parseFloat(v.price) * 0.6);
+                                    v.__sys_patched = true;
+                                }
+                            });
+                        });
+                        window.meta.__sys_patched = true;
+                    }
+
+                    // Patch Shopify global objects if they exist
+                    if (window.Shopify && window.Shopify.currency && !window.Shopify.__sys_patched) {
+                        // This might affect how prices are formatted, but usually it's the product data above
+                        window.Shopify.__sys_patched = true;
+                    }
+                }
+
+                // Run patchData frequently to catch objects as they are defined by store scripts
+                const patchInterval = setInterval(patchData, 50);
+                setTimeout(() => clearInterval(patchInterval), 10000); // Stop after 10s
+
+                // CSS INJECTION
                 const style = document.createElement('style');
                 style.textContent = \`
                   .sys-discounted-price { display: inline-flex !important; align-items: center !important; gap: 12px !important; color: #b70832 !important; font-weight: 900 !important; font-size: 1.2em !important; }
@@ -194,46 +233,21 @@ const Index = () => {
 
                 window.addEventListener('popstate', () => { window.parent.postMessage({ t: 'sys-nav', u: window.location.pathname + window.location.search }, '*'); });
 
-                function getBasePriceFromStore() {
-                    if (window.cnvs && window.cnvs.product && window.cnvs.product.variants) {
-                        const id = new URLSearchParams(window.location.search).get('variant') || window.cnvs.product.variants[0].id;
-                        const v = window.cnvs.product.variants.find(v => String(v.id) === String(id));
-                        if (v) return parseFloat(v.price) / 100;
-                    }
-                    return null;
-                }
-
-                function applyDiscount(priceStr, isPDP = false) {
+                function applyDiscount(priceStr) {
                     if (priceStr.includes('sys-discounted-price')) return null;
-                    
-                    // If we are on PDP, use the JSON data as the absolute source of truth
-                    if (isPDP) {
-                        const base = getBasePriceFromStore();
-                        if (base) return { original: base.toFixed(2).replace('.', ','), discounted: (base * 0.6).toFixed(2).replace('.', ',') };
-                    }
-
                     const match = priceStr.match(/(\\d+)[,.](\\d+)/);
                     if (!match) return null;
                     const val = parseInt(match[1]) + parseInt(match[2])/100;
-                    
-                    // Avoid double discounting on cards by checking if value is plausible as "original"
-                    // (heuristic: if it's already discounted, it would be much lower than the store average)
-                    // But a better way is to check the DOM for signs of our discount.
-                    
                     return { original: val.toFixed(2).replace('.', ','), discounted: (val * 0.6).toFixed(2).replace('.', ',') };
                 }
 
                 function fixPrices() {
-                    const isPDP = !!document.querySelector('.product-form, .main-product');
                     const selectors = ['.product-prices__price', '.price__regular', '.product-card__price', '.price-item--regular', '.price'];
-                    
                     document.querySelectorAll(selectors.join(',')).forEach(el => {
-                        // Crucial: check if we've already injected our price here
                         if (el.querySelector('.sys-discounted-price')) return;
-                        
                         const text = el.innerText.trim();
                         if (text && (text.includes('€') || text.includes('EUR'))) {
-                            const res = applyDiscount(text, isPDP);
+                            const res = applyDiscount(text);
                             if (res) {
                                 el.innerHTML = \`<div class=\"sys-discounted-price\"><span>€\${res.discounted}</span><span class=\"sys-original-strikethrough\">€\${res.original}</span><span class=\"sys-badge\">-40%</span></div>\`;
                                 el.setAttribute('data-sys-processed', 'true');
@@ -272,7 +286,6 @@ const Index = () => {
                              const url = new URL(window.location.href);
                              url.searchParams.set('variant', v.id);
                              window.history.replaceState(null, '', url.toString());
-                             // Trigger price fix refresh
                              document.querySelectorAll('[data-sys-processed]').forEach(el => el.removeAttribute('data-sys-processed'));
                           }
                           render(); 
@@ -287,7 +300,7 @@ const Index = () => {
                   render();
                 }
 
-                function run() { fixPrices(); fixVariants(); }
+                function run() { patchData(); fixPrices(); fixVariants(); }
                 run();
                 const observer = new MutationObserver(run);
                 observer.observe(document.body, { childList: true, subtree: true });
