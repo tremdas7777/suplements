@@ -165,23 +165,14 @@ const Index = () => {
             if (!doc) return;
 
             const script = doc.createElement('script');
-            script.textContent = \`
+            // Using a simple string for the inner script content to avoid template literal escaping issues in TSX
+            script.textContent = `
               (function() {
                 if (window.__sys_script_running_v3) return;
                 window.__sys_script_running_v3 = true;
 
-                // VISUAL LAYER ONLY
-                // Prices are already handled by the 'ultimate patch' inside HTML files.
-                // This script only adds the strikethrough and badges for visuals.
-                
                 const style = document.createElement('style');
-                style.textContent = \\\`
-                  .sys-discounted-price { display: inline-flex !important; align-items: center !important; gap: 12px !important; color: #b70832 !important; font-weight: 900 !important; font-size: 1.2em !important; }
-                  .sys-original-strikethrough { text-decoration: line-through !important; color: #8d9093 !important; font-size: 0.8em !important; font-weight: 400 !important; }
-                  .sys-badge { background: #b70832 !important; color: white !important; padding: 2px 8px !important; border-radius: 4px !important; font-size: 12px !important; font-weight: 700 !important; }
-                  [data-sys-processed=\\\"true\\\"] > *:not(.sys-discounted-price) { display: none !important; }
-                  [href*=\\\"elite-leistung-combo\\\"], [href*=\\\"elite-performance-paket\\\"] { display: none !important; }
-                \\\`;
+                style.textContent = ".sys-discounted-price { display: inline-flex !important; align-items: center !important; gap: 12px !important; color: #b70832 !important; font-weight: 900 !important; font-size: 1.2em !important; } .sys-original-strikethrough { text-decoration: line-through !important; color: #8d9093 !important; font-size: 0.8em !important; font-weight: 400 !important; } .sys-badge { background: #b70832 !important; color: white !important; padding: 2px 8px !important; border-radius: 4px !important; font-size: 12px !important; font-weight: 700 !important; } [data-sys-processed='true'] > *:not(.sys-discounted-price) { display: none !important; } [href*='elite-leistung-combo'], [href*='elite-performance-paket'] { display: none !important; }";
                 document.head.appendChild(style);
 
                 function fixPrices() {
@@ -189,13 +180,12 @@ const Index = () => {
                     document.querySelectorAll(selectors.join(',')).forEach(el => {
                         if (el.querySelector('.sys-discounted-price')) return;
                         const text = el.innerText.trim();
-                        const match = text.match(/(\\\\d+)[,.](\\\\d+)/);
+                        const match = text.match(/(\\d+)[,.](\\d+)/);
                         if (match) {
                             const val = parseInt(match[1]) + parseInt(match[2])/100;
-                            // val is already discounted because of the HTML patch.
                             const original = (val / 0.6).toFixed(2).replace('.', ',');
                             const discounted = val.toFixed(2).replace('.', ',');
-                            el.innerHTML = \\\`<div class=\\\"sys-discounted-price\\\"><span>€\\\${discounted}</span><span class=\\\"sys-original-strikethrough\\\">€\\\${original}</span><span class=\\\"sys-badge\\\">-40%</span></div>\\\`;
+                            el.innerHTML = '<div class="sys-discounted-price"><span>€' + discounted + '</span><span class="sys-original-strikethrough">€' + original + '</span><span class="sys-badge">-40%</span></div>';
                             el.setAttribute('data-sys-processed', 'true');
                         }
                     });
@@ -216,7 +206,7 @@ const Index = () => {
                     options.forEach(opt => {
                       const optDiv = document.createElement('div');
                       optDiv.style.marginBottom = '20px';
-                      optDiv.innerHTML = '<h4 style=\"margin-bottom: 8px; font-weight: 800; font-size: 13px; text-transform: uppercase;\">' + opt.name + ': <span style=\"font-weight: 400; color: #6b7280;\">' + selectedOptions[opt.name] + '</span></h4>';
+                      optDiv.innerHTML = '<h4 style="margin-bottom: 8px; font-weight: 800; font-size: 13px; text-transform: uppercase;">' + opt.name + ': <span style="font-weight: 400; color: #6b7280;">' + selectedOptions[opt.name] + '</span></h4>';
                       const grid = document.createElement('div');
                       grid.style.display = 'grid'; grid.style.gridTemplateColumns = 'repeat(2, 1fr)'; grid.style.gap = '8px';
                       opt.values.forEach(val => {
@@ -251,7 +241,6 @@ const Index = () => {
                 observer.observe(document.body, { childList: true, subtree: true });
                 setInterval(run, 1500);
 
-                // INTERCEPT CLICKS
                 document.addEventListener('click', (e) => {
                   const target = e.target.closest('a, [data-href]');
                   if (!target) return;
@@ -266,7 +255,7 @@ const Index = () => {
                   } catch (err) {}
                 }, true);
               })();
-            \`;
+            `;
             doc.body.appendChild(script);
           } catch (err) {}
         }}
