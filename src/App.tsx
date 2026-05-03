@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import ComboProduct from "./pages/ComboProduct.tsx";
 
 const queryClient = new QueryClient();
 
@@ -16,6 +17,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/products/esn-elite-leistung-combo" element={<ComboProduct />} />
           <Route path="/products/:slug" element={<Index />} />
           <Route path="/collections/:slug" element={<Index />} />
           <Route path="/pages/:slug" element={<Index />} />
