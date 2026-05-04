@@ -110,7 +110,7 @@ export default function Checkout() {
             price: i.price,
             quantity: i.quantity,
             image: i.image,
-            variant: i.variant || i.flavor || '',
+            variant: i.variant || '',
           })),
           customer: {
             firstName: form.firstName,
