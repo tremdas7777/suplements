@@ -739,7 +739,7 @@ export default function ComboProduct() {
           transition: all 0.15s;
           padding: 0;
           overflow: hidden;
-          background: #ebeff0;
+          background: #f5f5f5;
           display: flex;
           align-items: center;
           justify-content: center;
