@@ -347,7 +347,7 @@ export default function ComboProduct() {
   return (
     <>
     <div className="combo-page">
-      <HeaderESN />
+      <HeaderESN hideCart />
 
       {/* ── Main ── */}
       <section className="combo-main">
