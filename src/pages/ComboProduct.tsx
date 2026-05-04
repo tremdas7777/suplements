@@ -152,7 +152,7 @@ function getFlavorImage(item: typeof COMBO_ITEMS[0], flavor: string): string {
 }
 
 const GALLERY_IMAGES = [
-  { src: COMBO_HERO, label: "ESN Elite Leistung Combo" },
+  { src: COMBO_HERO, label: "ESN Elite Leistung Bundle" },
   ...COMBO_ITEMS.map(i => ({ src: i.image, label: i.name })),
 ];
 
@@ -408,7 +408,7 @@ export default function ComboProduct() {
 
             {/* ── Buy box ── */}
             <div className="combo-buybox">
-              <h1 className="combo-title">ESN Elite Leistung Combo</h1>
+              <h1 className="combo-title">ESN Elite Leistung Bundle – Muskelaufbau &amp; Performance</h1>
 
               {/* Stars */}
               <a href="#reviews" className="combo-stars">
@@ -498,7 +498,7 @@ export default function ComboProduct() {
               <div className="combo-accordion">
                 <AccordionSection title="Beschreibung">
                   <p>
-                    Das <strong>ESN Elite Leistung Combo</strong> ist das ultimative Paket für ambitionierte Athleten.
+                    Das <strong>ESN Elite Leistung Bundle</strong> ist das ultimative Paket für ambitionierte Athleten.
                     8 Premium-Produkte, perfekt aufeinander abgestimmt.
                   </p>
                   <h3>Inhalt des Combos</h3>
