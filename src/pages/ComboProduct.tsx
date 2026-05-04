@@ -38,7 +38,7 @@ const COMBO_ITEMS = [
     name: "Isoclear Whey Isolate",
     subtitle: "908g",
     slug: "esn-isoclear-whey-isolate",
-    image: "https://www.esn.com/cdn/shop/files/IsoClear_908g_RoyalCandyFlavor_2024x2024_shop-bPcaSXnC_b832db6a-040c-4214-8957-cec62c0f6245_grande.jpg?v=1775741941",
+    image: "https://i.ibb.co/XxwLcvQd/Iso-Clear-908g-Pina-Colada-Flavor-2024x2024-shop-a-bo-LTst-16635687-1341-4753-8426-6c37ab19f2c1.webp",
     flavors: [
       "Green Apple", "Peach Iced Tea", "Lemon Iced Tea", "Tropical Punch",
       "Royal Candy", "Cherry Lemonade", "Strawberry Lime",
@@ -58,7 +58,7 @@ const COMBO_ITEMS = [
     name: "Crank Pre-Workout",
     subtitle: "380g",
     slug: "esn-crank",
-    image: "https://www.esn.com/cdn/shop/files/Crank_380g_BlackberryFlavor_2024x2024_shop-Ky6j3hay_e04a4802-9642-4856-ad9b-69379cd8f308_grande.jpg?width=800",
+    image: "https://i.ibb.co/XxwLcvQd/Iso-Clear-908g-Pina-Colada-Flavor-2024x2024-shop-a-bo-LTst-16635687-1341-4753-8426-6c37ab19f2c1.webp",
     flavors: [
       "Mango Maui", "Sour Apple", "Cola", "Blue Raspberry",
       "Tropical", "Blackberry", "Lemon Lime",
