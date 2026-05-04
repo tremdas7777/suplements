@@ -357,7 +357,7 @@ export default function ProductDetail() {
                   <path d="M7.625 13a1 1 0 011-1h6.75a1 1 0 110 2h-6.75a1 1 0 01-1-1" />
                   <path d="M2.5 2v10h1.625a1 1 0 110 2H2.25A1.75 1.75 0 01.5 12.25V1.75A1.75 1.75 0 012.25 0H16.5a1 1 0 011 1v10.051a1 1 0 11-2 0V2z" />
                 </svg>
-                <span>Lieferzeit: 5-7 Werktage</span>
+                <span>Lieferzeit: 3-5 Werktage</span>
               </div>
 
               {/* USPs */}

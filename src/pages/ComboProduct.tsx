@@ -491,7 +491,7 @@ export default function ComboProduct() {
                   <path d="M2.5 2v10h1.625a1 1 0 110 2H2.25A1.75 1.75 0 01.5 12.25V1.75A1.75 1.75 0 012.25 0H16.5a1 1 0 011 1v10.051a1 1 0 11-2 0V2z" />
                   <path d="M15.5 6.25a1 1 0 011-1h6a1 1 0 011 1v6A1.75 1.75 0 0121.75 14h-1.875a1 1 0 110-2H21.5V7.25h-4v3.801a1 1 0 11-2 0z" />
                 </svg>
-                <span>Lieferzeit: 5-7 Werktage</span>
+                <span>Lieferzeit: 3-5 Werktage</span>
               </div>
 
               {/* Accordion */}
