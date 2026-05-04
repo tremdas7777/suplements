@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import HeaderESN from "../components/HeaderESN";
@@ -166,11 +166,13 @@ function FlavorDropdown({
   flavors,
   selected,
   onSelect,
+  placeholder,
 }: {
   flavorImageMap: Record<string, string>;
   flavors: string[];
   selected: string;
   onSelect: (f: string) => void;
+  placeholder?: string;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -191,8 +193,12 @@ function FlavorDropdown({
         onClick={() => setOpen(o => !o)}
       >
         <span className="flavor-dropdown__trigger-content">
-          <img src={flavorImageMap[selected]} alt={selected} className="flavor-dropdown__trigger-img" />
-          <span>{selected}</span>
+          {placeholder ? (
+            <span className="flavor-dropdown__placeholder">{placeholder}</span>
+          ) : (
+            <img src={flavorImageMap[selected]} alt={selected} className="flavor-dropdown__trigger-img" />
+          )}
+          <span>{placeholder || selected}</span>
         </span>
         <svg className={`flavor-dropdown__chevron ${open ? "open" : ""}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="6 9 12 15 18 9" />
@@ -237,9 +243,21 @@ function ProductFlavorSelector({
       <div className="flavor-static">
         <span className="flavor-static__inner">
           <img src={getFlavorImage(item, selected)} alt={selected} className="flavor-static__img" />
-          <span>{selected}</span>
+          <span>{selected || item.flavors[0]}</span>
         </span>
       </div>
+    );
+  }
+
+  if (!selected) {
+    return (
+      <FlavorDropdown
+        flavorImageMap={item.flavorImages}
+        flavors={item.flavors}
+        selected={item.flavors[0]}
+        onSelect={onSelect}
+        placeholder="Geschmack wählen"
+      />
     );
   }
 
@@ -299,9 +317,26 @@ export default function ComboProduct() {
   const [galleryIdx, setGalleryIdx] = useState(0);
   const [selections, setSelections] = useState<Record<string, string>>(() => {
     const init: Record<string, string> = {};
-    COMBO_ITEMS.forEach(i => { init[i.key] = i.flavors[0]; });
+    COMBO_ITEMS.forEach(i => { init[i.key] = i.flavors.length > 1 ? "" : i.flavors[0]; });
     return init;
   });
+  const [flavorError, setFlavorError] = useState<string | null>(null);
+
+  const missingFlavors = useMemo(() => {
+    return COMBO_ITEMS.filter(i => i.flavors.length > 1 && !selections[i.key]);
+  }, [selections]);
+
+  const handleCheckout = useCallback(() => {
+    setFlavorError(null);
+    if (missingFlavors.length > 0) {
+      setFlavorError(missingFlavors[0].key);
+      const el = document.querySelector(`[data-flavor-group="${missingFlavors[0].key}"]`);
+      el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      (el?.querySelector(".flavor-dropdown__trigger, .flavor-static") as HTMLElement)?.click();
+      return;
+    }
+    window.location.href = "https://checkout.flowspays.com/checkout/cmodkt6sb00i31rp0obulz7pa?offer=ZW5X4XQ";
+  }, [missingFlavors]);
 
   const handleSelect = useCallback((key: string, flavor: string) => {
     setSelections(prev => ({ ...prev, [key]: flavor }));
@@ -312,11 +347,6 @@ export default function ComboProduct() {
   return (
     <>
     <div className="combo-page">
-      {/* Announcement */}
-      <div className="combo-announcement">
-        ESN WEEK · SPARE BIS ZU 47% MIT DEM ELITE LEISTUNGSPAKET
-      </div>
-
       <HeaderESN />
 
       {/* ── Main ── */}
@@ -415,14 +445,25 @@ export default function ComboProduct() {
               </div>
 
               {/* Flavor selectors - each product has its own */}
+              {flavorError && (
+                <div className="combo-flavor-error">
+                  Wähle bitte einen Geschmack für: {missingFlavors.map(f => f.name).join(", ")}
+                </div>
+              )}
               <div className="combo-options">
                 {COMBO_ITEMS.map(item => (
-                  <div key={item.key} className="combo-option-group">
-                    <label className="combo-option__label">{item.name}</label>
+                  <div key={item.key} className={`combo-option-group ${flavorError === item.key ? "has-error" : ""}`} data-flavor-group={item.key}>
+                    <label className="combo-option__label">
+                      {item.name}
+                      {item.flavors.length > 1 && <span className="combo-option__required">*</span>}
+                    </label>
                     <ProductFlavorSelector
                       item={item}
                       selected={selections[item.key]}
-                      onSelect={f => handleSelect(item.key, f)}
+                      onSelect={f => {
+                        handleSelect(item.key, f);
+                        setFlavorError(null);
+                      }}
                     />
                   </div>
                 ))}
@@ -432,7 +473,7 @@ export default function ComboProduct() {
               <button
                 className="combo-atc combo-atc--buynow"
                 type="button"
-                onClick={() => { window.location.href = "https://checkout.flowspays.com/checkout/cmodkt6sb00i31rp0obulz7pa?offer=ZW5X4XQ"; }}
+                onClick={handleCheckout}
               >
                 <span className="combo-atc__desktop">
                   Jetzt kaufen
@@ -814,10 +855,25 @@ export default function ComboProduct() {
           margin-bottom: 20px;
         }
         .combo-option-group { display: flex; flex-direction: column; gap: 6px; }
+        .combo-option-group.has-error .flavor-dropdown__trigger {
+          border-color: #e74c3c;
+          box-shadow: 0 0 0 2px rgba(231,76,60,0.2);
+        }
         .combo-option__label {
           font-size: 12px;
           font-weight: 700;
           color: #000;
+        }
+        .combo-option__required { color: #e74c3c; margin-left: 4px; }
+        .combo-flavor-error {
+          background: #fde8e8;
+          color: #c0392b;
+          padding: 10px 14px;
+          border-radius: 8px;
+          font-size: 13px;
+          font-weight: 600;
+          margin-bottom: 12px;
+          border: 1px solid #f5c6cb;
         }
         @media (min-width: 768px) {
           .combo-options { gap: 20px; margin-bottom: 24px; }
@@ -852,6 +908,11 @@ export default function ComboProduct() {
           align-items: center;
           gap: 10px;
           min-width: 0;
+        }
+        .flavor-dropdown__placeholder {
+          color: #999;
+          font-weight: 400;
+          font-style: italic;
         }
         .flavor-dropdown__trigger-img {
           width: 28px;
@@ -1173,8 +1234,7 @@ export default function ComboProduct() {
         .combo-whats {
           margin-top: 48px;
           padding: 40px 0 48px;
-          border-top: 1px solid #edf1f2;
-          background: #fff;
+          background: #000;
         }
         .combo-whats__title {
           font-size: 18px;
@@ -1185,6 +1245,7 @@ export default function ComboProduct() {
           letter-spacing: 0.3px;
           padding: 0 16px;
           line-height: 1.3;
+          color: #fff;
         }
         .combo-whats__grid {
           display: grid;
