@@ -210,7 +210,7 @@ export default function ProductDetail() {
       price: product.price,
       quantity,
       image: product.flavorImages[selectedFlavor],
-      flavor: selectedFlavor,
+      variant: selectedFlavor,
     });
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2000);
