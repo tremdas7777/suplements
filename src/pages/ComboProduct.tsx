@@ -642,7 +642,7 @@ export default function ComboProduct() {
           width: 100%;
           overflow: hidden;
           border-radius: 12px;
-          background: #f5f5f5;
+          background: #ebeff0;
         }
         .combo-gallery__ratio {
           position: relative;
@@ -739,7 +739,7 @@ export default function ComboProduct() {
           transition: all 0.15s;
           padding: 0;
           overflow: hidden;
-          background: #f5f5f5;
+          background: #ebeff0;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -1133,7 +1133,7 @@ export default function ComboProduct() {
           width: 40px;
           height: 40px;
           min-width: 40px;
-          background: #f5f5f5;
+          background: #ebeff0;
           border-radius: 6px;
           display: flex;
           align-items: center;
