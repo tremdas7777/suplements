@@ -6,7 +6,7 @@ const ESN_LOGO_PATH = "m403.06 422.17 13.81-85.65h-184.5l7.23-44.72h184.5l14.34-
 
 export default function HeaderESN() {
   const navigate = useNavigate();
-  const { itemCount } = useCart();
+  const { count: itemCount } = useCart();
   const [cartCount, setCartCount] = useState(0);
 
   const updateCount = () => {
