@@ -58,7 +58,7 @@ const COMBO_ITEMS = [
     name: "Crank Pre-Workout",
     subtitle: "380g",
     slug: "esn-crank",
-    image: "https://i.ibb.co/XxwLcvQd/Iso-Clear-908g-Pina-Colada-Flavor-2024x2024-shop-a-bo-LTst-16635687-1341-4753-8426-6c37ab19f2c1.webp",
+    image: "https://www.esn.com/cdn/shop/files/Crank_380g_BlackberryFlavor_2024x2024_shop-Ky6j3hay_e04a4802-9642-4856-ad9b-69379cd8f308_grande.jpg?width=800",
     flavors: [
       "Mango Maui", "Sour Apple", "Cola", "Blue Raspberry",
       "Tropical", "Blackberry", "Lemon Lime",
