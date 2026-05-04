@@ -6,7 +6,7 @@ import FooterESN from "../components/FooterESN";
 import { useCart } from "../context/CartContext";
 
 const COMBO_HERO =
-  "https://kazoomglobal.lovable.app/esn-combo-main.jpg";
+  "https://i.ibb.co/0pwLPbb5/Gemini-Generated-Image-uj9dysuj9dysuj9d.png";
 
 const COMBO_ITEMS = [
   {
