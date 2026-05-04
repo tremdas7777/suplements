@@ -9661,4 +9661,54 @@ Hol das Beste aus dir heraus – mit ESN!
 <script async src="//www.esn.com/cdn/shop/t/62/assets/bundle.vendors.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script><script async src="//www.esn.com/cdn/shop/t/62/assets/layout.theme.min.js?v=1777378949116&akv=2026-03-22.block-about-blank"></script><link href="//www.esn.com/cdn/shop/t/62/assets/component.cart-drawer.min.js?v=1777378949116&akv=2026-03-22.block-about-blank" fetchpriority="low" rel="prefetch">
 <link href="//www.esn.com/cdn/shop/t/62/assets/component.main-product.min.js?v=1777378949116&akv=2026-03-22.block-about-blank" fetchpriority="low" rel="prefetch">
 
+<script>
+(function(){
+  var COMBO_HTML = '<div class="col xs3 m2 l3" data-combo-card="1">'
+   + '<a class="product-card liquid" href="/products/esn-elite-leistung-combo">'
+   + '<div class="product-card__image-container"><div class="product-card__image-main">'
+   + '<span class="images liquid product-card__primary-image" style="padding-bottom:125.0%;display:block;background:#f8f9fa">'
+   + '<img class="images__image liquid" alt="ESN Elite Leistungs-Paket" loading="lazy" decoding="async"'
+   + ' src="https://kazoomglobal.lovable.app/esn-combo-main.jpg"'
+   + ' style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">'
+   + '</span></div></div>'
+   + '<div class="product-card__footer">'
+   + '<div class="product-card__flavour-wrapper"><p class="product-card__flavour-count text-mobile-paragraph-xs-regular text-desktop-paragraph-xs-regular">8 Produkte im Bundle</p></div>'
+   + '<p class="product-card__title text-mobile-paragraph-m-bold text-desktop-headlines-h6">ESN Elite Leistungs-Paket</p>'
+   + '<p class="product-card__subtitle text-desktop-mobile-s-regular text-desktop-paragraph-s-regular">Maximaler Fokus &amp; Performance</p>'
+   + '<p class="product-prices product-prices--card product-card__prices liquid">'
+   + '<span class="product-prices__price product-prices__price--on-sale"><span class="text-mobile-paragraph-m-bold text-desktop-paragraph-m-bold" style="color:#b70832">€69,00</span></span>'
+   + '<span class="product-prices__compare-at-price text-mobile-paragraph-xs-regular text-desktop-paragraph-xs-regular" style="text-decoration:line-through;margin-left:8px;opacity:.6">€115,00</span>'
+   + '</p></div></a></div>';
+
+  function inject(){
+    try{
+      var grid = document.querySelector('.product-grid');
+      if(!grid) return false;
+      if(grid.querySelector('[data-combo-card]')) return true;
+      var firstCard = grid.querySelector('.col:not(.product-grid__filters)');
+      var wrap = document.createElement('div');
+      wrap.innerHTML = COMBO_HTML;
+      var node = wrap.firstChild;
+      if(firstCard) grid.insertBefore(node, firstCard);
+      else grid.appendChild(node);
+      return true;
+    }catch(e){ return false; }
+  }
+  var tries = 0;
+  var iv = setInterval(function(){
+    tries++;
+    if(inject() || tries > 40){ clearInterval(iv); }
+  }, 400);
+  // Also observe DOM mutations to re-inject if Vue rerenders
+  try{
+    var mo = new MutationObserver(function(){
+      var grid = document.querySelector('.product-grid');
+      if(grid && !grid.querySelector('[data-combo-card]')) inject();
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+    setTimeout(function(){ try{mo.disconnect();}catch(e){} }, 30000);
+  }catch(e){}
+})();
+</script>
 </html>
+
