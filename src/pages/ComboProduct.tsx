@@ -940,13 +940,7 @@ export default function ComboProduct() {
         }
         @media (max-width: 767px) {
           .flavor-dropdown__list {
-            position: fixed;
-            left: 8px;
-            right: 8px;
-            max-height: 50vh;
-            top: auto;
-            bottom: 8px;
-            z-index: 9999;
+            max-height: 220px;
           }
         }
         .flavor-dropdown__option {
