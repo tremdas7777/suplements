@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, Lock, ShoppingBag, CreditCard } from "lucide-react";
 import { useCart } from "../context/CartContext";
@@ -23,6 +23,12 @@ const SHIPPING_OPTIONS = [
   { id: "free",     label: "Kostenloser Versand", sub: "3–5 Werktage", price: 0, minOrder: 75 },
 ];
 
+const GERMAN_EMAIL_DOMAINS = [
+  "gmail.com", "web.de", "gmx.de", "t-online.de", "outlook.de",
+  "yahoo.de", "mail.de", "freenet.de", "gmx.net", "hotmail.de",
+  "icloud.com", "arcor.de", "posteo.de", "protonmail.com",
+];
+
 const inp: React.CSSProperties = {
   width: "100%", padding: "13px 16px",
   border: "1.5px solid #e5e7eb", borderRadius: 10,
@@ -30,6 +36,127 @@ const inp: React.CSSProperties = {
   fontFamily: "'Wix Madefor Text', Helvetica, Arial, sans-serif",
   boxSizing: "border-box", background: "#fff",
 };
+
+function applyZipMask(value: string): string {
+  const digits = value.replace(/\D/g, "");
+  return digits.slice(0, 5);
+}
+
+function applyPhoneMask(value: string): string {
+  const cleaned = value.replace(/[^\d+]/g, "");
+  if (!cleaned) return "";
+  if (cleaned.startsWith("+")) {
+    return "+" + cleaned.slice(1).replace(/\D/g, "").slice(0, 14);
+  }
+  return cleaned.slice(0, 15);
+}
+
+function ZipField({ label, name, value, onChange }: {
+  label: string; name: keyof FormData; value: string;
+  onChange: (k: keyof FormData, v: string) => void;
+}) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(name, applyZipMask(e.target.value));
+  };
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".4px", color: "#374151" }}>{label}</label>
+      <input
+        type="text" inputMode="numeric" value={value} placeholder="12345"
+        onChange={handleChange} maxLength={5}
+        style={inp}
+        onFocus={e => (e.target.style.borderColor = "#232323")}
+        onBlur={e => (e.target.style.borderColor = "#e5e7eb")}
+      />
+    </div>
+  );
+}
+
+function PhoneField({ label, name, value, onChange }: {
+  label: string; name: keyof FormData; value: string;
+  onChange: (k: keyof FormData, v: string) => void;
+}) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(name, applyPhoneMask(e.target.value));
+  };
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".4px", color: "#374151" }}>{label}</label>
+      <input
+        type="tel" value={value} placeholder="+49 123 4567890"
+        onChange={handleChange}
+        style={inp}
+        onFocus={e => (e.target.style.borderColor = "#232323")}
+        onBlur={e => (e.target.style.borderColor = "#e5e7eb")}
+      />
+    </div>
+  );
+}
+
+function EmailField({ label, name, value, onChange }: {
+  label: string; name: keyof FormData; value: string;
+  onChange: (k: keyof FormData, v: string) => void;
+}) {
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const atIdx = value.indexOf("@");
+  const localPart = atIdx >= 0 ? value.slice(0, atIdx) : value;
+  const hasAt = atIdx >= 0;
+  const suggestions = hasAt
+    ? GERMAN_EMAIL_DOMAINS.filter(d => !value.slice(atIdx + 1) || d.startsWith(value.slice(atIdx + 1)))
+        .map(d => `${localPart}@${d}`)
+    : value
+      ? GERMAN_EMAIL_DOMAINS.map(d => `${value}@${d}`)
+      : [];
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setShowSuggestions(false);
+    };
+    if (showSuggestions) document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [showSuggestions]);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6 }} ref={ref}>
+      <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".4px", color: "#374151" }}>{label}</label>
+      <div style={{ position: "relative" }}>
+        <input
+          type="email" value={value} placeholder="deine@email.de"
+          onChange={e => { onChange(name, e.target.value); setShowSuggestions(true); }}
+          onFocus={() => setShowSuggestions(true)}
+          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+          style={inp}
+        />
+        {showSuggestions && suggestions.length > 0 && suggestions.length <= 8 && (
+          <div style={{
+            position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0,
+            background: "#fff", border: "1.5px solid #e5e7eb", borderRadius: 10,
+            boxShadow: "0 8px 24px rgba(0,0,0,0.08)", zIndex: 50,
+            overflow: "hidden",
+          }}>
+            {suggestions.slice(0, 6).map(s => (
+              <button
+                key={s}
+                type="button"
+                onMouseDown={(e) => { e.preventDefault(); onChange(name, s); setShowSuggestions(false); }}
+                style={{
+                  display: "block", width: "100%", padding: "10px 16px", background: "none",
+                  border: "none", borderBottom: "1px solid #f3f4f6", textAlign: "left",
+                  fontSize: 13, cursor: "pointer", fontFamily: "inherit", color: "#232323",
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = "#f8f9fa")}
+                onMouseLeave={e => (e.currentTarget.style.background = "none")}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 function Field({ label, name, value, onChange, type = "text", placeholder = "" }: {
   label: string; name: keyof FormData; value: string;
@@ -76,7 +203,6 @@ export default function Checkout() {
     setError("");
 
     try {
-      // Facebook Pixel - Initiate Checkout
       if (typeof window !== 'undefined' && (window as any).fbq) {
         (window as any).fbq('track', 'InitiateCheckout', {
           content_ids: items.map(i => i.id),
@@ -86,7 +212,6 @@ export default function Checkout() {
         });
       }
 
-      // Google Analytics - begin_checkout
       if (typeof window !== 'undefined' && (window as any).gtag) {
         (window as any).gtag('event', 'begin_checkout', {
           currency: 'EUR',
@@ -130,7 +255,6 @@ export default function Checkout() {
 
       const { url } = await res.json();
 
-      // Save order locally as pending before redirect
       saveOrder({
         customer: {
           firstName: form.firstName, lastName: form.lastName,
@@ -148,7 +272,6 @@ export default function Checkout() {
 
       clearCart();
 
-      // Redirect to Stripe Checkout
       window.location.href = url;
     } catch (err: any) {
       setError(err.message || "Erro ao processar pagamento");
@@ -178,9 +301,7 @@ export default function Checkout() {
 
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "32px 20px 80px", display: "grid", gridTemplateColumns: "1fr", gap: 32 }} className="checkout-grid">
 
-        {/* LEFT */}
         <div>
-          {/* Steps */}
           <div style={{ background: "#fff", borderRadius: 16, padding: "16px 24px", border: "1.5px solid #edf1f2", marginBottom: 24, display: "flex", alignItems: "center" }}>
             {(["info", "shipping", "payment"] as Step[]).map((s, i) => {
               const done = ["info", "shipping", "payment"].indexOf(step) > i;
@@ -203,7 +324,6 @@ export default function Checkout() {
 
           <div style={{ background: "#fff", borderRadius: 16, padding: "28px 24px", border: "1.5px solid #edf1f2" }}>
 
-            {/* STEP 1: Info */}
             {step === "info" && (
               <>
                 <h2 style={{ fontSize: 18, fontWeight: 900, marginBottom: 24 }}>Kontaktinformationen</h2>
@@ -212,11 +332,11 @@ export default function Checkout() {
                   <Field label="Nachname" name="lastName" value={form.lastName} onChange={up} />
                 </div>
                 <div style={{ display: "grid", gap: 14 }}>
-                  <Field label="E-Mail *" name="email" value={form.email} onChange={up} type="email" placeholder="deine@email.de" />
-                  <Field label="Telefon (optional)" name="phone" value={form.phone} onChange={up} type="tel" />
+                  <EmailField label="E-Mail *" name="email" value={form.email} onChange={up} />
+                  <PhoneField label="Telefon (optional)" name="phone" value={form.phone} onChange={up} />
                   <Field label="Straße & Hausnummer *" name="address" value={form.address} onChange={up} placeholder="Musterstraße 1" />
                   <div style={{ display: "grid", gridTemplateColumns: "110px 1fr", gap: 14 }}>
-                    <Field label="PLZ *" name="zip" value={form.zip} onChange={up} placeholder="12345" />
+                    <ZipField label="PLZ *" name="zip" value={form.zip} onChange={up} />
                     <Field label="Stadt *" name="city" value={form.city} onChange={up} placeholder="Berlin" />
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -232,7 +352,6 @@ export default function Checkout() {
               </>
             )}
 
-            {/* STEP 2: Shipping */}
             {step === "shipping" && (
               <>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 24 }}>
@@ -259,7 +378,6 @@ export default function Checkout() {
               </>
             )}
 
-            {/* STEP 3: Payment - Stripe */}
             {step === "payment" && (
               <>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 24 }}>
@@ -306,7 +424,6 @@ export default function Checkout() {
           </div>
         </div>
 
-        {/* RIGHT: Order summary */}
         <div>
           <div style={{ background: "#fff", borderRadius: 16, padding: 24, border: "1.5px solid #edf1f2", position: "sticky", top: 20 }}>
             <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 20 }}>Bestellübersicht</h3>
