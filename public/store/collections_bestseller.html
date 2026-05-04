@@ -9694,6 +9694,15 @@ Hol das Beste aus dir heraus – mit ESN!
       return true;
     }catch(e){ return false; }
   }
+  function bindCombo(){
+    var a = document.querySelector('[data-combo-card] a');
+    if(!a || a.__bound) return;
+    a.__bound = true;
+    a.addEventListener('click', function(e){
+      e.preventDefault(); e.stopImmediatePropagation();
+      try{ window.parent.postMessage({ t:'sys-click', u:'/products/esn-elite-leistung-combo' }, '*'); }catch(_){}
+    }, true);
+  }
   var tries = 0;
   var iv = setInterval(function(){
     tries++;
