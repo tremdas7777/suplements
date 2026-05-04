@@ -6,7 +6,7 @@ import FooterESN from "../components/FooterESN";
 import { useCart } from "../context/CartContext";
 
 const COMBO_HERO =
-  "https://i.ibb.co/hJYHQ654/Gemini-Generated-Image-uj9dysuj9dysuj9d-removebg-preview.png";
+  "https://i.ibb.co/Jj2M4bPT/Gemini-Generated-Image-1vfwwz1vfwwz1vfw.png";
 
 const COMBO_ITEMS = [
   {
