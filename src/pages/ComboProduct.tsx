@@ -11,7 +11,7 @@ const COMBO_HERO =
 const COMBO_ITEMS = [
   {
     key: "designer_whey",
-    name: "Designer Whey Protein",
+    name: "Designer Whey 908g",
     subtitle: "908g",
     slug: "esn-designer-whey-protein",
     image: "https://www.esn.com/cdn/shop/files/DesignerWhey_908g_MilkChocolateFlavor_2024x2024_shop-rHcG0v3w_609c8915-2161-4548-9969-93857677536b_grande.jpg?v=1744207024",
@@ -35,7 +35,7 @@ const COMBO_ITEMS = [
   },
   {
     key: "isoclear",
-    name: "Isoclear Whey Isolate",
+    name: "Isoclear 908g",
     subtitle: "908g",
     slug: "esn-isoclear-whey-isolate",
     image: "https://i.ibb.co/XxwLcvQd/Iso-Clear-908g-Pina-Colada-Flavor-2024x2024-shop-a-bo-LTst-16635687-1341-4753-8426-6c37ab19f2c1.webp",
@@ -55,7 +55,7 @@ const COMBO_ITEMS = [
   },
   {
     key: "crank",
-    name: "Crank Pre-Workout",
+    name: "Crank 380g",
     subtitle: "380g",
     slug: "esn-crank",
     image: "https://www.esn.com/cdn/shop/files/Crank_380g_BlackberryFlavor_2024x2024_shop-Ky6j3hay_e04a4802-9642-4856-ad9b-69379cd8f308_grande.jpg?width=800",
@@ -75,7 +75,7 @@ const COMBO_ITEMS = [
   },
   {
     key: "designer_bar",
-    name: "Designer Protein Bar Box",
+    name: "Designer Protein Bar 12 Einheiten",
     subtitle: "12x45g Box",
     slug: "designer-bar",
     image: "https://www.esn.com/cdn/shop/files/DesignerBar_45g_Tray_DarkChocolateSaltedAlmondFlavor_2024x2024_shop-4mvbqa9t_ff7823ec-c07e-4039-80a7-f3bf95d0638a_grande.jpg?v=1773753890",
@@ -98,7 +98,7 @@ const COMBO_ITEMS = [
   },
   {
     key: "daily",
-    name: "ESN Daily",
+    name: "Daily 480g",
     subtitle: "30 Sachets",
     slug: "esn-daily",
     image: "https://www.esn.com/cdn/shop/files/Daily_480g_CactusFruitFlavor_2024x2024_shop-ZTJBj2Ln_f6c0fd1b-c9af-43b4-9ff0-00a180714e8b_grande.jpg?width=800",
@@ -111,7 +111,7 @@ const COMBO_ITEMS = [
   },
   {
     key: "creatine",
-    name: "Ultrapure Kreatin Pulver",
+    name: "Ultrapure Kreatin Pulver 500g",
     subtitle: "500g",
     slug: "esn-ultrapure-creatine-monohydrate",
     image: "https://www.esn.com/cdn/shop/files/UltrapureCreatine_500g_Beutel_NeutralFlavor_2024x2024_shop-6v02cWzQ_a41b1095-1dad-4771-9e1b-4d233d8f358b_grande.jpg?width=800",
@@ -125,8 +125,8 @@ const COMBO_ITEMS = [
   },
   {
     key: "ashwa",
-    name: "Ashwa+ Kapseln",
-    subtitle: "90 Kaps.",
+    name: "Ashwa+ Kapseln 120 Kaps.",
+    subtitle: "120 Kaps.",
     slug: "esn-ashwa-pro",
     image: "https://www.esn.com/cdn/shop/files/Ashwa__120Caps_2024x2024_shop-ZiGfqmvZ_617765a7-6ae0-4a08-8e92-cc92773b2760_grande.jpg?width=800",
     flavors: ["Standard"],
@@ -136,8 +136,8 @@ const COMBO_ITEMS = [
   },
   {
     key: "magnesium",
-    name: "Magnesium Complex",
-    subtitle: "120 Kaps.",
+    name: "Magnesium Complex 90 Kaps.",
+    subtitle: "90 Kaps.",
     slug: "magnesium-complex",
     image: "https://www.esn.com/cdn/shop/files/MagnesiumComplex_90VeganCaps_2024x2024_shop-Nyzniicd_ab59e585-d0b9-45e7-92f6-a9ee5b94598a_grande.jpg?width=800",
     flavors: ["Standard"],
@@ -534,14 +534,14 @@ export default function ComboProduct() {
                       <tr><th>Produkt</th><th>Portion</th><th>Protein</th><th>Portionen</th></tr>
                     </thead>
                     <tbody>
-                      <tr><td>Designer Whey</td><td>33g</td><td>25g</td><td>27</td></tr>
-                      <tr><td>Isoclear</td><td>30g</td><td>23g</td><td>30</td></tr>
-                      <tr><td>Crank</td><td>9,5g</td><td>–</td><td>40</td></tr>
-                      <tr><td>Designer Bar</td><td>45g</td><td>18g</td><td>12</td></tr>
-                      <tr><td>ESN Daily</td><td>1 Sachet</td><td>–</td><td>30</td></tr>
-                      <tr><td>Kreatin</td><td>5g</td><td>–</td><td>100</td></tr>
-                      <tr><td>Ashwa+</td><td>3 Kaps.</td><td>–</td><td>30</td></tr>
-                      <tr><td>Magnesium</td><td>4 Kaps.</td><td>–</td><td>30</td></tr>
+                    <tr><td>Designer Whey 908g</td><td>33g</td><td>25g</td><td>27</td></tr>
+                    <tr><td>Isoclear 908g</td><td>30g</td><td>23g</td><td>30</td></tr>
+                    <tr><td>Crank 380g</td><td>9,5g</td><td>–</td><td>40</td></tr>
+                    <tr><td>Designer Protein Bar</td><td>45g</td><td>18g</td><td>12</td></tr>
+                    <tr><td>Daily 480g</td><td>1 Sachet</td><td>–</td><td>30</td></tr>
+                    <tr><td>Ultrapure Kreatin 500g</td><td>5g</td><td>–</td><td>100</td></tr>
+                    <tr><td>Ashwa+ Kapseln</td><td>3 Kaps.</td><td>–</td><td>40</td></tr>
+                    <tr><td>Magnesium Complex</td><td>4 Kaps.</td><td>–</td><td>30</td></tr>
                     </tbody>
                   </table>
                 </AccordionSection>
