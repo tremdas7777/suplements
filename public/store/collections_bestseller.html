@@ -9706,13 +9706,14 @@ Hol das Beste aus dir heraus – mit ESN!
   var tries = 0;
   var iv = setInterval(function(){
     tries++;
-    if(inject() || tries > 40){ clearInterval(iv); }
+    if(inject()){ bindCombo(); }
+    if(tries > 40){ clearInterval(iv); }
   }, 400);
-  // Also observe DOM mutations to re-inject if Vue rerenders
   try{
     var mo = new MutationObserver(function(){
       var grid = document.querySelector('.product-grid');
       if(grid && !grid.querySelector('[data-combo-card]')) inject();
+      bindCombo();
     });
     mo.observe(document.body, { childList: true, subtree: true });
     setTimeout(function(){ try{mo.disconnect();}catch(e){} }, 30000);
