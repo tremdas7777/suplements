@@ -555,6 +555,9 @@ export default function ComboProduct() {
         /* ── Reset (scoped to combo-page) ── */
         .combo-page *, .combo-page *::before, .combo-page *::after { box-sizing: border-box; }
 
+        /* ── Prevent horizontal overflow ── */
+        html, body { overflow-x: hidden; width: 100%; }
+
         /* ── Base ── */
         .combo-page {
           min-height: 100vh;
@@ -574,12 +577,17 @@ export default function ComboProduct() {
         .combo-announcement {
           background: #b70832;
           color: #fff;
-          padding: 10px 12px;
+          padding: 8px 12px;
           text-align: center;
-          font-size: 11px;
+          font-size: 10px;
           font-weight: 700;
           letter-spacing: 0.3px;
           line-height: 1.4;
+          word-break: break-word;
+          overflow-wrap: break-word;
+        }
+        @media (max-width: 479px) {
+          .combo-announcement { font-size: 9px; padding: 7px 8px; }
         }
 
         /* ── Main layout ── */
@@ -662,6 +670,13 @@ export default function ComboProduct() {
         }
         .combo-gallery__thumbs-mobile::-webkit-scrollbar { display: none; }
 
+        @media (max-width: 767px) {
+          .combo-gallery__arrow { width: 32px; height: 32px; }
+          .combo-gallery__arrow--prev { left: 4px; }
+          .combo-gallery__arrow--next { right: 4px; }
+          .combo-gallery__thumb { width: 48px; height: 48px; min-width: 48px; }
+        }
+
         @media (min-width: 1024px) {
           .combo-gallery {
             display: grid;
@@ -704,6 +719,7 @@ export default function ComboProduct() {
           align-items: center;
           justify-content: center;
           scroll-snap-align: start;
+          -webkit-tap-highlight-color: transparent;
         }
         .combo-gallery__thumb img {
           width: 100%;
@@ -876,6 +892,17 @@ export default function ComboProduct() {
           max-height: 240px;
           overflow-y: auto;
           -webkit-overflow-scrolling: touch;
+        }
+        @media (max-width: 767px) {
+          .flavor-dropdown__list {
+            position: fixed;
+            left: 8px;
+            right: 8px;
+            max-height: 50vh;
+            top: auto;
+            bottom: 8px;
+            z-index: 9999;
+          }
         }
         .flavor-dropdown__option {
           width: 100%;
@@ -1234,6 +1261,13 @@ export default function ComboProduct() {
         }
         @media (min-width: 1024px) {
           .combo-whats__grid { grid-template-columns: repeat(8, 1fr); }
+        }
+
+        /* ── Very small screens ── */
+        @media (max-width: 359px) {
+          .combo-whats__grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+          .combo-whats__name { font-size: 8px; }
+          .combo-whats__sub { font-size: 8px; }
         }
 
         /* ── Visually hidden ── */
