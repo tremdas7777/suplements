@@ -183,32 +183,32 @@ function EmailField({ label, name, value, onChange }: {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
           </div>
         )}
+        {showSuggestions && suggestions.length > 0 && (
+          <div style={{
+            position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0,
+            background: "#fff", border: "1.5px solid #e5e7eb", borderRadius: 10,
+            boxShadow: "0 8px 24px rgba(0,0,0,0.08)", zIndex: 50,
+            overflow: "hidden",
+          }}>
+            {suggestions.map(s => (
+              <button
+                key={s}
+                type="button"
+                onMouseDown={(e) => { e.preventDefault(); onChange(name, s); setShowSuggestions(false); }}
+                style={{
+                  display: "block", width: "100%", padding: "10px 16px", background: "none",
+                  border: "none", borderBottom: "1px solid #f3f4f6", textAlign: "left",
+                  fontSize: 13, cursor: "pointer", fontFamily: "inherit", color: "#232323",
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = "#f8f9fa")}
+                onMouseLeave={e => (e.currentTarget.style.background = "none")}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
-      {showSuggestions && suggestions.length > 0 && (
-        <div style={{
-          position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0,
-          background: "#fff", border: "1.5px solid #e5e7eb", borderRadius: 10,
-          boxShadow: "0 8px 24px rgba(0,0,0,0.08)", zIndex: 50,
-          overflow: "hidden",
-        }}>
-          {suggestions.map(s => (
-            <button
-              key={s}
-              type="button"
-              onMouseDown={(e) => { e.preventDefault(); onChange(name, s); setShowSuggestions(false); }}
-              style={{
-                display: "block", width: "100%", padding: "10px 16px", background: "none",
-                border: "none", borderBottom: "1px solid #f3f4f6", textAlign: "left",
-                fontSize: 13, cursor: "pointer", fontFamily: "inherit", color: "#232323",
-              }}
-              onMouseEnter={e => (e.currentTarget.style.background = "#f8f9fa")}
-              onMouseLeave={e => (e.currentTarget.style.background = "none")}
-            >
-              {s}
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
