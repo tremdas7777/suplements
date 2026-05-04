@@ -294,7 +294,7 @@ function AccordionSection({ title, children }: { title: string; children: React.
 /* ── Main Page ── */
 export default function ComboProduct() {
   const navigate = useNavigate();
-  const { addItem, openCart } = useCart();
+  const { addItem } = useCart();
 
   const [galleryIdx, setGalleryIdx] = useState(0);
   const [selections, setSelections] = useState<Record<string, string>>(() => {
@@ -302,28 +302,12 @@ export default function ComboProduct() {
     COMBO_ITEMS.forEach(i => { init[i.key] = i.flavors[0]; });
     return init;
   });
-  const [addedToCart, setAddedToCart] = useState(false);
 
   const handleSelect = useCallback((key: string, flavor: string) => {
     setSelections(prev => ({ ...prev, [key]: flavor }));
     const idx = COMBO_ITEMS.findIndex(i => i.key === key);
     if (idx >= 0) setGalleryIdx(idx + 1);
   }, []);
-
-  const handleAddToCart = useCallback(() => {
-    addItem({
-      id: "esn-elite-leistung-combo",
-      title: "ESN Elite Leistung Combo",
-      price: COMBO_PRICE,
-      quantity: 1,
-      image: COMBO_HERO,
-      isCombo: true,
-      comboSelections: { ...selections },
-    });
-    setAddedToCart(true);
-    setTimeout(() => setAddedToCart(false), 2000);
-    openCart();
-  }, [selections, addItem, openCart]);
 
   return (
     <>
@@ -444,17 +428,17 @@ export default function ComboProduct() {
                 ))}
               </div>
 
-              {/* Add to cart */}
+              {/* Buy Now button */}
               <button
-                className={`combo-atc ${addedToCart ? "combo-atc--success" : ""}`}
+                className="combo-atc combo-atc--buynow"
                 type="button"
-                onClick={handleAddToCart}
+                onClick={() => { window.location.href = "https://checkout.flowspays.com/checkout/cmodkt6sb00i31rp0obulz7pa?offer=ZW5X4XQ"; }}
               >
                 <span className="combo-atc__desktop">
-                  {addedToCart ? "✓ Hinzugefügt" : "In den Warenkorb"}
+                  Jetzt kaufen
                 </span>
                 <span className="combo-atc__mobile">
-                  {addedToCart ? "✓" : "Warenkorb"}
+                  Jetzt kaufen
                 </span>
               </button>
 
