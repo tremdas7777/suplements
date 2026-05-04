@@ -42,15 +42,6 @@ function applyZipMask(value: string): string {
   return digits.slice(0, 5);
 }
 
-function applyPhoneMask(value: string): string {
-  const cleaned = value.replace(/[^\d+]/g, "");
-  if (!cleaned) return "";
-  if (cleaned.startsWith("+")) {
-    return "+" + cleaned.slice(1).replace(/\D/g, "").slice(0, 14);
-  }
-  return cleaned.slice(0, 15);
-}
-
 function ZipField({ label, name, value, onChange }: {
   label: string; name: keyof FormData; value: string;
   onChange: (k: keyof FormData, v: string) => void;
@@ -118,18 +109,34 @@ function PhoneField({ label, name, value, onChange }: {
   onChange: (k: keyof FormData, v: string) => void;
 }) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(name, applyPhoneMask(e.target.value));
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
+    onChange(name, "+49 " + digits);
   };
+  const displayValue = value.startsWith("+49") ? value.slice(4) : "";
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
       <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".4px", color: "#374151" }}>{label}</label>
-      <input
-        type="tel" value={value} placeholder="+49 123 4567890"
-        onChange={handleChange}
-        style={inp}
-        onFocus={e => (e.target.style.borderColor = "#232323")}
-        onBlur={e => (e.target.style.borderColor = "#e5e7eb")}
-      />
+      <div style={{ display: "flex", alignItems: "stretch" }}>
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "center",
+          padding: "0 12px", background: "#f8f9fa", border: "1.5px solid #e5e7eb",
+          borderRight: "none", borderRadius: "10px 0 0 10px",
+          fontSize: 14, fontWeight: 700, color: "#374151",
+          fontFamily: "'Wix Madefor Text', Helvetica, Arial, sans-serif",
+        }}>
+          +49
+        </div>
+        <input
+          type="tel" value={displayValue} placeholder="123 4567890"
+          onChange={handleChange}
+          style={{
+            ...inp, borderRadius: "0 10px 10px 0", flex: 1,
+            borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
+          }}
+          onFocus={e => (e.target.style.borderColor = "#232323")}
+          onBlur={e => (e.target.style.borderColor = "#e5e7eb")}
+        />
+      </div>
     </div>
   );
 }
