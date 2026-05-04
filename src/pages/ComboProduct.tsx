@@ -147,6 +147,149 @@ const COMBO_ITEMS = [
   },
 ];
 
+/* ── Nutrition data per product ── */
+interface NutritionRow { label: string; per100g: string; perPortion: string }
+interface NutritionIngredient { label: string; amount: string }
+interface NutritionEntry {
+  productKey: string;
+  product: string;
+  portionInfo: string;
+  rows: NutritionRow[];
+  activeIngredients?: NutritionIngredient[];
+}
+
+const NUTRITION_DATA: NutritionEntry[] = [
+  {
+    productKey: "designer_whey",
+    product: "Designer Whey 908g",
+    portionInfo: "30 g Pulver (ca. 1 Messlöffel) · 30 Portionen",
+    rows: [
+      { label: "Brennwert", per100g: "1556 kJ / 372 kcal", perPortion: "469 kJ / 112 kcal" },
+      { label: "Fett", per100g: "3,7 g", perPortion: "1,1 g" },
+      { label: "davon gesättigte Fettsäuren", per100g: "1,7 g", perPortion: "0,5 g" },
+      { label: "Kohlenhydrate", per100g: "6,7 g", perPortion: "2,0 g" },
+      { label: "davon Zucker", per100g: "4,1 g", perPortion: "1,2 g" },
+      { label: "Eiweiß", per100g: "78 g", perPortion: "23,4 g" },
+      { label: "Salz", per100g: "1,4 g", perPortion: "0,41 g" },
+    ],
+  },
+  {
+    productKey: "isoclear",
+    product: "Isoclear 908g",
+    portionInfo: "30 g Pulver + 500 ml Wasser · 30 Portionen",
+    rows: [
+      { label: "Brennwert", per100g: "1423 kJ / 340 kcal", perPortion: "427 kJ / 102 kcal" },
+      { label: "Fett", per100g: "0 g", perPortion: "0 g" },
+      { label: "davon gesättigte Fettsäuren", per100g: "0 g", perPortion: "0 g" },
+      { label: "Kohlenhydrate", per100g: "1 g", perPortion: "0,3 g" },
+      { label: "davon Zucker", per100g: "0 g", perPortion: "0 g" },
+      { label: "Eiweiß", per100g: "84 g", perPortion: "25,2 g" },
+      { label: "Salz", per100g: "0,28 g", perPortion: "0,08 g" },
+    ],
+  },
+  {
+    productKey: "crank",
+    product: "Crank 380g",
+    portionInfo: "19 g Pulver (1 Messlöffel) + 500 ml Wasser · 20 Portionen",
+    rows: [
+      { label: "Brennwert", per100g: "0 kJ / 0 kcal", perPortion: "0 kJ / 0 kcal" },
+      { label: "Fett", per100g: "0 g", perPortion: "0 g" },
+      { label: "Kohlenhydrate", per100g: "0 g", perPortion: "0 g" },
+      { label: "davon Zucker", per100g: "0 g", perPortion: "0 g" },
+      { label: "Eiweiß", per100g: "0 g", perPortion: "0 g" },
+      { label: "Salz", per100g: "0 g", perPortion: "0 g" },
+    ],
+    activeIngredients: [
+      { label: "L-Citrullin Malat", amount: "6.000 mg" },
+      { label: "L-Arginin Alpha-Ketoglutarat", amount: "4.000 mg" },
+      { label: "Koffein", amount: "200 mg" },
+      { label: "Taurin", amount: "1.000 mg" },
+      { label: "L-Tyrosin", amount: "1.000 mg" },
+      { label: "L-Glycin", amount: "1.000 mg" },
+      { label: "Grüntee-Extrakt", amount: "250 mg" },
+      { label: "Traubenkernextrakt", amount: "250 mg" },
+      { label: "Glucuronolacton", amount: "500 mg" },
+      { label: "Schizandra-Extrakt", amount: "200 mg" },
+      { label: "Ginsengwurzel-Extrakt", amount: "100 mg" },
+      { label: "Rhodiola Rosea Extrakt", amount: "100 mg" },
+      { label: "Bitterorangen-Extrakt (davon Synephrin 6 mg)", amount: "100 mg" },
+      { label: "Pfeffer-Extrakt (davon Piperin 4 mg)", amount: "4,07 mg" },
+    ],
+  },
+  {
+    productKey: "designer_bar",
+    product: "Designer Protein Bar 12 Einheiten",
+    portionInfo: "1 Riegel (45 g) · 12 Riegel",
+    rows: [
+      { label: "Brennwert", per100g: "1631 kJ / 390 kcal", perPortion: "732 kJ / 175 kcal" },
+      { label: "Fett", per100g: "19 g", perPortion: "8,6 g" },
+      { label: "davon gesättigte Fettsäuren", per100g: "8,5 g", perPortion: "3,8 g" },
+      { label: "Kohlenhydrate", per100g: "29,7 g", perPortion: "13,4 g" },
+      { label: "davon Zucker", per100g: "3,1 g", perPortion: "1,5 g" },
+      { label: "Ballaststoffe", per100g: "2,5 g", perPortion: "1,1 g" },
+      { label: "Eiweiß", per100g: "31,5 g", perPortion: "14,2 g" },
+      { label: "Salz", per100g: "0,25 g", perPortion: "0,1 g" },
+    ],
+  },
+  {
+    productKey: "daily",
+    product: "Daily 480g",
+    portionInfo: "24 g Pulver (1 Sachet) + 500 ml Wasser · 20 Portionen",
+    rows: [],
+    activeIngredients: [
+      { label: "Kollagenhydrolysat", amount: "10 g" },
+      { label: "davon TENDOFORTE®", amount: "5,0 g" },
+      { label: "davon FORTIGEL®", amount: "5,0 g" },
+      { label: "L-Glutamin", amount: "5,0 g" },
+      { label: "Creatin Monohydrat", amount: "3,0 g" },
+      { label: "L-Leucin", amount: "1,8 g" },
+    ],
+  },
+  {
+    productKey: "creatine",
+    product: "Ultrapure Kreatin Pulver 500g",
+    portionInfo: "3,5 g Pulver + 100 ml Wasser · 142 Portionen",
+    rows: [
+      { label: "Brennwert", per100g: "0 kJ / 0 kcal", perPortion: "0 kJ / 0 kcal" },
+      { label: "Fett", per100g: "0 g", perPortion: "0 g" },
+      { label: "Kohlenhydrate", per100g: "0 g", perPortion: "0 g" },
+      { label: "davon Zucker", per100g: "0 g", perPortion: "0 g" },
+      { label: "Eiweiß", per100g: "0 g", perPortion: "0 g" },
+      { label: "Salz", per100g: "0 g", perPortion: "0 g" },
+    ],
+    activeIngredients: [
+      { label: "Creatin Monohydrat", amount: "3,5 g" },
+      { label: "davon Creatin", amount: "3,0 g" },
+    ],
+  },
+  {
+    productKey: "ashwa",
+    product: "Ashwa+ Kapseln 120 Kaps.",
+    portionInfo: "2 Kapseln · 60 Portionen",
+    rows: [],
+    activeIngredients: [
+      { label: "Ashwagandha-Wurzelextrakt (KSM-66®)", amount: "600 mg" },
+      { label: "davon Withanolide", amount: "30 mg" },
+      { label: "Magnesium", amount: "60 mg" },
+      { label: "Zink", amount: "2,0 mg" },
+      { label: "Vitamin B6", amount: "0,2 mg" },
+    ],
+  },
+  {
+    productKey: "magnesium",
+    product: "Magnesium Complex 90 Kaps.",
+    portionInfo: "3 Kapseln · 30 Portionen",
+    rows: [],
+    activeIngredients: [
+      { label: "Magnesium (elementar)", amount: "323 mg" },
+      { label: "Magnesiumbisglycinat", amount: "–" },
+      { label: "Magnesiummalat", amount: "–" },
+      { label: "Magnesiumtaurat", amount: "–" },
+      { label: "Trimagnesiumdicitrat", amount: "–" },
+    ],
+  },
+];
+
 function getFlavorImage(item: typeof COMBO_ITEMS[0], flavor: string): string {
   return item.flavorImages[flavor] || item.image;
 }
@@ -529,21 +672,50 @@ export default function ComboProduct() {
                   </div>
                 </AccordionSection>
                 <AccordionSection title="Nährwerte">
-                  <table className="combo-nutrition">
-                    <thead>
-                      <tr><th>Produkt</th><th>Portion</th><th>Protein</th><th>Portionen</th></tr>
-                    </thead>
-                    <tbody>
-                    <tr><td>Designer Whey 908g</td><td>33g</td><td>25g</td><td>27</td></tr>
-                    <tr><td>Isoclear 908g</td><td>30g</td><td>23g</td><td>30</td></tr>
-                    <tr><td>Crank 380g</td><td>9,5g</td><td>–</td><td>40</td></tr>
-                    <tr><td>Designer Protein Bar</td><td>45g</td><td>18g</td><td>12</td></tr>
-                    <tr><td>Daily 480g</td><td>1 Sachet</td><td>–</td><td>30</td></tr>
-                    <tr><td>Ultrapure Kreatin 500g</td><td>5g</td><td>–</td><td>100</td></tr>
-                    <tr><td>Ashwa+ Kapseln</td><td>3 Kaps.</td><td>–</td><td>40</td></tr>
-                    <tr><td>Magnesium Complex</td><td>4 Kaps.</td><td>–</td><td>30</td></tr>
-                    </tbody>
-                  </table>
+                  {NUTRITION_DATA.map((n) => (
+                    <div key={n.product} className="nutrition-card">
+                      <div className="nutrition-card__header">
+                        <div className="nutrition-card__thumb">
+                          <img src={COMBO_ITEMS.find(i => i.key === n.productKey)?.image} alt={n.product} />
+                        </div>
+                        <div className="nutrition-card__title">{n.product}</div>
+                        <div className="nutrition-card__portion-info">{n.portionInfo}</div>
+                      </div>
+                      <table className="nutrition-table">
+                        <thead>
+                          <tr>
+                            <th></th>
+                            <th>pro 100g</th>
+                            <th>pro Portion</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {n.rows.map((row, i) => (
+                            <tr key={i}>
+                              <td>{row.label}</td>
+                              <td>{row.per100g}</td>
+                              <td>{row.perPortion}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      {n.activeIngredients && (
+                        <table className="nutrition-table nutrition-table--ingredients">
+                          <thead>
+                            <tr><th>Aktive Inhaltsstoffe</th><th>pro Portion</th></tr>
+                          </thead>
+                          <tbody>
+                            {n.activeIngredients.map((row, i) => (
+                              <tr key={i}>
+                                <td>{row.label}</td>
+                                <td>{row.amount}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      )}
+                    </div>
+                  ))}
                 </AccordionSection>
               </div>
             </div>
@@ -1191,37 +1363,103 @@ export default function ComboProduct() {
           .combo-highlight { padding: 16px; font-size: 13px; margin-top: 16px; }
         }
 
-        /* Nutrition table */
-        .combo-nutrition {
+        /* Nutrition cards */
+        .nutrition-card {
+          margin-bottom: 20px;
+          border: 1.5px solid #edf1f2;
+          border-radius: 10px;
+          overflow: hidden;
+        }
+        .nutrition-card__header {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px 12px;
+          background: #f8f9fa;
+          border-bottom: 1px solid #edf1f2;
+        }
+        .nutrition-card__thumb {
+          width: 40px;
+          height: 40px;
+          min-width: 40px;
+          background: #ebeff0;
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+        .nutrition-card__thumb img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+        }
+        .nutrition-card__title {
+          flex: 1;
+          font-size: 12px;
+          font-weight: 700;
+          color: #000;
+        }
+        .nutrition-card__portion-info {
+          font-size: 10px;
+          color: #757575;
+          text-align: right;
+          white-space: nowrap;
+        }
+        .nutrition-table {
           width: 100%;
           border-collapse: collapse;
-          font-size: 12px;
-          display: block;
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
+          font-size: 11px;
         }
-        .combo-nutrition thead,
-        .combo-nutrition tbody { display: table; width: 100%; }
-        .combo-nutrition th {
+        .nutrition-table th {
           text-align: left;
           font-weight: 700;
           text-transform: uppercase;
-          font-size: 10px;
-          padding: 6px 8px;
+          font-size: 9px;
+          padding: 6px 10px;
           border-bottom: 2px solid #000;
           color: #000;
           white-space: nowrap;
+          letter-spacing: 0.3px;
         }
-        .combo-nutrition td {
-          padding: 6px 8px;
+        .nutrition-table th:last-child {
+          text-align: right;
+        }
+        .nutrition-table th:nth-child(2) {
+          text-align: center;
+        }
+        .nutrition-table td {
+          padding: 5px 10px;
           border-bottom: 1px solid #edf1f2;
           color: #333;
           white-space: nowrap;
         }
+        .nutrition-table td:last-child {
+          text-align: right;
+          font-weight: 600;
+        }
+        .nutrition-table td:nth-child(2) {
+          text-align: center;
+          color: #757575;
+        }
+        .nutrition-table td:first-child {
+          color: #333;
+        }
+        .nutrition-table--ingredients {
+          border-top: 2px solid #edf1f2;
+        }
+        .nutrition-table--ingredients thead {
+          background: #f8f9fa;
+        }
         @media (min-width: 768px) {
-          .combo-nutrition { font-size: 13px; }
-          .combo-nutrition th { font-size: 11px; padding: 8px 12px; }
-          .combo-nutrition td { padding: 8px 12px; }
+          .nutrition-card { margin-bottom: 24px; }
+          .nutrition-card__header { padding: 12px 16px; gap: 14px; }
+          .nutrition-card__thumb { width: 48px; height: 48px; min-width: 48px; border-radius: 8px; }
+          .nutrition-card__title { font-size: 14px; }
+          .nutrition-card__portion-info { font-size: 11px; }
+          .nutrition-table { font-size: 12px; }
+          .nutrition-table th { font-size: 10px; padding: 8px 14px; }
+          .nutrition-table td { padding: 6px 14px; }
         }
 
         /* ── What's inside ── */
