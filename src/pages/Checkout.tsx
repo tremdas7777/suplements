@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, Lock, ShoppingBag, CreditCard } from "lucide-react";
+import { ChevronLeft, Lock, ShoppingBag, CreditCard, MapPin, Loader2 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import FooterESN from "../components/FooterESN";
 import HeaderESN from "../components/HeaderESN";
@@ -55,19 +55,60 @@ function ZipField({ label, name, value, onChange }: {
   label: string; name: keyof FormData; value: string;
   onChange: (k: keyof FormData, v: string) => void;
 }) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(name, applyZipMask(e.target.value));
+    const masked = applyZipMask(e.target.value);
+    onChange(name, masked);
+    setError("");
+
+    if (masked.length === 5) {
+      setLoading(true);
+      fetch(`https://api.zippopotam.de/de/${masked}`)
+        .then(res => {
+          if (!res.ok) throw new Error("invalid");
+          return res.json();
+        })
+        .then(data => {
+          if (data.places && data.places.length > 0) {
+            const city = data.places[0]["place name"];
+            if (city) {
+              onChange("city", city);
+            }
+          }
+          setLoading(false);
+        })
+        .catch(() => {
+          setError("Ungültige PLZ in Deutschland");
+          setLoading(false);
+        });
+    }
   };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
       <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".4px", color: "#374151" }}>{label}</label>
-      <input
-        type="text" inputMode="numeric" value={value} placeholder="12345"
-        onChange={handleChange} maxLength={5}
-        style={inp}
-        onFocus={e => (e.target.style.borderColor = "#232323")}
-        onBlur={e => (e.target.style.borderColor = "#e5e7eb")}
-      />
+      <div style={{ position: "relative" }}>
+        <input
+          type="text" inputMode="numeric" value={value} placeholder="12345"
+          onChange={handleChange} maxLength={5}
+          style={{ ...inp, paddingRight: loading ? 40 : 16, borderColor: error ? "#ef4444" : undefined }}
+          onFocus={e => (e.target.style.borderColor = error ? "#ef4444" : "#232323")}
+          onBlur={e => (e.target.style.borderColor = error ? "#ef4444" : "#e5e7eb")}
+        />
+        {loading && (
+          <div style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)" }}>
+            <Loader2 size={16} className="animate-spin" />
+          </div>
+        )}
+        {!loading && value.length === 5 && !error && (
+          <div style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)" }}>
+            <MapPin size={14} style={{ color: "#22c55e" }} />
+          </div>
+        )}
+      </div>
+      {error && <span style={{ fontSize: 11, color: "#ef4444", fontWeight: 600 }}>{error}</span>}
     </div>
   );
 }
@@ -102,12 +143,21 @@ function EmailField({ label, name, value, onChange }: {
   const atIdx = value.indexOf("@");
   const localPart = atIdx >= 0 ? value.slice(0, atIdx) : value;
   const hasAt = atIdx >= 0;
-  const suggestions = hasAt
-    ? GERMAN_EMAIL_DOMAINS.filter(d => !value.slice(atIdx + 1) || d.startsWith(value.slice(atIdx + 1)))
-        .map(d => `${localPart}@${d}`)
-    : value
-      ? GERMAN_EMAIL_DOMAINS.map(d => `${value}@${d}`)
-      : [];
+  const hasDot = value.includes(".");
+
+  const suggestions = (() => {
+    if (!value || (hasAt && hasDot && localPart.length < 1)) return [];
+    if (hasAt) {
+      const domainInput = value.slice(atIdx + 1);
+      if (!domainInput) {
+        return GERMAN_EMAIL_DOMAINS.map(d => `${localPart}@${d}`);
+      }
+      return GERMAN_EMAIL_DOMAINS
+        .filter(d => d.startsWith(domainInput))
+        .map(d => `${localPart}@${d}`);
+    }
+    return GERMAN_EMAIL_DOMAINS.map(d => `${value}@${d}`);
+  })().slice(0, 6);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -124,36 +174,41 @@ function EmailField({ label, name, value, onChange }: {
         <input
           type="email" value={value} placeholder="deine@email.de"
           onChange={e => { onChange(name, e.target.value); setShowSuggestions(true); }}
-          onFocus={() => setShowSuggestions(true)}
-          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-          style={inp}
+          onFocus={() => { if (value.length > 0) setShowSuggestions(true); }}
+          onBlur={() => setTimeout(() => setShowSuggestions(false), 250)}
+          style={{ ...inp, paddingRight: 40 }}
         />
-        {showSuggestions && suggestions.length > 0 && suggestions.length <= 8 && (
-          <div style={{
-            position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0,
-            background: "#fff", border: "1.5px solid #e5e7eb", borderRadius: 10,
-            boxShadow: "0 8px 24px rgba(0,0,0,0.08)", zIndex: 50,
-            overflow: "hidden",
-          }}>
-            {suggestions.slice(0, 6).map(s => (
-              <button
-                key={s}
-                type="button"
-                onMouseDown={(e) => { e.preventDefault(); onChange(name, s); setShowSuggestions(false); }}
-                style={{
-                  display: "block", width: "100%", padding: "10px 16px", background: "none",
-                  border: "none", borderBottom: "1px solid #f3f4f6", textAlign: "left",
-                  fontSize: 13, cursor: "pointer", fontFamily: "inherit", color: "#232323",
-                }}
-                onMouseEnter={e => (e.currentTarget.style.background = "#f8f9fa")}
-                onMouseLeave={e => (e.currentTarget.style.background = "none")}
-              >
-                {s}
-              </button>
-            ))}
+        {value.includes("@") && (
+          <div style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)" }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
           </div>
         )}
       </div>
+      {showSuggestions && suggestions.length > 0 && (
+        <div style={{
+          position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0,
+          background: "#fff", border: "1.5px solid #e5e7eb", borderRadius: 10,
+          boxShadow: "0 8px 24px rgba(0,0,0,0.08)", zIndex: 50,
+          overflow: "hidden",
+        }}>
+          {suggestions.map(s => (
+            <button
+              key={s}
+              type="button"
+              onMouseDown={(e) => { e.preventDefault(); onChange(name, s); setShowSuggestions(false); }}
+              style={{
+                display: "block", width: "100%", padding: "10px 16px", background: "none",
+                border: "none", borderBottom: "1px solid #f3f4f6", textAlign: "left",
+                fontSize: 13, cursor: "pointer", fontFamily: "inherit", color: "#232323",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = "#f8f9fa")}
+              onMouseLeave={e => (e.currentTarget.style.background = "none")}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -331,7 +386,7 @@ export default function Checkout() {
                   <Field label="Vorname *" name="firstName" value={form.firstName} onChange={up} />
                   <Field label="Nachname" name="lastName" value={form.lastName} onChange={up} />
                 </div>
-                <div style={{ display: "grid", gap: 14 }}>
+                <div style={{ display: "grid", gap: 14, position: "relative" }}>
                   <EmailField label="E-Mail *" name="email" value={form.email} onChange={up} />
                   <PhoneField label="Telefon (optional)" name="phone" value={form.phone} onChange={up} />
                   <Field label="Straße & Hausnummer *" name="address" value={form.address} onChange={up} placeholder="Musterstraße 1" />
@@ -387,14 +442,23 @@ export default function Checkout() {
 
                 <div style={{ background: "#f0fdf4", border: "1.5px solid #bbf7d0", borderRadius: 10, padding: "12px 16px", marginBottom: 20, display: "flex", gap: 10 }}>
                   <Lock size={16} style={{ color: "#16a34a", flexShrink: 0, marginTop: 2 }} />
-                  <span style={{ fontSize: 12, color: "#15803d", fontWeight: 600 }}>256-bit SSL-Verschlüsselung · Sichere Zahlung via Stripe</span>
+                  <span style={{ fontSize: 12, color: "#15803d", fontWeight: 600 }}>256-bit SSL-Verschlüsselung · Sichere Zahlung via Stripe Checkout</span>
                 </div>
 
-                <div style={{ background: "#f8f9fa", borderRadius: 12, padding: 16, marginBottom: 20, display: "flex", alignItems: "center", gap: 12 }}>
-                  <CreditCard size={20} />
-                  <span style={{ fontWeight: 700, fontSize: 14 }}>Kreditkarte / Debitkarte</span>
-                  <div style={{ marginLeft: "auto", display: "flex", gap: 6 }}>
-                    {["VISA","MC","AMEX"].map(b => <span key={b} style={{ fontSize: 9, fontWeight: 800, background: "#fff", border: "1px solid #e5e7eb", borderRadius: 4, padding: "2px 6px" }}>{b}</span>)}
+                <div style={{ background: "#fff", border: "1.5px solid #e5e7eb", borderRadius: 12, padding: 20, marginBottom: 20 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                    <CreditCard size={20} />
+                    <span style={{ fontWeight: 700, fontSize: 14 }}>Kreditkarte / Debitkarte</span>
+                  </div>
+                  <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
+                    {["VISA","MC","AMEX","Google Pay","Apple Pay"].map(b => (
+                      <span key={b} style={{ fontSize: 10, fontWeight: 800, background: "#f8f9fa", border: "1px solid #e5e7eb", borderRadius: 6, padding: "4px 10px", color: "#374151" }}>{b}</span>
+                    ))}
+                  </div>
+                  <div style={{ background: "#f8f9fa", borderRadius: 8, padding: "12px 16px", fontSize: 13, color: "#6b7280", lineHeight: 1.5 }}>
+                    <strong style={{ color: "#232323" }}>So funktioniert es:</strong>
+                    <br />
+                    Nach dem Klick auf "Jetzt kaufen" wirst du zur sicheren Bezahlung auf <strong>Stripe</strong> weitergeleitet. Dort gibst du deine Kartendaten ein (Nummer, Ablaufdatum, CVV).
                   </div>
                 </div>
 
